@@ -1,388 +1,388 @@
-import React, { useState, useEffect } from "react";
-import { useRedux } from "../../hooks/useRedux";
-import {
-  submitVerifyAddressmodal,
-  updateAddress,
-} from "../../slices/myAddressSlice";
-import {
-  getShippingAddressAction,
-  getResolvedAddressAction,
-  deleteAddressAction,
-} from "../../app/actions";
-import SuggestedAddressModalComponent from "./suggestedAddressModal";
-import VerifyAddressModalComponent from "./verifyAddressModal";
-import AddressForm from "./addressForm";
-import EditForm from "./editForm";
-import AddressListComponent from "./addressList";
-import ReplaceAddressModal from "./replaceModal";
-import classNames from "classnames";
-import { Address } from "./myAddressesProps";
-import "./index.scss";
-import ReduxProvider from "../../app/ReduxProvider";
-import {
-  byAttrVal,
-  createCustomElement,
-  DOMModel,
-  // @ts-ignore
-} from "@adobe/react-webcomponent";
-import { SHIPPING_CHECKOUT } from "../../const/shippingCheckout";
-import { isSignedIn } from "../../utilities/userLoginCheck";
-import { store } from "../../app/store";
-import {pushAddressEventsDataOnClick, setDataLayer} from "../../app/analytics"
-import { AC } from "../../const/analyticsConstants";
+Fulfillment Picker: 
 
-class MyAddressModel extends DOMModel {
-  @byAttrVal text?: string;
+import { getHasValidGigyaAccountData } from "../../utilities/gigyaProfile";
+import { setProfileInfo } from "../../slices/gigyaProfileSlice";
+import { setAccountInfo } from "../../utilities/gigyaAccountInfo";
+
+const gigyaAccountData = useTypedSelector((state) => state.gigyaProfile);
+useEffect(() => {
+    const gigyaCartType = gigyaAccountData?.gigyaProfile?.data?.preferences?.cartType;
+      if(isSignedIn && gigyaCartType){
+        switch (gigyaCartType) {
+          case DELIVERY:
+            setSelectedTile(DELIVERY);
+            localStorage.setItem("order-type", DELIVERY)
+            break;
+          case SHIPPING:
+            setSelectedTile(SHIPPING);
+            localStorage.setItem("order-type", SHIPPING)
+            break;
+          default:
+            setSelectedTile(TILE_TYPE.IN_STORE);
+            localStorage.setItem("order-type", TILE_TYPE.IN_STORE)
+            break;
+        }
+      }
+  }, [gigyaAccountData]);
+
+ useEffect(() => {
+    window.gigya &&
+      window.gigya.accounts &&
+      window.gigya.accounts.getAccountInfo({
+        include: 'profile,data,loginIDs',
+        extraProfileFields: 'phones',
+        callback: (response: any) => {
+          if (getHasValidGigyaAccountData(response)) {
+            dispatch(setProfileInfo(response));
+          }
+        },
+      });
+  }, [dispatch]);
+
+API Response: 
+{
+  "callId": "4c4ffd08cc814329895e219dfc41e622",
+  "data": {
+    "preferences": {
+      "POSreceipt": {
+        "flag": "none",
+        "optIn": "false",
+        "SMS": "no",
+        "email": "no"
+      },
+      "preferredStore": "9800",
+      "emailMarketing": "0",
+      "cartType": "delivery",
+      "myDG": {
+        "acceptanceDate": "3/18/2025",
+        "isShowWelcomeScreen": false,
+        "acceptedVersion": "16",
+        "source": "DGWeb",
+        "isMyDG": true
+      },
+  "profile": {
+    "firstName": "Prabjot",
+    "lastName": "Singh",
+    "email": "prabjsingh@deloitte.com"
+  },
 }
-
-interface MyAddressProps {
-  myaddressdata?: string;
-  customClass?: string;
-  isshippingcart?: boolean;
-  onClose?: () => void;
-}
-
-const MyAddress: React.FC<MyAddressProps> = (props) => {
-  const { myaddressdata, customClass, isshippingcart, onClose } = props;
-  const correctedMyAddressData = myaddressdata?.replace(/'/g, '"');
-  const AddressTexts = correctedMyAddressData
-    ? JSON.parse(correctedMyAddressData)
-    : null;
-
-  const [showConnectModalOpen, setShowConnectModalOpen] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-  const [enteredAddress, setEnteredAddress] = useState<Address | null>(null);
-  const [showVerifyModal, setShowVerifyModal] = useState(false);
-  const [showSuggestedModal, setShowSuggestedModal] = useState(false);
-  const [AddressData, setAddressData] = useState<Address[]>([]);
-  const [hideDeleteButton, setHideDeleteButton] = useState(false);
-  const [shippingsuggestedadd, setShippingsuggestedadd] =
-    useState<Address | null>(null);
-  const [showaddressmodal, setShowaddressmodal] = useState(false);
-  const [submitAddressForm, setSubmitAddressForm] = useState(false);
-  const [user, setUser] = useState(false);
-  const [userShippingAddresses, setUserShippingAddresses] = useState([]);
-  const [editFormNavSource, setEditFormNavSource] = useState('');
-  const {addAddressButton,emptyAddressesTitle, emptyAddressesSubtitle, save, replace, edit} = window.DG?.aemData?.labels?.myAddress || {};
-  const { storeData, dispatch } = useRedux();
-
-  const openConnectModal = () => {
-    setShowConnectModalOpen(true);
-  };
-
-  const enableScroll = () => {
-    document.querySelector("body")!.style.overflow = "auto";
-  };
-
-  const closeConnectModal = () => {
-    setShowConnectModalOpen(false);
-    enableScroll();
-  };
-
-  const handleAddressSubmit = async (AddressData: Address) => {
-    setSubmitAddressForm(true);
-    setEnteredAddress(AddressData);
-    await dispatch(
-      getResolvedAddressAction({ address: AddressData, isAuthenticated: user })
-    );
-    pushAddressEventsDataOnClick(AddressData)
-  };
-  useEffect(() => {
-    if (submitAddressForm && !storeData.myAddress.resolvedAddress) {
-      setShowVerifyModal(true);
-    }
-  }, [storeData.myAddress.resolvedAddress]);
+    
+  Address Form :
 
   useEffect(() => {
-    const loggedin = isSignedIn();
-    setUser(loggedin);
+    setUser(storeData.checkout.user);
   }, [storeData.checkout.user]);
 
   useEffect(() => {
-    if (user && !isshippingcart) {
-      dispatch(getShippingAddressAction())
-        .unwrap()
-        .then((res) => {
-          setUserShippingAddresses(res?.data?.ShippingAddresses);
-        });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    dispatch(updateAddress(enteredAddress));
-  }, [enteredAddress]);
-
-  useEffect(() => {
-    const suggadd = storeData.myAddress.resolvedAddress?.ResolvedAddress;
-    setShippingsuggestedadd(suggadd);
-    if (
-      storeData.myAddress.resolvedAddress?.UserProfileShippingAddress
-        ?.ShippingAddresses
-    ) {
-      setUserShippingAddresses(
-        storeData.myAddress.resolvedAddress?.UserProfileShippingAddress
-          ?.ShippingAddresses
+    if (editFormNavSource) {
+      setShippingFirstName(
+        selectedAddress?.ShippingFirstName
+          ? selectedAddress.ShippingFirstName
+          : ""
+      );
+      setShippingLastName(
+        selectedAddress?.ShippingLastName
+          ? selectedAddress.ShippingLastName
+          : ""
       );
     }
-  }, [storeData.myAddress.resolvedAddress]);
+    if (editFormNavSource === "edit") {
+      setShippingAddressLine1(
+        selectedAddress?.ShippingAddressLine1
+          ? selectedAddress.ShippingAddressLine1
+          : ""
+      );
+      setShippingAddressLine2(
+        selectedAddress?.ShippingAddressLine2
+          ? selectedAddress.ShippingAddressLine2
+          : ""
+      );
+      setShippingZip(
+        selectedAddress?.ShippingZip ? selectedAddress.ShippingZip : ""
+      );
+      setShippingCity(
+        selectedAddress?.ShippingCity ? selectedAddress.ShippingCity : ""
+      );
+      setShippingState(
+        selectedAddress?.ShippingState ? selectedAddress.ShippingState : ""
+      );
+      setIsDefaultShippingAddress(
+        selectedAddress?.IsDefaultShippingAddress
+          ? selectedAddress.IsDefaultShippingAddress
+          : false
+      );
+    }
+  }, [editFormNavSource]);
 
   useEffect(() => {
-    if (storeData.myAddress.resolvedAddress?.ResolvedAddress) {
-      setShowSuggestedModal(true);
+    if (editFormNavSource === "edit") {
+      setUpdatebutton(false);
     } else {
-      setShowSuggestedModal(false);
+      setUpdatebutton(false);
     }
-  }, [storeData.myAddress.resolvedAddress]);
+  },[editFormNavSource]);
 
   useEffect(() => {
-    setShowaddressmodal(storeData.checkout.showaddressform);
-  }, [storeData.checkout.showaddressform]);
+    // Check if any error state is not empty
+    if (
+      ShippingFirstNameError ||
+      ShippingLastNameError ||
+      ShippingAddressLine1Error ||
+      ShippingaddressLine2Error ||
+      ShippingZipError ||
+      ShippingCityError ||
+      ShippingFirstName === "" ||
+      ShippingLastName === "" ||
+      ShippingAddressLine1 === "" ||
+      ShippingZip === "" ||
+      ShippingCity === "" ||
+      ShippingState === ""
+    ) {
+      SetFormerror(true);
+    } else {
+      SetFormerror(false);
+    }
+  }, [
+    ShippingFirstNameError,
+    ShippingLastNameError,
+    ShippingAddressLine1Error,
+    ShippingaddressLine2Error,
+    ShippingZipError,
+    ShippingCityError,
+    ShippingFirstName,
+    ShippingLastName,
+    ShippingAddressLine1,
+    ShippingAddressLine2,
+    ShippingZip,
+    ShippingCity,
+    ShippingState,
+  ]);
 
   useEffect(() => {
-    setAddressData(storeData.checkout.address);
-  }, []);
+    dispatch(updateformenablebutton(formerror));
+  }, [formerror]);
 
-  const handleAddAddressClick = () => {
-    document.querySelector("body")!.style.overflow = "hidden";
-    if (AddressData?.length === 10 || userShippingAddresses?.length === 10) {
-      openConnectModal();
-    } else {
-      handleAddAnAddressClick({
-        ShippingFirstName: "",
-        ShippingLastName: "",
-        ShippingAddressLine1: "",
-        ShippingZip: "",
-        ShippingCity: "",
-        ShippingState: "",
-      });
+  useEffect(() => {
+    const result = storeData.checkout.executehandlesubmit;
+    setExecuteguestsubmit(result);
+  }, [storeData.checkout.executehandlesubmit]);
+
+  // Validate fields on change
+  const handleShippingFirstNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingFirstName(e.target.value);
+    setIsTouched(true);
+    setShippingFirstNameError(
+      e.target.value.length <= 1
+        ? yellowButton || isshippingcart
+          ? myAddress?.firstNameRequired
+          : myAddress?.invalidFirstName
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
     }
   };
 
-  const formatVerifyAddress = (addr: any) => {
-    return `${addr.ShippingFirstName} ${addr.ShippingLastName}\n${
-      addr.ShippingAddressLine1
-    }${addr.ShippingAddressLine2 ? `\n${addr.ShippingAddressLine2}` : ""}\n${
-      addr.ShippingCity
-    }, ${addr.ShippingState}\n${addr.ShippingZip}`;
-  };
-
-  const handleEditClick = (address: Address) => {
-    setSelectedAddress(address);
-    setEditFormNavSource("edit");
-    enableScroll();
-    setHideDeleteButton(false);
-  };
-  const handleAddAnAddressClick = (address: Address) => {
-    setSelectedAddress(address);
-    setEditFormNavSource("save");
-    enableScroll();
-    setHideDeleteButton(true);
-  };
-
-  const handleSaveClick = (updatedAddress: Address) => {
-    if (selectedAddress?.Id) {
-      handleAddressSubmit({
-        ...updatedAddress,
-        Id: selectedAddress?.Id,
-      });
-    } else {
-      handleAddressSubmit(updatedAddress);
+  const handleShippingLastNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingLastName(e.target.value);
+    setIsTouched(true);
+    setShippingLastNameError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.LastNameRequired
+          : myAddress?.invalidLastName
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
     }
+  };
 
-    setAddressData((prevAddressData) =>
-      prevAddressData?.map?.((address) =>
-        address.ShippingZip === updatedAddress.ShippingZip
-          ? updatedAddress
-          : { ...address, IsDefaultShippingAddress: false }
-      )
+  const handleShippingAddressLine1Change = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingAddressLine1(e.target.value);
+    setIsTouched(true);
+
+    if (poBoxRegex.test(e.target.value)) {
+      setShippingAddressLine1Error(
+        myAddress?.poBoxInvalidAddress ||
+          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
+      );
+    } else {
+      setShippingAddressLine1Error(
+        e.target.value.length <= 1
+          ? yellowButton || isshippingcart
+            ? myAddress?.address1Required
+            : myAddress?.invalidAddress1
+          : ""
+      );
+    }
+    if (!updatebutton && editFormNavSource === "edit") {
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingAddressLine2Change = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingAddressLine2(e.target.value);
+    setIsTouched(true);
+    setShippingAddressLine2Error(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.Address2Required
+          : myAddress?.invalidAddress2
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setShippingZip(e.target.value);
+    setIsTouched(true);
+    if (!zipPattern.test(value)) {
+      setShippingZipError(
+        yellowButton ||  isshippingcart
+          ? myAddress?.zipCodeRequired
+          : myAddress?.invalidZipCode
+      );
+    } else {
+      setShippingZipError("");
+    }
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShippingCity(e.target.value);
+    setIsTouched(true);
+    setShippingCityError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.cityRequired
+          : myAddress?.invalidCity
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingStateChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setShippingState(e.target.value);
+    setIsTouched(true);
+    setShippingStateError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.stateRequired
+          : myAddress?.invalidState
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const validateForm = (e: React.FormEvent<Element>) => {
+    setShippingFirstNameError(
+      ShippingFirstName.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.firstNameRequired
+          : myAddress?.invalidFirstName
+        : ""
+    );
+    setShippingLastNameError(
+      ShippingLastName.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.LastNameRequired
+          : myAddress?.invalidLastName
+        : ""
     );
 
-    setSelectedAddress(null);
+    if (poBoxRegex.test(ShippingAddressLine1)) {
+      setShippingAddressLine1Error(
+        myAddress?.poBoxInvalidAddress ||
+          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
+      );
+      e.preventDefault();
+      return;
+    } else {
+      setShippingAddressLine1Error(
+        ShippingAddressLine1.length <= 1
+        ? yellowButton ||  isshippingcart
+            ? myAddress?.address1Required
+            : myAddress?.invalidAddress1
+          : ""
+      );
+    }
+    setShippingZipError(
+      !zipPattern.test(ShippingZip)
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.zipCodeRequired
+          : myAddress?.invalidZipCode
+        : ""
+    );
+    setShippingCityError(
+      ShippingCity.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.cityRequired
+          : myAddress?.invalidCity
+        : ""
+    );
+    setShippingStateError(
+      ShippingState.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.stateRequired
+          : myAddress?.invalidState
+        : ""
+    );
   };
 
-  const handleReplaceAddress = (address: Address, skipClose?: boolean) => {
-    setSelectedAddress(address);
-    setEditFormNavSource("replace");
-    setShowConnectModalOpen(false);
-    setHideDeleteButton(true);
-    enableScroll();
-  };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    validateForm(e);
 
-  const handleDeleteClick = (addressToDelete: Address) => {
-    dispatch(deleteAddressAction(addressToDelete))
-      .unwrap()
-      .then((res) => {
-        if (res?.data?.length > 0)
-          setUserShippingAddresses(res?.data?.ShippingAddresses);
-        dispatch(getShippingAddressAction())
-          .unwrap()
-          .then((res) => {
-            setUserShippingAddresses(res?.data?.ShippingAddresses);
-          });
-        setSelectedAddress(null);
-      })
-      .catch((error) => {
-        // console.error("Failed to delete address", error);
-      });
-  };
+    // Check if there are any errors before submitting
+    if (
+      ShippingFirstName.length <= 1 ||
+      ShippingLastName.length <= 1 ||
+      ShippingAddressLine1.length <= 1 ||
+      !zipPattern.test(ShippingZip) ||
+      ShippingCity.length <= 1 ||
+      ShippingState.length <= 1
+    ) {
+      return;
+    }
 
-  const handleConfirmAddress = (newAddress: Address) => {
-    const latestAddress = {
-      DeliveryInstructions: newAddress.DeliveryInstructions ?? false,
-      IsDefaultShippingAddress: newAddress.IsDefaultShippingAddress ?? false,
-      ShippingAddressLine1: newAddress.ShippingAddressLine1 ?? "",
-      ShippingAddressLine2: newAddress.ShippingAddressLine2 ?? "",
-      ShippingCity: newAddress.ShippingCity ?? "",
-      ShippingCountry: newAddress.ShippingCountry ?? "US",
-      ShippingFirstName: enteredAddress?.ShippingFirstName ?? "",
-      ShippingLastName: enteredAddress?.ShippingLastName ?? "",
-      ShippingState: newAddress.ShippingState ?? "",
-      ShippingZip: newAddress.ShippingZip ?? "",
+    const submitData = {
+      ShippingFirstName,
+      ShippingLastName,
+      ShippingAddressLine1,
+      ShippingAddressLine2,
+      ShippingZip,
+      ShippingCity,
+      ShippingState,
+      IsDefaultShippingAddress,
+      DeliveryInstructions,
+      ShippingCountry: "US",
+
     };
-    if (newAddress.Id) {
-      latestAddress.Id = newAddress.Id;
-    }
-    if (!user) {
-      latestAddress.shoppingListId = storeData.cart.cartShoppingListId;
-    }
-    dispatch(
-      getResolvedAddressAction({
-        address: latestAddress,
-        isAuthenticated: user,
-        skipAddressSuggestion: true,
-      })
-    ).then(() => {
-      if (user) {
-        dispatch(getShippingAddressAction());
-      }
-    });
-    setShowSuggestedModal(false);
-    if (user) {
-      setTimeout(() => {
-        dispatch(getShippingAddressAction());
-      }, 2000);
-    }
 
-    onClose?.();
-    dispatch(submitVerifyAddressmodal(true));
-  };
+export default AddressForm;
 
-  useEffect(() => {
-    setDataLayer(AC.MODAL_VIEWED, {
-      modal: {
-        name: "Verify delivery address",
-      },
-    });
-  })
+    SO here what I need is that just the way I'm getting data from API response from gigya in fulfilment Picker, I need the first name and last name in address Form prepopulated from gigya if it is present, otherwise it should be empty just way it is. 
 
-  return (
-    <div className={classNames(`my-address ${customClass ? customClass : ""}`)}>
-      <div className="my-address__header__title">
-        {isshippingcart ? (
-          <>
-          <p className="shippingcheckouthead">{SHIPPING_CHECKOUT.ADD_NEW_ADDRESS}</p>
-          <p className="shippingcheckouttitle">
-            {SHIPPING_CHECKOUT.FORM_INSTRUCTION}
-          </p>
-          </>
-        ) : null}
-        {userShippingAddresses?.length === 0 && (
-          <>
-            <div className="my-address__header__title">
-              {AddressData?.length > 0 ? "" : emptyAddressesTitle }
-            </div>
-            <div className="my-address__header__subtitle">
-              {AddressData?.length > 0 ? "" : emptyAddressesSubtitle}
-            </div>
-          </>
-        )}
-      </div>
+    
 
-      {isshippingcart && showaddressmodal ? (
-        <AddressForm
-          customClass={customClass}
-          isshippingcart={isshippingcart}
-          onSubmit={handleAddressSubmit}
-          checkoutShipping={true}
-        />
-      ) : selectedAddress ? (
-        <EditForm
-          myaddressdata={JSON.stringify(AddressTexts)}
-          address={selectedAddress}
-          editFormNavSource={editFormNavSource}
-          onBackClick={() => setSelectedAddress(null)}
-          onSaveClick={handleSaveClick}
-          onDeleteClick={() => handleDeleteClick(selectedAddress)}
-          hideDeleteButton={hideDeleteButton}
-        />
-      ) : userShippingAddresses?.length > 0 && !isshippingcart ? (
-        <>
-          <div className="address__container">
-            {userShippingAddresses.map((address) => (
-              <AddressListComponent
-                key={address.Id}
-                address={address}
-                onEditClick={() => handleEditClick(address)}
-              />
-            ))}
-          </div>
-          <button
-            className="add-address-button"
-            onClick={handleAddAddressClick}
-          >
-            {"Add an address"}
-          </button>
-        </>
-      ) : (
-        <AddressForm
-          customClass={customClass}
-          isshippingcart={isshippingcart}
-          onSubmit={handleAddressSubmit}
-        />
-      )}
 
-      {showVerifyModal && (
-        <VerifyAddressModalComponent
-          onClose={() => setShowVerifyModal(false)}
-          onCustomButtonClick={() => setShowVerifyModal(false)}
-          address={formatVerifyAddress(enteredAddress)} 
-        />
-      )}
-
-      {showSuggestedModal && enteredAddress && shippingsuggestedadd && (
-        <SuggestedAddressModalComponent
-          suggestedAddress={shippingsuggestedadd}
-          enteredAddress={enteredAddress}
-          onClose={() => setShowSuggestedModal(false)}
-          onConfirm={handleConfirmAddress}
-        />
-      )}
-
-      {showConnectModalOpen && (
-        <ReplaceAddressModal
-          onClose={closeConnectModal}
-          onOpenModal={handleReplaceAddress}
-          addressList={
-            AddressData.length > 0 ? AddressData : userShippingAddresses
-          }
-        />
-      )}
-    </div>
-  );
-};
-
-export default MyAddress;
-
-const CustomMyAddress = createCustomElement(
-  (props: any) => (
-    <ReduxProvider>
-      <MyAddress {...props}></MyAddress>
-    </ReduxProvider>
-  ),
-  MyAddressModel,
-  "element"
-);
-
-customElements.define("custom-my-address", CustomMyAddress);
-
-so here what is happening is that when I add a new address, it is taking me back to address list component and then opening the verify address modal. What I need is that it should stay at the same page without going to address list component.
