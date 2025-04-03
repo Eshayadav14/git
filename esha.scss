@@ -1,27 +1,18 @@
-const handleSaveClick = async (updatedAddress: Address) => {
-  const addressToSubmit = selectedAddress?.Id
-    ? { ...updatedAddress, Id: selectedAddress?.Id }
-    : updatedAddress;
+try {
+  const response = await dispatch(getResolvedAddressAction({ isAuthenticated: user })).unwrap();
 
-  try {
-    const response = await dispatch(getResolvedAddressAction({ 
-      address: addressToSubmit, 
-      isAuthenticated: user 
-    })).unwrap();
+  console.log("API Response:", response);
+  console.log("Store Data:", storeData); // Check if storeData has status
 
-    setAddressData((prevAddressData) =>
-      prevAddressData?.map?.((address) =>
-        address.ShippingZip === updatedAddress.ShippingZip
-          ? updatedAddress
-          : { ...address, IsDefaultShippingAddress: false }
-      )
-    );
+  setAddressData((prevAddressData) =>
+    prevAddressData?.map((address) =>
+      address.ShippingZip === updatedAddress.ShippingZip ? updatedAddress : address
+    )
+  );
 
-    // If API call is successful and it's an edit operation, set selected address to null
-    if (editFormNavSource === "edit" && response?.status === "succeeded") {
-      setSelectedAddress(null);
-    }
-  } catch (error) {
-    console.error("Failed to resolve address:", error);
+  if (editFormNavSource === "edit" && storeData?.status === "succeeded") {
+    setSelectedAddress(null);
   }
-};
+} catch (error) {
+  console.error("Failed to resolve address:", error);
+}
