@@ -79,33 +79,6 @@ const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
     setIsSearchIconClicked(!isSearchIconClicked);
   };
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const sortValue = queryParams.get("type");
-
-    switch (sortValue) {
-      case "1":
-        setFilters({
-          categories: [],
-          brands: [],
-          dealTypes: ["Coupons"],
-        });
-        break;
-      case "2":
-        setFilters({
-          categories: [],
-          brands: [],
-          dealTypes: ["Cash Back"],
-        });
-        break;
-      default:
-        setFilters({
-          categories: [],
-          brands: [],
-          dealTypes: [],
-        });
-        break;
-    }
     const urlCategories: string[] = [];
     queryParams.getAll("category").forEach((category) => {
       urlCategories.push(category);
@@ -119,105 +92,29 @@ const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
     setIsFirstEffectCompleted(true);
   }, []);
 
-  const updateUrl = () => {
-    const queryParams = new URLSearchParams();
-    const selectedCategories = filters?.categories
-      ?.filter((category) => category.selected)
-      ?.map((category) => category.name)
-      .join(",");
-    const selectedBrands = filters?.brands
-      ?.filter((brand) => brand.selected)
-      ?.map((brand) => brand.name)
-      .join(",");
-
-    if (selectedCategories && selectedCategories.length > 0) {
-      const categories = filters?.categories
-        ?.filter((category) => category.selected)
-        ?.map((category) => category.name);
-      
-      categories.forEach((category) =>
-        queryParams.append("category", category)
-      );
-    } else {
-      queryParams.delete("category");
-    }
-    if (selectedBrands && selectedBrands?.length) {
-      const brands = filters?.brands
-        ?.filter((brand) => brand.selected)
-        ?.map((brand) => brand.name);
-      brands.forEach((brand) => queryParams.append("brand", brand));
-    } else {
-      queryParams.delete("brand");
-    }
-  
-    if (searchText) {
-      queryParams.set("search", searchText);
-    }
-    if(pageIndex+1>1)
-      {
-      queryParams.set("page", (pageIndex+1).toString());
-      }
-    queryParams.set("sort", sortByPayload.toString());
-    queryParams.set("sortOrder", sortOrderPayload.toString());
-    
-
-    if (filters?.dealTypes?.length > 0) {
-      if (filters.dealTypes[0].toString() == "Coupons") {
-        queryParams.set("type", "1");
-      } else {
-        queryParams.set("type", "2");
-      }
-    } else {
-      queryParams.set("type", "0");
-    }
-
-    const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
-    if (newUrl !== window.location.href) {
-      window.history.replaceState(null, "", newUrl);
-    }
-  };
-
   // Helper function for fetching coupon data
 
   const fetchCoupons = async () => {
     try {
       setLoadingMore(true); // Set loading state to true while fetching
+      // setErrorMessage("");
       let response = storeData.couponDetails;
       let newCoupons = (await response?.data?.Coupons) || [];
 
-      if (newCoupons.length === 0 && pageIndex === 0) {
+      if (newCoupons.length === 0 && pageIndex === 0 && storeData.status === "succeeded") {
         setErrorMessage("No coupons match your search. Please try againn");
         setHasMoreCoupons(false);
-      } else {
-        //window.DG.allignKevelInlineCouponsComponent();
+      } else if (storeData.status === "failed") {
+        setErrorMessage("API failed");
+        setHasMoreCoupons(false);
+      }
+      else {
         setErrorMessage("");
         setHasMoreCoupons(newCoupons.length > 0); //there are more coupons to load
         setCouponData((prevData) =>
           pageIndex === 0 ? newCoupons : [...prevData, ...newCoupons]
         );
       }
-      // Update categories and brands
-      const updatedCategory = response?.data?.Category?.map(
-        (category: any) => ({
-          name: category?.Name,
-          count: category?.Count,
-          selected: filters?.categories?.some(
-            (c) => c.name === category.Name && c.selected
-          ),
-        })
-      );
-      const categories = updatedCategory?.map((item: any) => ({
-        name: item?.name,
-        count: item?.count,
-        selected: currentCategories?.some((c) => c === item?.name),
-      }));
-      const updatedBrands = response?.data?.Brands?.map((brand: any) => ({
-        name: brand.Name,
-        count: brand.Count,
-        selected: filters?.brands?.some(
-          (b) => b.name === brand.Name && b.selected
-        ),
-      }));
 
       const brands = updatedBrands?.map((item: any) => ({
         name: item?.name,
@@ -227,13 +124,12 @@ const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
       updateUrl();
       setFilters((prevFilters) => ({ ...prevFilters, categories, brands }));
     } catch (error) {
-      // console.error("Error fetching coupon data:", error);
+      console.error("Error fetching coupon data:", error);
       setErrorMessage("An error occurred while fetching coupon data.");
     } finally {
       setLoadingMore(false); // reset loading state
     }
   };
-
   useEffect(() => {
     const handleFetchData = async () => {
       await fetchCoupons();
@@ -282,7 +178,8 @@ const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
   ]);
 
   return (
-
+    <div className={`${parsedCouponTileData?.styles.margin} ${parsedCouponTileData?.styles.padding}`}>
+      ...
           {/*show error message if no coupons are found */}
           {errorMessage ? (
             <div className="error-message">{errorMessage}</div>
@@ -306,7 +203,7 @@ const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
                 })}
                 </div>
               ) : (
-                "Loading..."
+                "Loadingg..."
               )}
               {hasMoreCoupons && (
                 <div className="coupon-container__button">
@@ -328,21 +225,4 @@ const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
 
 export default CouponTileContainer;
 
-couponSlice: 
- .addCase(getCouponDetailAction.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(
-        getCouponDetailAction.fulfilled,
-        (state, action: PayloadAction<{ couponDetails: any }>) => {
-          state.status = "succeeded";
-          state.couponDetails = action.payload;
-        }
-      )
-      .addCase(getCouponDetailAction.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message || null;
-      })
-
-
-so here what is happening is that the error message "No coupons match your search. Please try againn" is coming even when the API is in pending state, I need to show this message only when API is Successful.
+even when the API fails, I'm getting "loading..." instead what I need to setErrorMessage as API failed 
