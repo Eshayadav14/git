@@ -1,388 +1,348 @@
-Fulfillment Picker: 
 
-import { getHasValidGigyaAccountData } from "../../utilities/gigyaProfile";
-import { setProfileInfo } from "../../slices/gigyaProfileSlice";
-import { setAccountInfo } from "../../utilities/gigyaAccountInfo";
+const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
+  const { coupontiledata } = props;
+  const dispatch = useDispatch<AppDispatch>();
+  const storeData = useTypedSelector((state) => state.coupon);
+  const correctedCouponTileData = coupontiledata?.replace(/'/g, '"');
+  const parsedCouponTileData = correctedCouponTileData
+    ? JSON.parse(correctedCouponTileData)
+    : null;
 
-const gigyaAccountData = useTypedSelector((state) => state.gigyaProfile);
-useEffect(() => {
-    const gigyaCartType = gigyaAccountData?.gigyaProfile?.data?.preferences?.cartType;
-      if(isSignedIn && gigyaCartType){
-        switch (gigyaCartType) {
-          case DELIVERY:
-            setSelectedTile(DELIVERY);
-            localStorage.setItem("order-type", DELIVERY)
-            break;
-          case SHIPPING:
-            setSelectedTile(SHIPPING);
-            localStorage.setItem("order-type", SHIPPING)
-            break;
-          default:
-            setSelectedTile(TILE_TYPE.IN_STORE);
-            localStorage.setItem("order-type", TILE_TYPE.IN_STORE)
-            break;
-        }
+  const pageSize = parsedCouponTileData?.properties?.pageSize;
+  const analyticsdata: AnalyticsData[] = parsedCouponTileData?.analytics || [];
+  const [couponData, setCouponData] = useState<CouponData[]>([]); // State for coupon Data
+  const [filters, setFilters] = useState<FilterOptions>({
+    categories: [],
+    brands: [],
+    dealTypes: [],
+  });
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+  const [isSearchIconClicked, setIsSearchIconClicked] = useState(false);
+
+  // Separate states
+  const [searchText, setSearchText] = useState<string>("");
+  const [sortByPayload, setSortByPayload] = useState<number>(0);
+  const [sortOrderPayload, setSortOrderPayload] = useState<number>(2);
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [hasMoreCoupons, setHasMoreCoupons] = useState<boolean>(true); //to track if there are more coupons
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [currentBrands, setCurrentBrand] = useState<string[]>([]);
+  const [currentCategories, setCurrentCategories] = useState<string[]>([]);
+  const [authType, setAuthType] = useState<string>("0");
+  const [isFirstEffectCompleted, setIsFirstEffectCompleted] = useState(false);
+
+  //handle "LoadMore" button click
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMoreCoupons) {
+      setPageIndex((prevIndex) => prevIndex + 1);
+    }
+  };
+  const handleFilterChange = (newFilters: FilterOptions) => {
+    const selectedCategories = newFilters?.categories
+      ?.filter((category) => category.selected)
+      ?.map((category) => category.name);
+    const selectedBrands = newFilters?.brands
+      ?.filter((brand) => brand.selected)
+      ?.map((brand) => brand.name);
+    setCurrentCategories(selectedCategories);
+    setCurrentBrand(selectedBrands);
+    setFilters(newFilters);
+    resetPagination();
+  };
+
+  const handleSortChange = (newSortBy: number, newSortOrder: number) => {
+    setSortByPayload(newSortBy);
+    setSortOrderPayload(newSortOrder);
+    resetPagination();
+  };
+  const resetPagination = () => {
+    setPageIndex(0);
+    setCouponData([]);
+    setHasMoreCoupons(true);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      categories: [],
+      brands: [],
+      dealTypes: ["Coupons", "Cash Back"],
+    });
+    resetPagination();
+  };
+
+  const handleFiltersModal = () => {
+    setIsFiltersModalOpen(!isFiltersModalOpen);
+  };
+
+  const handleSearchIconClicked = () => {
+    setIsSearchIconClicked(!isSearchIconClicked);
+  };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const sortValue = queryParams.get("type");
+
+    switch (sortValue) {
+      case "1":
+        setFilters({
+          categories: [],
+          brands: [],
+          dealTypes: ["Coupons"],
+        });
+        break;
+      case "2":
+        setFilters({
+          categories: [],
+          brands: [],
+          dealTypes: ["Cash Back"],
+        });
+        break;
+      default:
+        setFilters({
+          categories: [],
+          brands: [],
+          dealTypes: [],
+        });
+        break;
+    }
+    const urlCategories: string[] = [];
+    queryParams.getAll("category").forEach((category) => {
+      urlCategories.push(category);
+    });
+    setCurrentCategories(urlCategories);
+    const brandUrlParameter: string[] = [];
+    queryParams.getAll("brand").forEach((brand) => {
+      brandUrlParameter.push(brand);
+    });
+    setCurrentBrand(brandUrlParameter);
+    setIsFirstEffectCompleted(true);
+  }, []);
+
+  const updateUrl = () => {
+    const queryParams = new URLSearchParams();
+    const selectedCategories = filters?.categories
+      ?.filter((category) => category.selected)
+      ?.map((category) => category.name)
+      .join(",");
+    const selectedBrands = filters?.brands
+      ?.filter((brand) => brand.selected)
+      ?.map((brand) => brand.name)
+      .join(",");
+
+    if (selectedCategories && selectedCategories.length > 0) {
+      const categories = filters?.categories
+        ?.filter((category) => category.selected)
+        ?.map((category) => category.name);
+      
+      categories.forEach((category) =>
+        queryParams.append("category", category)
+      );
+    } else {
+      queryParams.delete("category");
+    }
+    if (selectedBrands && selectedBrands?.length) {
+      const brands = filters?.brands
+        ?.filter((brand) => brand.selected)
+        ?.map((brand) => brand.name);
+      brands.forEach((brand) => queryParams.append("brand", brand));
+    } else {
+      queryParams.delete("brand");
+    }
+  
+    if (searchText) {
+      queryParams.set("search", searchText);
+    }
+    if(pageIndex+1>1)
+      {
+      queryParams.set("page", (pageIndex+1).toString());
       }
-  }, [gigyaAccountData]);
-
- useEffect(() => {
-    window.gigya &&
-      window.gigya.accounts &&
-      window.gigya.accounts.getAccountInfo({
-        include: 'profile,data,loginIDs',
-        extraProfileFields: 'phones',
-        callback: (response: any) => {
-          if (getHasValidGigyaAccountData(response)) {
-            dispatch(setProfileInfo(response));
-          }
-        },
-      });
-  }, [dispatch]);
-
-API Response: 
-{
-  "callId": "4c4ffd08cc814329895e219dfc41e622",
-  "data": {
-    "preferences": {
-      "POSreceipt": {
-        "flag": "none",
-        "optIn": "false",
-        "SMS": "no",
-        "email": "no"
-      },
-      "preferredStore": "9800",
-      "emailMarketing": "0",
-      "cartType": "delivery",
-      "myDG": {
-        "acceptanceDate": "3/18/2025",
-        "isShowWelcomeScreen": false,
-        "acceptedVersion": "16",
-        "source": "DGWeb",
-        "isMyDG": true
-      },
-  "profile": {
-    "firstName": "Prabjot",
-    "lastName": "Singh",
-    "email": "prabjsingh@deloitte.com"
-  },
-}
+    queryParams.set("sort", sortByPayload.toString());
+    queryParams.set("sortOrder", sortOrderPayload.toString());
     
-  Address Form :
 
-  useEffect(() => {
-    setUser(storeData.checkout.user);
-  }, [storeData.checkout.user]);
-
-  useEffect(() => {
-    if (editFormNavSource) {
-      setShippingFirstName(
-        selectedAddress?.ShippingFirstName
-          ? selectedAddress.ShippingFirstName
-          : ""
-      );
-      setShippingLastName(
-        selectedAddress?.ShippingLastName
-          ? selectedAddress.ShippingLastName
-          : ""
-      );
-    }
-    if (editFormNavSource === "edit") {
-      setShippingAddressLine1(
-        selectedAddress?.ShippingAddressLine1
-          ? selectedAddress.ShippingAddressLine1
-          : ""
-      );
-      setShippingAddressLine2(
-        selectedAddress?.ShippingAddressLine2
-          ? selectedAddress.ShippingAddressLine2
-          : ""
-      );
-      setShippingZip(
-        selectedAddress?.ShippingZip ? selectedAddress.ShippingZip : ""
-      );
-      setShippingCity(
-        selectedAddress?.ShippingCity ? selectedAddress.ShippingCity : ""
-      );
-      setShippingState(
-        selectedAddress?.ShippingState ? selectedAddress.ShippingState : ""
-      );
-      setIsDefaultShippingAddress(
-        selectedAddress?.IsDefaultShippingAddress
-          ? selectedAddress.IsDefaultShippingAddress
-          : false
-      );
-    }
-  }, [editFormNavSource]);
-
-  useEffect(() => {
-    if (editFormNavSource === "edit") {
-      setUpdatebutton(false);
+    if (filters?.dealTypes?.length > 0) {
+      if (filters.dealTypes[0].toString() == "Coupons") {
+        queryParams.set("type", "1");
+      } else {
+        queryParams.set("type", "2");
+      }
     } else {
-      setUpdatebutton(false);
+      queryParams.set("type", "0");
     }
-  },[editFormNavSource]);
+
+    const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
+    if (newUrl !== window.location.href) {
+      window.history.replaceState(null, "", newUrl);
+    }
+  };
+
+  // Helper function for fetching coupon data
+
+  const fetchCoupons = async () => {
+    try {
+      setLoadingMore(true); // Set loading state to true while fetching
+      let response = storeData.couponDetails;
+      let newCoupons = (await response?.data?.Coupons) || [];
+
+      if (newCoupons.length === 0 && pageIndex === 0) {
+        setErrorMessage("No coupons match your search. Please try againn");
+        setHasMoreCoupons(false);
+      } else {
+        //window.DG.allignKevelInlineCouponsComponent();
+        setErrorMessage("");
+        setHasMoreCoupons(newCoupons.length > 0); //there are more coupons to load
+        setCouponData((prevData) =>
+          pageIndex === 0 ? newCoupons : [...prevData, ...newCoupons]
+        );
+      }
+      // Update categories and brands
+      const updatedCategory = response?.data?.Category?.map(
+        (category: any) => ({
+          name: category?.Name,
+          count: category?.Count,
+          selected: filters?.categories?.some(
+            (c) => c.name === category.Name && c.selected
+          ),
+        })
+      );
+      const categories = updatedCategory?.map((item: any) => ({
+        name: item?.name,
+        count: item?.count,
+        selected: currentCategories?.some((c) => c === item?.name),
+      }));
+      const updatedBrands = response?.data?.Brands?.map((brand: any) => ({
+        name: brand.Name,
+        count: brand.Count,
+        selected: filters?.brands?.some(
+          (b) => b.name === brand.Name && b.selected
+        ),
+      }));
+
+      const brands = updatedBrands?.map((item: any) => ({
+        name: item?.name,
+        count: item?.count,
+        selected: currentBrands?.some((c) => c === item?.name),
+      }));
+      updateUrl();
+      setFilters((prevFilters) => ({ ...prevFilters, categories, brands }));
+    } catch (error) {
+      // console.error("Error fetching coupon data:", error);
+      setErrorMessage("An error occurred while fetching coupon data.");
+    } finally {
+      setLoadingMore(false); // reset loading state
+    }
+  };
 
   useEffect(() => {
-    // Check if any error state is not empty
-    if (
-      ShippingFirstNameError ||
-      ShippingLastNameError ||
-      ShippingAddressLine1Error ||
-      ShippingaddressLine2Error ||
-      ShippingZipError ||
-      ShippingCityError ||
-      ShippingFirstName === "" ||
-      ShippingLastName === "" ||
-      ShippingAddressLine1 === "" ||
-      ShippingZip === "" ||
-      ShippingCity === "" ||
-      ShippingState === ""
-    ) {
-      SetFormerror(true);
-    } else {
-      SetFormerror(false);
-    }
+    const handleFetchData = async () => {
+      await fetchCoupons();
+      (pageIndex + 1) * pageSize <
+      storeData?.couponDetails?.data?.PaginationInfo?.TotalRecords
+        ? setHasMoreCoupons(true)
+        : setHasMoreCoupons(false);
+    };
+    handleFetchData();
+  }, [storeData?.couponDetails?.data?.Coupons]);
+
+  useEffect(() => {
+    if (!isFirstEffectCompleted) return;
+    const selectedCategories: string[] = currentCategories;
+    const selectedBrands: string[] = currentBrands;
+    const authType = Cookies.get("authType");
+    const isLoggedIn = authType === "1" ? "1" : "0";
+    setAuthType(isLoggedIn);
+    itemCount = 1;
+    currentRow = 0;
+    dispatch(
+      getCouponDetailAction({
+        searchText: searchText || "",
+        sortOrderPayload,
+        sortByPayload,
+        pageIndex: pageIndex * pageSize,
+        pageSize,
+        selectedCategories,
+        selectedBrands,
+        offerSourceType: filters.dealTypes.includes(COUPONS)
+          ? 1
+          : filters.dealTypes.includes(CASHBACK)
+          ? 2
+          : 0,
+        authType,
+        deviceId: Cookies.get("uniqueDeviceId"),
+      })
+    );
   }, [
-    ShippingFirstNameError,
-    ShippingLastNameError,
-    ShippingAddressLine1Error,
-    ShippingaddressLine2Error,
-    ShippingZipError,
-    ShippingCityError,
-    ShippingFirstName,
-    ShippingLastName,
-    ShippingAddressLine1,
-    ShippingAddressLine2,
-    ShippingZip,
-    ShippingCity,
-    ShippingState,
+    sortByPayload,
+    sortOrderPayload,
+    searchText,
+    currentBrands,
+    currentCategories,
+    pageIndex,
   ]);
 
-  useEffect(() => {
-    dispatch(updateformenablebutton(formerror));
-  }, [formerror]);
+  return (
 
-  useEffect(() => {
-    const result = storeData.checkout.executehandlesubmit;
-    setExecuteguestsubmit(result);
-  }, [storeData.checkout.executehandlesubmit]);
+          {/*show error message if no coupons are found */}
+          {errorMessage ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : (
+            <>
+              {/* Render CouponTile with filtered data */}
+              {couponData.length > 0 ? (
+                <div className="coupon-container coupon-tile-container">
+                {couponData?.map((coupon, index) => {
+                  return (
+                    <>
+                      {/* {renderKevelBetweenCouponTile()} */}
+                      <CouponTile
+                        coupon={coupon}
+                        couponTexts={parsedCouponTileData.properties}
+                        onTileClick={() => handleCouponClick(coupon)}
+                        key={coupon.OfferID}
+                      />
+                    </>
+                  );
+                })}
+                </div>
+              ) : (
+                "Loading..."
+              )}
+              {hasMoreCoupons && (
+                <div className="coupon-container__button">
+                  <button
+                    className="coupon-container__button__load-more-button"
+                    onClick={handleLoadMore}
+                  >
+                    {loadingMore ? "Loading...." : "Load More"}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  // Validate fields on change
-  const handleShippingFirstNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingFirstName(e.target.value);
-    setIsTouched(true);
-    setShippingFirstNameError(
-      e.target.value.length <= 1
-        ? yellowButton || isshippingcart
-          ? myAddress?.firstNameRequired
-          : myAddress?.invalidFirstName
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
+export default CouponTileContainer;
 
-  const handleShippingLastNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingLastName(e.target.value);
-    setIsTouched(true);
-    setShippingLastNameError(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.LastNameRequired
-          : myAddress?.invalidLastName
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingAddressLine1Change = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingAddressLine1(e.target.value);
-    setIsTouched(true);
-
-    if (poBoxRegex.test(e.target.value)) {
-      setShippingAddressLine1Error(
-        myAddress?.poBoxInvalidAddress ||
-          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
-      );
-    } else {
-      setShippingAddressLine1Error(
-        e.target.value.length <= 1
-          ? yellowButton || isshippingcart
-            ? myAddress?.address1Required
-            : myAddress?.invalidAddress1
-          : ""
-      );
-    }
-    if (!updatebutton && editFormNavSource === "edit") {
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingAddressLine2Change = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingAddressLine2(e.target.value);
-    setIsTouched(true);
-    setShippingAddressLine2Error(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.Address2Required
-          : myAddress?.invalidAddress2
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setShippingZip(e.target.value);
-    setIsTouched(true);
-    if (!zipPattern.test(value)) {
-      setShippingZipError(
-        yellowButton ||  isshippingcart
-          ? myAddress?.zipCodeRequired
-          : myAddress?.invalidZipCode
-      );
-    } else {
-      setShippingZipError("");
-    }
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShippingCity(e.target.value);
-    setIsTouched(true);
-    setShippingCityError(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.cityRequired
-          : myAddress?.invalidCity
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingStateChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setShippingState(e.target.value);
-    setIsTouched(true);
-    setShippingStateError(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.stateRequired
-          : myAddress?.invalidState
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const validateForm = (e: React.FormEvent<Element>) => {
-    setShippingFirstNameError(
-      ShippingFirstName.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.firstNameRequired
-          : myAddress?.invalidFirstName
-        : ""
-    );
-    setShippingLastNameError(
-      ShippingLastName.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.LastNameRequired
-          : myAddress?.invalidLastName
-        : ""
-    );
-
-    if (poBoxRegex.test(ShippingAddressLine1)) {
-      setShippingAddressLine1Error(
-        myAddress?.poBoxInvalidAddress ||
-          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
-      );
-      e.preventDefault();
-      return;
-    } else {
-      setShippingAddressLine1Error(
-        ShippingAddressLine1.length <= 1
-        ? yellowButton ||  isshippingcart
-            ? myAddress?.address1Required
-            : myAddress?.invalidAddress1
-          : ""
-      );
-    }
-    setShippingZipError(
-      !zipPattern.test(ShippingZip)
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.zipCodeRequired
-          : myAddress?.invalidZipCode
-        : ""
-    );
-    setShippingCityError(
-      ShippingCity.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.cityRequired
-          : myAddress?.invalidCity
-        : ""
-    );
-    setShippingStateError(
-      ShippingState.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.stateRequired
-          : myAddress?.invalidState
-        : ""
-    );
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    validateForm(e);
-
-    // Check if there are any errors before submitting
-    if (
-      ShippingFirstName.length <= 1 ||
-      ShippingLastName.length <= 1 ||
-      ShippingAddressLine1.length <= 1 ||
-      !zipPattern.test(ShippingZip) ||
-      ShippingCity.length <= 1 ||
-      ShippingState.length <= 1
-    ) {
-      return;
-    }
-
-    const submitData = {
-      ShippingFirstName,
-      ShippingLastName,
-      ShippingAddressLine1,
-      ShippingAddressLine2,
-      ShippingZip,
-      ShippingCity,
-      ShippingState,
-      IsDefaultShippingAddress,
-      DeliveryInstructions,
-      ShippingCountry: "US",
-
-    };
-
-export default AddressForm;
-
-    SO here what I need is that just the way I'm getting data from API response from gigya in fulfilment Picker, I need the first name and last name in address Form prepopulated from gigya if it is present, otherwise it should be empty just way it is. 
-
-    
+couponSlice: 
+ .addCase(getCouponDetailAction.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getCouponDetailAction.fulfilled,
+        (state, action: PayloadAction<{ couponDetails: any }>) => {
+          state.status = "succeeded";
+          state.couponDetails = action.payload;
+        }
+      )
+      .addCase(getCouponDetailAction.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || null;
+      })
 
 
+so here what is happening is that the error message "No coupons match your search. Please try againn" is coming even when the API is in pending state, I need to show this message only when API is Successful.
