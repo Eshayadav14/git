@@ -1,228 +1,39 @@
+{couponData.length > 0 ? (
+  <div className="coupon-container coupon-tile-container">
+    {couponData?.map((coupon, index) => {
+      return (
+        <>
+          <CouponTile
+            coupon={coupon}
+            couponTexts={parsedCouponTileData.properties}
+            onTileClick={() => handleCouponClick(coupon)}
+            key={coupon.OfferID}
+          />
+        </>
+      );
+    })}
+  </div>
+) : (
+  "Loadingg..."
+)}
 
-const CouponTileContainer: React.FC<CouponTileContainerProps> = (props) => {
-  const { coupontiledata } = props;
-  const dispatch = useDispatch<AppDispatch>();
-  const storeData = useTypedSelector((state) => state.coupon);
-  const correctedCouponTileData = coupontiledata?.replace(/'/g, '"');
-  const parsedCouponTileData = correctedCouponTileData
-    ? JSON.parse(correctedCouponTileData)
-    : null;
 
-  const pageSize = parsedCouponTileData?.properties?.pageSize;
-  const analyticsdata: AnalyticsData[] = parsedCouponTileData?.analytics || [];
-  const [couponData, setCouponData] = useState<CouponData[]>([]); // State for coupon Data
-  const [filters, setFilters] = useState<FilterOptions>({
-    categories: [],
-    brands: [],
-    dealTypes: [],
-  });
-  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-  const [isSearchIconClicked, setIsSearchIconClicked] = useState(false);
 
-  // Separate states
-  const [searchText, setSearchText] = useState<string>("");
-  const [sortByPayload, setSortByPayload] = useState<number>(0);
-  const [sortOrderPayload, setSortOrderPayload] = useState<number>(2);
-  const [pageIndex, setPageIndex] = useState<number>(0);
-  const [loadingMore, setLoadingMore] = useState<boolean>(false);
-  const [hasMoreCoupons, setHasMoreCoupons] = useState<boolean>(true); //to track if there are more coupons
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [currentBrands, setCurrentBrand] = useState<string[]>([]);
-  const [currentCategories, setCurrentCategories] = useState<string[]>([]);
-  const [authType, setAuthType] = useState<string>("0");
-  const [isFirstEffectCompleted, setIsFirstEffectCompleted] = useState(false);
 
-  //handle "LoadMore" button click
-  const handleLoadMore = () => {
-    if (!loadingMore && hasMoreCoupons) {
-      setPageIndex((prevIndex) => prevIndex + 1);
-    }
-  };
-  const handleFilterChange = (newFilters: FilterOptions) => {
-    const selectedCategories = newFilters?.categories
-      ?.filter((category) => category.selected)
-      ?.map((category) => category.name);
-    const selectedBrands = newFilters?.brands
-      ?.filter((brand) => brand.selected)
-      ?.map((brand) => brand.name);
-    setCurrentCategories(selectedCategories);
-    setCurrentBrand(selectedBrands);
-    setFilters(newFilters);
-    resetPagination();
-  };
 
-  const handleSortChange = (newSortBy: number, newSortOrder: number) => {
-    setSortByPayload(newSortBy);
-    setSortOrderPayload(newSortOrder);
-    resetPagination();
-  };
-  const resetPagination = () => {
-    setPageIndex(0);
-    setCouponData([]);
-    setHasMoreCoupons(true);
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      categories: [],
-      brands: [],
-      dealTypes: ["Coupons", "Cash Back"],
-    });
-    resetPagination();
-  };
-
-  const handleFiltersModal = () => {
-    setIsFiltersModalOpen(!isFiltersModalOpen);
-  };
-
-  const handleSearchIconClicked = () => {
-    setIsSearchIconClicked(!isSearchIconClicked);
-  };
-
-    const urlCategories: string[] = [];
-    queryParams.getAll("category").forEach((category) => {
-      urlCategories.push(category);
-    });
-    setCurrentCategories(urlCategories);
-    const brandUrlParameter: string[] = [];
-    queryParams.getAll("brand").forEach((brand) => {
-      brandUrlParameter.push(brand);
-    });
-    setCurrentBrand(brandUrlParameter);
-    setIsFirstEffectCompleted(true);
-  }, []);
-
-  // Helper function for fetching coupon data
-
-  const fetchCoupons = async () => {
-    try {
-      setLoadingMore(true); // Set loading state to true while fetching
-      // setErrorMessage("");
-      let response = storeData.couponDetails;
-      let newCoupons = (await response?.data?.Coupons) || [];
-
-      if (newCoupons.length === 0 && pageIndex === 0 && storeData.status === "succeeded") {
-        setErrorMessage("No coupons match your search. Please try againn");
-        setHasMoreCoupons(false);
-      } else if (storeData.status === "failed") {
-        setErrorMessage("API failed");
-        setHasMoreCoupons(false);
-      }
-      else {
-        setErrorMessage("");
-        setHasMoreCoupons(newCoupons.length > 0); //there are more coupons to load
-        setCouponData((prevData) =>
-          pageIndex === 0 ? newCoupons : [...prevData, ...newCoupons]
-        );
-      }
-
-      const brands = updatedBrands?.map((item: any) => ({
-        name: item?.name,
-        count: item?.count,
-        selected: currentBrands?.some((c) => c === item?.name),
-      }));
-      updateUrl();
-      setFilters((prevFilters) => ({ ...prevFilters, categories, brands }));
-    } catch (error) {
-      console.error("Error fetching coupon data:", error);
-      setErrorMessage("An error occurred while fetching coupon data.");
-    } finally {
-      setLoadingMore(false); // reset loading state
-    }
-  };
-  useEffect(() => {
-    const handleFetchData = async () => {
-      await fetchCoupons();
-      (pageIndex + 1) * pageSize <
-      storeData?.couponDetails?.data?.PaginationInfo?.TotalRecords
-        ? setHasMoreCoupons(true)
-        : setHasMoreCoupons(false);
-    };
-    handleFetchData();
-  }, [storeData?.couponDetails?.data?.Coupons]);
-
-  useEffect(() => {
-    if (!isFirstEffectCompleted) return;
-    const selectedCategories: string[] = currentCategories;
-    const selectedBrands: string[] = currentBrands;
-    const authType = Cookies.get("authType");
-    const isLoggedIn = authType === "1" ? "1" : "0";
-    setAuthType(isLoggedIn);
-    itemCount = 1;
-    currentRow = 0;
-    dispatch(
-      getCouponDetailAction({
-        searchText: searchText || "",
-        sortOrderPayload,
-        sortByPayload,
-        pageIndex: pageIndex * pageSize,
-        pageSize,
-        selectedCategories,
-        selectedBrands,
-        offerSourceType: filters.dealTypes.includes(COUPONS)
-          ? 1
-          : filters.dealTypes.includes(CASHBACK)
-          ? 2
-          : 0,
-        authType,
-        deviceId: Cookies.get("uniqueDeviceId"),
-      })
-    );
-  }, [
-    sortByPayload,
-    sortOrderPayload,
-    searchText,
-    currentBrands,
-    currentCategories,
-    pageIndex,
-  ]);
-
-  return (
-    <div className={`${parsedCouponTileData?.styles.margin} ${parsedCouponTileData?.styles.padding}`}>
-      ...
-          {/*show error message if no coupons are found */}
-          {errorMessage ? (
-            <div className="error-message">{errorMessage}</div>
-          ) : (
-            <>
-              {/* Render CouponTile with filtered data */}
-              {couponData.length > 0 ? (
-                <div className="coupon-container coupon-tile-container">
-                {couponData?.map((coupon, index) => {
-                  return (
-                    <>
-                      {/* {renderKevelBetweenCouponTile()} */}
-                      <CouponTile
-                        coupon={coupon}
-                        couponTexts={parsedCouponTileData.properties}
-                        onTileClick={() => handleCouponClick(coupon)}
-                        key={coupon.OfferID}
-                      />
-                    </>
-                  );
-                })}
-                </div>
-              ) : (
-                "Loadingg..."
-              )}
-              {hasMoreCoupons && (
-                <div className="coupon-container__button">
-                  <button
-                    className="coupon-container__button__load-more-button"
-                    onClick={handleLoadMore}
-                  >
-                    {loadingMore ? "Loading...." : "Load More"}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default CouponTileContainer;
-
-even when the API fails, I'm getting "loading..." instead what I need to setErrorMessage as API failed 
+{errorMessage ? (
+  <div className="error-message">{errorMessage}</div>
+) : couponData.length > 0 ? (
+  <div className="coupon-container coupon-tile-container">
+    {couponData?.map((coupon) => (
+      <CouponTile
+        coupon={coupon}
+        couponTexts={parsedCouponTileData.properties}
+        onTileClick={() => handleCouponClick(coupon)}
+        key={coupon.OfferID}
+      />
+    ))}
+  </div>
+) : loadingMore ? (
+  "Loading..."
+) : null}
