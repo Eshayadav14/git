@@ -1,77 +1,48 @@
-{couponData.length > 0 ? (
-  <div className="coupon-container coupon-tile-container">
-    {couponData?.map((coupon, index) => {
-      return (
-        <>
-          <CouponTile
-            coupon={coupon}
-            couponTexts={parsedCouponTileData.properties}
-            onTileClick={() => handleCouponClick(coupon)}
-            key={coupon.OfferID}
-          />
-        </>
-      );
-    })}
-  </div>
-) : (
-  "Loadingg..."
-)}
+useEffect(() => {
 
+  const fetchCoupons = async () => {
+    try {
+      const selectedCategories: string[] = currentCategories;
+      const selectedBrands: string[] = currentBrands;
+      const authType = Cookies.get("authType");
+      const isLoggedIn = authType === "1" ? "1" : "0";
 
+      setAuthType(isLoggedIn);
+      itemCount = 1;
+      currentRow = 0;
 
+      await dispatch(
+        getCouponDetailAction({
+          searchText: searchText || "",
+          sortOrderPayload,
+          sortByPayload,
+          pageIndex: pageIndex * pageSize,
+          pageSize,
+          selectedCategories,
+          selectedBrands,
+          offerSourceType: filters.dealTypes.includes(COUPONS)
+            ? 1
+            : filters.dealTypes.includes(CASHBACK)
+            ? 2
+            : 0,
+          authType,
+          deviceId: Cookies.get("uniqueDeviceId"),
+        })
+      ).unwrap(); // Unwrap the promise
 
+      setErrorMessage(""); // Clear error if successful
+    } catch (error) {
+      console.error("API failed:", error);
+      setErrorMessage("API failed");
+    }
+  };
 
-{errorMessage ? (
-  <div className="error-message">{errorMessage}</div>
-) : couponData.length > 0 ? (
-  <div className="coupon-container coupon-tile-container">
-    {couponData?.map((coupon) => (
-      <CouponTile
-        coupon={coupon}
-        couponTexts={parsedCouponTileData.properties}
-        onTileClick={() => handleCouponClick(coupon)}
-        key={coupon.OfferID}
-      />
-    ))}
-  </div>
-) : loadingMore ? (
-  "Loading..."
-) : null}
-
-
-  useEffect(() => {
-    if (!isFirstEffectCompleted) return;
-    const selectedCategories: string[] = currentCategories;
-    const selectedBrands: string[] = currentBrands;
-    const authType = Cookies.get("authType");
-    const isLoggedIn = authType === "1" ? "1" : "0";
-    setAuthType(isLoggedIn);
-    itemCount = 1;
-    currentRow = 0;
-    dispatch(
-      getCouponDetailAction({
-        searchText: searchText || "",
-        sortOrderPayload,
-        sortByPayload,
-        pageIndex: pageIndex * pageSize,
-        pageSize,
-        selectedCategories,
-        selectedBrands,
-        offerSourceType: filters.dealTypes.includes(COUPONS)
-          ? 1
-          : filters.dealTypes.includes(CASHBACK)
-          ? 2
-          : 0,
-        authType,
-        deviceId: Cookies.get("uniqueDeviceId"),
-      })
-    ).unwrap();
-  }, [
-    sortByPayload,
-    sortOrderPayload,
-    searchText,
-    currentBrands,
-    currentCategories,
-    pageIndex,
-  ]);
-
+  fetchCoupons();
+}, [
+  sortByPayload,
+  sortOrderPayload,
+  searchText,
+  currentBrands,
+  currentCategories,
+  pageIndex,
+]);
