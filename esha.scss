@@ -37,3 +37,41 @@
 ) : loadingMore ? (
   "Loading..."
 ) : null}
+
+
+  useEffect(() => {
+    if (!isFirstEffectCompleted) return;
+    const selectedCategories: string[] = currentCategories;
+    const selectedBrands: string[] = currentBrands;
+    const authType = Cookies.get("authType");
+    const isLoggedIn = authType === "1" ? "1" : "0";
+    setAuthType(isLoggedIn);
+    itemCount = 1;
+    currentRow = 0;
+    dispatch(
+      getCouponDetailAction({
+        searchText: searchText || "",
+        sortOrderPayload,
+        sortByPayload,
+        pageIndex: pageIndex * pageSize,
+        pageSize,
+        selectedCategories,
+        selectedBrands,
+        offerSourceType: filters.dealTypes.includes(COUPONS)
+          ? 1
+          : filters.dealTypes.includes(CASHBACK)
+          ? 2
+          : 0,
+        authType,
+        deviceId: Cookies.get("uniqueDeviceId"),
+      })
+    ).unwrap();
+  }, [
+    sortByPayload,
+    sortOrderPayload,
+    searchText,
+    currentBrands,
+    currentCategories,
+    pageIndex,
+  ]);
+
