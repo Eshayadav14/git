@@ -1,43 +1,63 @@
-const handleSaveClick = async (updatedAddress: Address) => {
-  // Optimistically update local state
-  setAddressData((prevAddressData) =>
-    prevAddressData?.map((address) =>
-      address.Id === updatedAddress.Id
-        ? updatedAddress
-        : { ...address, IsDefaultShippingAddress: false }
-    )
-  );
+ const handleSaveClick = (updatedAddress: Address) => {
+    if (selectedAddress?.Id) {
+      handleAddressSubmit({
+        ...updatedAddress,
+        Id: selectedAddress?.Id,
+      });
+    } else {
+      handleAddressSubmit(updatedAddress);
+    }
 
-  let resolvedResult;
-  try {
-    resolvedResult = await dispatch(
-      getResolvedAddressAction({
-        address: {
-          ...updatedAddress,
-          Id: selectedAddress?.Id || updatedAddress.Id,
-        },
-        isAuthenticated: user,
-      })
-    ).unwrap();
-  } catch (error) {
-    return;
-  }
+    setAddressData((prevAddressData) =>
+      prevAddressData?.map?.((address) =>
+        address.ShippingZip === updatedAddress.ShippingZip
+          ? updatedAddress
+          : { ...address, IsDefaultShippingAddress: false }
+      )
+    );
 
-  if (!resolvedResult) {
-    // No resolved address returned → show verify modal
-    setEnteredAddress(updatedAddress);
-    setShowVerifyModal(true);
-  } else if (resolvedResult.ResolvedAddress) {
-    // Suggested address returned → show suggestion modal
-    setEnteredAddress(updatedAddress);
-    setShowSuggestedModal(true);
-  } else {
-    // No suggestion/verify needed → refresh address list and return to list view
-    const refreshedList = await dispatch(getShippingAddressAction()).unwrap();
-    const updatedShippingAddresses = refreshedList?.data?.ShippingAddresses || [];
+   const handleSaveClick = async (updatedAddress: Address) => {
+    // Optimistically update local state
+    setAddressData((prevAddressData) =>
+      prevAddressData?.map((address) =>
+        address.Id === updatedAddress.Id
+          ? updatedAddress
+          : { ...address, IsDefaultShippingAddress: false }
+      )
+    );
+  
+    let resolvedResult;
+    try {
+      resolvedResult = await dispatch(
+        getResolvedAddressAction({
+          address: {
+            ...updatedAddress,
+            Id: selectedAddress?.Id || updatedAddress.Id,
+          },
+          isAuthenticated: user,
+        })
+      ).unwrap();
+    } catch (error) {
+      return;
+    }
+  
+    if (!resolvedResult) {
+      // No resolved address returned → show verify modal
+      setEnteredAddress(updatedAddress);
+      setShowVerifyModal(true);
+    } else if (resolvedResult.ResolvedAddress) {
+      // Suggested address returned → show suggestion modal
+      setEnteredAddress(updatedAddress);
+      setShowSuggestedModal(true);
+    } else {
+      // No suggestion/verify needed → refresh address list and return to list view
+      const refreshedList = await dispatch(getShippingAddressAction()).unwrap();
+      const updatedShippingAddresses = refreshedList?.data?.ShippingAddresses || [];
+  
+      // Update local state with new address list
+      setUserShippingAddresses(updatedShippingAddresses);
+      setAddressData(updatedShippingAddresses)
+      setSelectedAddress(null);
+    }
 
-    // Update local state with new address list
-    setUserShippingAddresses(updatedShippingAddresses);
-    setSelectedAddress(null);
-  }
-};
+     with the top handleSaveClick the address is getting updated perfectly on address list after I've edited the address. But with the second handleSaveClick, the address is not getting updated. please help me
