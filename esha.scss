@@ -1,56 +1,371 @@
-const handleSaveClick = async (updatedAddress: Address) => {
-  // Update our local address list state immediately (if desired)
-  setAddressData((prevAddressData) =>
-    prevAddressData?.map((address) =>
-      // Use a unique key such as Id if available instead of ShippingZip
-      address.Id === updatedAddress.Id ? updatedAddress : { ...address, IsDefaultShippingAddress: false }
-    )
-  );
+const MyAddress: React.FC<MyAddressProps> = (props) => {
+  const { myaddressdata, customClass, isshippingcart, onClose } = props;
+  const correctedMyAddressData = myaddressdata?.replace(/'/g, '"');
+  const AddressTexts = correctedMyAddressData
+    ? JSON.parse(correctedMyAddressData)
+    : null;
 
-  let resolvedResult;
-  try {
-    if (selectedAddress?.Id) {
-      resolvedResult = await dispatch(
-        getResolvedAddressAction({
-          address: { ...updatedAddress, Id: selectedAddress.Id },
-          isAuthenticated: user,
-        })
-      ).unwrap();
-    } else {
-      resolvedResult = await dispatch(
-        getResolvedAddressAction({
-          address: updatedAddress,
-          isAuthenticated: user,
-        })
-      ).unwrap();
+  const [showConnectModalOpen, setShowConnectModalOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [enteredAddress, setEnteredAddress] = useState<Address | null>(null);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [showSuggestedModal, setShowSuggestedModal] = useState(false);
+  const [AddressData, setAddressData] = useState<Address[]>([]);
+  const [hideDeleteButton, setHideDeleteButton] = useState(false);
+  const [shippingsuggestedadd, setShippingsuggestedadd] =
+    useState<Address | null>(null);
+  const [showaddressmodal, setShowaddressmodal] = useState(false);
+  const [submitAddressForm, setSubmitAddressForm] = useState(false);
+  const [user, setUser] = useState(false);
+  const [userShippingAddresses, setUserShippingAddresses] = useState([]);
+  const [editFormNavSource, setEditFormNavSource] = useState('');
+  const {addAddressButton,emptyAddressesTitle, emptyAddressesSubtitle, save, replace, edit} = window.DG?.aemData?.labels?.myAddress || {};
+  const { storeData, dispatch } = useRedux();
+
+  const openConnectModal = () => {
+    setShowConnectModalOpen(true);
+  };
+
+  const enableScroll = () => {
+    document.querySelector("body")!.style.overflow = "auto";
+  };
+
+  const closeConnectModal = () => {
+    setShowConnectModalOpen(false);
+    enableScroll();
+  };
+
+  const handleAddressSubmit = async (AddressData: Address) => {
+    setSubmitAddressForm(true);
+    setEnteredAddress(AddressData);
+    await dispatch(
+      getResolvedAddressAction({ address: AddressData, isAuthenticated: user })
+    );
+    pushAddressEventsDataOnClick(AddressData)
+  };
+  useEffect(() => {
+    if (submitAddressForm && !storeData.myAddress.resolvedAddress) {
+      setShowVerifyModal(true);
     }
-  } catch (error) {
-    // Handle error if needed. For now, simply return.
-    return;
-  }
+  }, [storeData.myAddress.resolvedAddress]);
 
-  /*
-    Decide what to do based on the returned resolvedResult:
-    - If nothing is returned (or you determine that the address didn’t change in a way
-      that requires a modal), assume it’s a simple update.
-    - If the response has a suggestion (i.e. resolvedResult.ResolvedAddress exists),
-      then set the enteredAddress and show the suggestion modal.
-    - Optionally, if you want to show a verify modal when no resolvedResult is returned,
-      you can do that here as well.
-  */
-  if (!resolvedResult) {
-    // No resolved address returned → show verify modal.
-    setEnteredAddress(updatedAddress);
-    setShowVerifyModal(true);
-  } else if (resolvedResult.ResolvedAddress) {
-    // A suggested address is returned → remain on edit form and show the suggestion modal.
-    setEnteredAddress(updatedAddress);
-    setShowSuggestedModal(true);
-  } else {
-    // Otherwise (for example, when only a name is changed and no address suggestion is needed):
-    // Refresh the address list to pull in the updated address,
-    // then clear selectedAddress to return to the address list view.
-    await dispatch(getShippingAddressAction());
-    setSelectedAddress(null);
-  }
+  useEffect(() => {
+    const loggedin = isSignedIn();
+    setUser(loggedin);
+  }, [storeData.checkout.user]);
+
+  useEffect(() => {
+    if (user && !isshippingcart) {
+      dispatch(getShippingAddressAction())
+        .unwrap()
+        .then((res) => {
+          setUserShippingAddresses(res?.data?.ShippingAddresses);
+        });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    dispatch(updateAddress(enteredAddress));
+  }, [enteredAddress]);
+
+  useEffect(() => {
+    const suggadd = storeData.myAddress.resolvedAddress?.ResolvedAddress;
+    setShippingsuggestedadd(suggadd);
+    if (
+      storeData.myAddress.resolvedAddress?.UserProfileShippingAddress
+        ?.ShippingAddresses
+    ) {
+      setUserShippingAddresses(
+        storeData.myAddress.resolvedAddress?.UserProfileShippingAddress
+          ?.ShippingAddresses
+      );
+    }
+  }, [storeData.myAddress.resolvedAddress]);
+
+  useEffect(() => {
+    if (storeData.myAddress.resolvedAddress?.ResolvedAddress) {
+      setShowSuggestedModal(true);
+    } else {
+      setShowSuggestedModal(false);
+    }
+  }, [storeData.myAddress.resolvedAddress]);
+
+  useEffect(() => {
+    setShowaddressmodal(storeData.checkout.showaddressform);
+  }, [storeData.checkout.showaddressform]);
+
+  useEffect(() => {
+    setAddressData(storeData.checkout.address);
+  }, []);
+
+  const handleAddAddressClick = () => {
+    document.querySelector("body")!.style.overflow = "hidden";
+    if (AddressData?.length === 10 || userShippingAddresses?.length === 10) {
+      openConnectModal();
+    } else {
+      handleAddAnAddressClick({
+        ShippingFirstName: "",
+        ShippingLastName: "",
+        ShippingAddressLine1: "",
+        ShippingZip: "",
+        ShippingCity: "",
+        ShippingState: "",
+      });
+    }
+  };
+
+  const formatVerifyAddress = (addr: any) => {
+    return `${addr.ShippingFirstName} ${addr.ShippingLastName}\n${
+      addr.ShippingAddressLine1
+    }${addr.ShippingAddressLine2 ? `\n${addr.ShippingAddressLine2}` : ""}\n${
+      addr.ShippingCity
+    }, ${addr.ShippingState}\n${addr.ShippingZip}`;
+  };
+
+  const handleEditClick = (address: Address) => {
+    setSelectedAddress(address);
+    setEditFormNavSource("edit");
+    enableScroll();
+    setHideDeleteButton(false);
+  };
+  const handleAddAnAddressClick = (address: Address) => {
+    setSelectedAddress(address);
+    setEditFormNavSource("save");
+    enableScroll();
+    setHideDeleteButton(true);
+  };
+
+  const handleSaveClick = async (updatedAddress: Address) => {
+    // Update our local address list state immediately (if desired)
+    setAddressData((prevAddressData) =>
+      prevAddressData?.map((address) =>
+        // Use a unique key such as Id if available instead of ShippingZip
+        address.Id === updatedAddress.Id ? updatedAddress : { ...address, IsDefaultShippingAddress: false }
+      )
+    );
+  
+    let resolvedResult;
+    try {
+      if (selectedAddress?.Id) {
+        resolvedResult = await dispatch(
+          getResolvedAddressAction({
+            address: { ...updatedAddress, Id: selectedAddress.Id },
+            isAuthenticated: user,
+          })
+        ).unwrap();
+      } else {
+        resolvedResult = await dispatch(
+          getResolvedAddressAction({
+            address: updatedAddress,
+            isAuthenticated: user,
+          })
+        ).unwrap();
+      }
+    } catch (error) {
+      // Handle error if needed. For now, simply return.
+      return;
+    }
+  
+    /*
+      Decide what to do based on the returned resolvedResult:
+      - If nothing is returned (or you determine that the address didn’t change in a way
+        that requires a modal), assume it’s a simple update.
+      - If the response has a suggestion (i.e. resolvedResult.ResolvedAddress exists),
+        then set the enteredAddress and show the suggestion modal.
+      - Optionally, if you want to show a verify modal when no resolvedResult is returned,
+        you can do that here as well.
+    */
+    if (!resolvedResult) {
+      // No resolved address returned → show verify modal.
+      setEnteredAddress(updatedAddress);
+      setShowVerifyModal(true);
+    } else if (resolvedResult.ResolvedAddress) {
+      // A suggested address is returned → remain on edit form and show the suggestion modal.
+      setEnteredAddress(updatedAddress);
+      setShowSuggestedModal(true);
+    } else {
+      // Otherwise (for example, when only a name is changed and no address suggestion is needed):
+      // Refresh the address list to pull in the updated address,
+      // then clear selectedAddress to return to the address list view.
+      await dispatch(getShippingAddressAction());
+      setSelectedAddress(null);
+    }
+  };
+
+  const handleReplaceAddress = (address: Address, skipClose?: boolean) => {
+    setSelectedAddress(address);
+    setEditFormNavSource("replace");
+    setShowConnectModalOpen(false);
+    setHideDeleteButton(true);
+    enableScroll();
+  };
+
+  const handleDeleteClick = (addressToDelete: Address) => {
+    dispatch(deleteAddressAction(addressToDelete))
+      .unwrap()
+      .then((res) => {
+        if (res?.data?.length > 0)
+          setUserShippingAddresses(res?.data?.ShippingAddresses);
+        dispatch(getShippingAddressAction())
+          .unwrap()
+          .then((res) => {
+            setUserShippingAddresses(res?.data?.ShippingAddresses);
+          });
+        setSelectedAddress(null);
+      })
+      .catch((error) => {
+        // console.error("Failed to delete address", error);
+      });
+  };
+
+  const handleConfirmAddress = (newAddress: Address) => {
+    const latestAddress = {
+      DeliveryInstructions: newAddress.DeliveryInstructions ?? false,
+      IsDefaultShippingAddress: newAddress.IsDefaultShippingAddress ?? false,
+      ShippingAddressLine1: newAddress.ShippingAddressLine1 ?? "",
+      ShippingAddressLine2: newAddress.ShippingAddressLine2 ?? "",
+      ShippingCity: newAddress.ShippingCity ?? "",
+      ShippingCountry: newAddress.ShippingCountry ?? "US",
+      ShippingFirstName: enteredAddress?.ShippingFirstName ?? "",
+      ShippingLastName: enteredAddress?.ShippingLastName ?? "",
+      ShippingState: newAddress.ShippingState ?? "",
+      ShippingZip: newAddress.ShippingZip ?? "",
+    };
+    if (newAddress.Id) {
+      latestAddress.Id = newAddress.Id;
+    }
+    if (!user) {
+      latestAddress.shoppingListId = storeData.cart.cartShoppingListId;
+    }
+    dispatch(
+      getResolvedAddressAction({
+        address: latestAddress,
+        isAuthenticated: user,
+        skipAddressSuggestion: true,
+      })
+    ).then(() => {
+      if (user) {
+        dispatch(getShippingAddressAction());
+      }
+      setSelectedAddress(null);
+    });
+    setShowSuggestedModal(false);
+    // if (user) {
+    //   setTimeout(() => {
+    //     dispatch(getShippingAddressAction());
+    //   }, 2000);
+    // }
+
+    onClose?.();
+    dispatch(submitVerifyAddressmodal(true));
+  };
+
+  useEffect(() => {
+    setDataLayer(AC.MODAL_VIEWED, {
+      modal: {
+        name: "Verify delivery address",
+      },
+    });
+  }, [])
+
+  return (
+    <div className={classNames(`my-address ${customClass ? customClass : ""}`)}>
+      <div className="my-address__header__title">
+        {isshippingcart ? (
+          <>
+          <p className="shippingcheckouthead">{SHIPPING_CHECKOUT.ADD_NEW_ADDRESS}</p>
+          <p className="shippingcheckouttitle">
+            {SHIPPING_CHECKOUT.FORM_INSTRUCTION}
+          </p>
+          </>
+        ) : null}
+        {userShippingAddresses?.length === 0 && (
+          <>
+            <div className="my-address__header__title">
+              {AddressData?.length > 0 ? "" : emptyAddressesTitle }
+            </div>
+            <div className="my-address__header__subtitle">
+              {AddressData?.length > 0 ? "" : emptyAddressesSubtitle}
+            </div>
+          </>
+        )}
+      </div>
+
+      {isshippingcart && showaddressmodal ? (
+        <AddressForm
+          customClass={customClass}
+          isshippingcart={isshippingcart}
+          onSubmit={handleAddressSubmit}
+          checkoutShipping={true}
+        />
+      ) : selectedAddress ? (
+        <EditForm
+          myaddressdata={JSON.stringify(AddressTexts)}
+          address={selectedAddress}
+          editFormNavSource={editFormNavSource}
+          onBackClick={() => setSelectedAddress(null)}
+          onSaveClick={handleSaveClick}
+          onDeleteClick={() => handleDeleteClick(selectedAddress)}
+          hideDeleteButton={hideDeleteButton}
+        />
+      ) : userShippingAddresses?.length > 0 && !isshippingcart ? (
+        <>
+          <div className="address__container">
+            {userShippingAddresses.map((address) => (
+              <AddressListComponent
+                key={address.Id}
+                address={address}
+                onEditClick={() => handleEditClick(address)}
+              />
+            ))}
+          </div>
+          <button
+            className="add-address-button"
+            onClick={handleAddAddressClick}
+          >
+            {"Add an address"}
+          </button>
+        </>
+      ) : (
+        <AddressForm
+          customClass={customClass}
+          isshippingcart={isshippingcart}
+          onSubmit={handleAddressSubmit}
+        />
+      )}
+
+      {showVerifyModal && (
+        <VerifyAddressModalComponent
+          onClose={() => {setShowVerifyModal(false);
+            setSelectedAddress(null);
+          }}
+          onCustomButtonClick={() => setShowVerifyModal(false)}
+          address={formatVerifyAddress(enteredAddress)} 
+        />
+      )}
+
+      {showSuggestedModal && enteredAddress && shippingsuggestedadd && (
+        <SuggestedAddressModalComponent
+          suggestedAddress={shippingsuggestedadd}
+          enteredAddress={enteredAddress}
+          onClose={() => setShowSuggestedModal(false)}
+          onConfirm={handleConfirmAddress}
+        />
+      )}
+
+      {showConnectModalOpen && (
+        <ReplaceAddressModal
+          onClose={closeConnectModal}
+          onOpenModal={handleReplaceAddress}
+          addressList={
+            AddressData.length > 0 ? AddressData : userShippingAddresses
+          }
+        />
+      )}
+    </div>
+  );
 };
+
+export default MyAddress;
+
+so here what is happening is that the address is not getting updated on address list page after I've edit a new valid address. something to do with handleSaveClick
