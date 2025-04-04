@@ -1,4 +1,24 @@
 const handleSaveClick = async (updatedAddress: Address) => {
+  // Call API to save/update address
+  if (selectedAddress?.Id) {
+    await handleAddressSubmit({
+      ...updatedAddress,
+      Id: selectedAddress?.Id,
+    });
+  } else {
+    await handleAddressSubmit(updatedAddress);
+  }
+
+  // Optimistically update local state for faster UI response
+  setAddressData((prevAddressData) =>
+    prevAddressData?.map?.((address) =>
+      address.Id === updatedAddress.Id
+        ? updatedAddress
+        : { ...address, IsDefaultShippingAddress: false }
+    )
+  );
+
+  // Now check if verification or suggestion is needed
   let resolvedResult;
   try {
     resolvedResult = await dispatch(
@@ -15,16 +35,18 @@ const handleSaveClick = async (updatedAddress: Address) => {
   }
 
   if (!resolvedResult) {
+    // No resolved address returned → show verify modal
     setEnteredAddress(updatedAddress);
     setShowVerifyModal(true);
   } else if (resolvedResult.ResolvedAddress) {
+    // Suggested address returned → show suggestion modal
     setEnteredAddress(updatedAddress);
     setShowSuggestedModal(true);
   } else {
+    // No suggestion/verify needed → refresh list
     const refreshedList = await dispatch(getShippingAddressAction()).unwrap();
     const updatedShippingAddresses = refreshedList?.data?.ShippingAddresses || [];
 
-    // This ensures the actual updated address replaces the old one
     setUserShippingAddresses(updatedShippingAddresses);
     setAddressData(updatedShippingAddresses);
     setSelectedAddress(null);
