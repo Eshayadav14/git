@@ -1,10 +1,9 @@
 const handleSaveClick = async (updatedAddress: Address) => {
-  // Update our local address list state immediately
+  // Update our local address list state immediately (if desired)
   setAddressData((prevAddressData) =>
     prevAddressData?.map((address) =>
-      address.ShippingZip === updatedAddress.ShippingZip
-        ? updatedAddress
-        : { ...address, IsDefaultShippingAddress: false }
+      // Use a unique key such as Id if available instead of ShippingZip
+      address.Id === updatedAddress.Id ? updatedAddress : { ...address, IsDefaultShippingAddress: false }
     )
   );
 
@@ -33,11 +32,11 @@ const handleSaveClick = async (updatedAddress: Address) => {
   /*
     Decide what to do based on the returned resolvedResult:
     - If nothing is returned (or you determine that the address didn’t change in a way
-      that requires a modal), assume it’s a simple update: clear selectedAddress and go back.
+      that requires a modal), assume it’s a simple update.
     - If the response has a suggestion (i.e. resolvedResult.ResolvedAddress exists),
       then set the enteredAddress and show the suggestion modal.
-    - (Optionally, if you want to show a verify modal when no resolvedResult is returned,
-      you can do that here as well.)
+    - Optionally, if you want to show a verify modal when no resolvedResult is returned,
+      you can do that here as well.
   */
   if (!resolvedResult) {
     // No resolved address returned → show verify modal.
@@ -48,8 +47,10 @@ const handleSaveClick = async (updatedAddress: Address) => {
     setEnteredAddress(updatedAddress);
     setShowSuggestedModal(true);
   } else {
-    // Otherwise (for example, when only a name is changed and no address suggestion is needed),
-    // clear selectedAddress immediately to return to the list.
+    // Otherwise (for example, when only a name is changed and no address suggestion is needed):
+    // Refresh the address list to pull in the updated address,
+    // then clear selectedAddress to return to the address list view.
+    await dispatch(getShippingAddressAction());
     setSelectedAddress(null);
   }
 };
