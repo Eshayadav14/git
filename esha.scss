@@ -1,11 +1,4 @@
-const MyAddress: React.FC<MyAddressProps> = (props) => {
-  const { myaddressdata, customClass, isshippingcart, onClose } = props;
-  const correctedMyAddressData = myaddressdata?.replace(/'/g, '"');
-  const AddressTexts = correctedMyAddressData
-    ? JSON.parse(correctedMyAddressData)
-    : null;
-
-  const openConnectModal = () => {
+const openConnectModal = () => {
     setShowConnectModalOpen(true);
   };
 
@@ -350,7 +343,6 @@ const MyAddress: React.FC<MyAddressProps> = (props) => {
   );
 };
 
-so here what is happening is that even when I'm editing an address on click of edit on edit page, the updated address is getting saved as a new address on address list page. Ideally it should update the same on address list page. 
 export default MyAddress;
 
-
+in this code, when i edit an address it is getting saved as a new address on address list component. I think there's something wrong with resolvedResult. 
