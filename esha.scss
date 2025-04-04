@@ -1,356 +1,332 @@
-interface AddressFormProps {
-  onSubmit: (address: Address) => void;
-  buttonText?: string;
-  yellowButton?: boolean;
-  customClass?: string;
-  isshippingcart?: boolean;
-  deliverycheckoutReplaceAddress?: any;
-  selectedAddress?: Address;
-  editFormNavSource?: string;
-  checkoutShipping?: boolean;
-}
+const MyAddress: React.FC<MyAddressProps> = (props) => {
+  const { myaddressdata, customClass, isshippingcart, onClose } = props;
+  const correctedMyAddressData = myaddressdata?.replace(/'/g, '"');
+  const AddressTexts = correctedMyAddressData
+    ? JSON.parse(correctedMyAddressData)
+    : null;
 
-class AddressFormModel extends DOMModel {}
-
-const AddressForm: React.FC<AddressFormProps> = (props) => {
-  const {
-    onSubmit,
-    yellowButton,
-    buttonText,
-    customClass,
-    isshippingcart,
-    selectedAddress,
-    editFormNavSource,
-    deliverycheckoutReplaceAddress,
-    checkoutShipping,
-  } = props;
-  const myAddress = window.DG?.aemData?.labels?.myAddress || {};
-  const { setAsDefault } = myAddress || {}
-  const gigyaProfile = useTypedSelector((state) => state.gigyaProfile?.profile);
-  const [ShippingFirstName, setShippingFirstName] = useState(deliverycheckoutReplaceAddress?deliverycheckoutReplaceAddress.ShippingFirstName: gigyaProfile?.firstName || "" );
-  const [ShippingLastName, setShippingLastName] = useState(deliverycheckoutReplaceAddress?deliverycheckoutReplaceAddress.ShippingLastName: gigyaProfile?.LastName || "");
-  const [ShippingAddressLine1, setShippingAddressLine1] = useState("");
-  const [ShippingAddressLine2, setShippingAddressLine2] = useState("");
-  const [ShippingZip, setShippingZip] = useState("");
-  const [ShippingCity, setShippingCity] = useState("");
-  const [ShippingState, setShippingState] = useState("");
-  const [DeliveryInstructions, setDeliveryInstructions] = useState(false);
-  const [isTouched, setIsTouched] = useState(false);
-  const [IsDefaultShippingAddress, setIsDefaultShippingAddress] =
-    useState(false);
-
+  const [showConnectModalOpen, setShowConnectModalOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [enteredAddress, setEnteredAddress] = useState<Address | null>(null);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [showSuggestedModal, setShowSuggestedModal] = useState(false);
+  const [AddressData, setAddressData] = useState<Address[]>([]);
+  const [hideDeleteButton, setHideDeleteButton] = useState(false);
+  const [shippingsuggestedadd, setShippingsuggestedadd] =
+    useState<Address | null>(null);
+  const [showaddressmodal, setShowaddressmodal] = useState(false);
+  const [submitAddressForm, setSubmitAddressForm] = useState(false);
+  const [user, setUser] = useState(false);
+  const [userShippingAddresses, setUserShippingAddresses] = useState([]);
+  const [editFormNavSource, setEditFormNavSource] = useState('');
+  const {addAddressButton,emptyAddressesTitle, emptyAddressesSubtitle, save, replace, edit} = window.DG?.aemData?.labels?.myAddress || {};
   const { storeData, dispatch } = useRedux();
+
+  const openConnectModal = () => {
+    setShowConnectModalOpen(true);
+  };
+
+  const enableScroll = () => {
+    document.querySelector("body")!.style.overflow = "auto";
+  };
+
+  const closeConnectModal = () => {
+    setShowConnectModalOpen(false);
+    enableScroll();
+  };
+
+  const handleAddressSubmit = async (AddressData: Address) => {
+    setSubmitAddressForm(true);
+    setEnteredAddress(AddressData);
+    await dispatch(
+      getResolvedAddressAction({ address: AddressData, isAuthenticated: user })
+    );
+    pushAddressEventsDataOnClick(AddressData)
+  };
   useEffect(() => {
-    setUser(storeData.checkout.user);
+    if (submitAddressForm && !storeData.myAddress.resolvedAddress) {
+      setShowVerifyModal(true);
+    }
+  }, [storeData.myAddress.resolvedAddress]);
+
+  useEffect(() => {
+    const loggedin = isSignedIn();
+    setUser(loggedin);
   }, [storeData.checkout.user]);
 
   useEffect(() => {
-    if (editFormNavSource) {
-      setShippingFirstName(
-        selectedAddress?.ShippingFirstName || gigyaProfile?.firstName || ""
-      );
-      setShippingLastName(
-        selectedAddress?.ShippingLastName || gigyaProfile?.lastName || ""
+    if (user && !isshippingcart) {
+      dispatch(getShippingAddressAction())
+        .unwrap()
+        .then((res) => {
+          setUserShippingAddresses(res?.data?.ShippingAddresses);
+        });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    dispatch(updateAddress(enteredAddress));
+  }, [enteredAddress]);
+
+  useEffect(() => {
+    const suggadd = storeData.myAddress.resolvedAddress?.ResolvedAddress;
+    setShippingsuggestedadd(suggadd);
+    if (
+      storeData.myAddress.resolvedAddress?.UserProfileShippingAddress
+        ?.ShippingAddresses
+    ) {
+      setUserShippingAddresses(
+        storeData.myAddress.resolvedAddress?.UserProfileShippingAddress
+          ?.ShippingAddresses
       );
     }
-  }, [gigyaProfile, editFormNavSource]);
+  }, [storeData.myAddress.resolvedAddress]);
 
-  ...
-  );
-};
-
-export default AddressForm;
-
-deliveryadress.tsx:
- function handlechangeSelectedAddress(address: any) {
-    setSelectedAddress(address);
-  }
-  const handlecheckavailablity = () => {
-    const addressdata = {
-      store: store,
-      cartType: SHOPPINGLISTID_DELIVERY,
-      addressId: selectedAddress?.Id,
-      zipCode: selectedAddress?.ShippingZip,
-      dropOffAddress: {
-        addressId: selectedAddress?.Id,
-        firstName: selectedAddress?.ShippingFirstName,
-        lastName: selectedAddress?.ShippingLastName,
-        contactPhoneNumber: "",
-        addressLine1: selectedAddress?.ShippingAddressLine1,
-        addressLine2: selectedAddress?.ShippingAddressLine2
-          ? selectedAddress.ShippingAddressLine2
-          : "",
-        city: selectedAddress.ShippingCity,
-        state: selectedAddress.ShippingState,
-        zipCode: selectedAddress.ShippingZip,
-        longitude: selectedAddress.Longitude,
-        latitude: selectedAddress.Latitude,
-      },
-    };
-
-  
-            );
-          }
-        }
-      );
+  useEffect(() => {
+    if (storeData.myAddress.resolvedAddress?.ResolvedAddress) {
+      setShowSuggestedModal(true);
     } else {
-      const settypepayload = {
-        newShoppingListTypeId: SHOPPINGLISTID_DELIVERY,
-        store: store,
-        zipcode: addressdata?.zipCode,
-        hasPreviousList: false,
-        shoppingListId: shippinglistid,
-        removeItemsFromCart: 0,
-        DropOffAddress: {
-          addressId: addressdata?.dropOffAddress?.addressId,
-          firstName: addressdata?.dropOffAddress?.firstName,
-          lastName: addressdata?.dropOffAddress?.lastName,
-          contactPhoneNumber: addressdata?.dropOffAddress?.contactPhoneNumber,
-          addressLine1: addressdata?.dropOffAddress?.addressLine1,
-          addressLine2: addressdata?.dropOffAddress?.addressLine2,
-          city: addressdata?.dropOffAddress?.city,
-          state: addressdata?.dropOffAddress?.state,
-          zipCode: addressdata?.dropOffAddress?.zipCode,
-        },
-    
-          });
-        }
+      setShowSuggestedModal(false);
+    }
+  }, [storeData.myAddress.resolvedAddress]);
+
+  useEffect(() => {
+    setShowaddressmodal(storeData.checkout.showaddressform);
+  }, [storeData.checkout.showaddressform]);
+
+  useEffect(() => {
+    setAddressData(storeData.checkout.address);
+  }, []);
+
+  const handleAddAddressClick = () => {
+    document.querySelector("body")!.style.overflow = "hidden";
+    if (AddressData?.length === 10 || userShippingAddresses?.length === 10) {
+      openConnectModal();
+    } else {
+      handleAddAnAddressClick({
+        ShippingFirstName: "",
+        ShippingLastName: "",
+        ShippingAddressLine1: "",
+        ShippingZip: "",
+        ShippingCity: "",
+        ShippingState: "",
       });
     }
+  };
+
+  const formatVerifyAddress = (addr: any) => {
+    return `${addr.ShippingFirstName} ${addr.ShippingLastName}\n${
+      addr.ShippingAddressLine1
+    }${addr.ShippingAddressLine2 ? `\n${addr.ShippingAddressLine2}` : ""}\n${
+      addr.ShippingCity
+    }, ${addr.ShippingState}\n${addr.ShippingZip}`;
+  };
+
+  const handleEditClick = (address: Address) => {
+    setSelectedAddress(address);
+    setEditFormNavSource("edit");
+    enableScroll();
+    setHideDeleteButton(false);
+  };
+  const handleAddAnAddressClick = (address: Address) => {
+    setSelectedAddress(address);
+    setEditFormNavSource("save");
+    enableScroll();
+    setHideDeleteButton(true);
+  };
+
+  const handleSaveClick = (updatedAddress: Address) => {
+    if (selectedAddress?.Id) {
+      handleAddressSubmit({
+        ...updatedAddress,
+        Id: selectedAddress?.Id,
+      });
+    } else {
+      handleAddressSubmit(updatedAddress);
+    }
+
+    setAddressData((prevAddressData) =>
+      prevAddressData?.map?.((address) =>
+        address.ShippingZip === updatedAddress.ShippingZip
+          ? updatedAddress
+          : { ...address, IsDefaultShippingAddress: false }
+      )
+    );
+    setSelectedAddress(null);
+  };
+
+  const handleReplaceAddress = (address: Address, skipClose?: boolean) => {
+    setSelectedAddress(address);
+    setEditFormNavSource("replace");
+    setShowConnectModalOpen(false);
+    setHideDeleteButton(true);
+    enableScroll();
+  };
+
+  const handleDeleteClick = (addressToDelete: Address) => {
+    dispatch(deleteAddressAction(addressToDelete))
+      .unwrap()
+      .then((res) => {
+        if (res?.data?.length > 0)
+          setUserShippingAddresses(res?.data?.ShippingAddresses);
+        dispatch(getShippingAddressAction())
+          .unwrap()
+          .then((res) => {
+            setUserShippingAddresses(res?.data?.ShippingAddresses);
+          });
+        setSelectedAddress(null);
+      })
+      .catch((error) => {
+        // console.error("Failed to delete address", error);
+      });
+  };
+
+  const handleConfirmAddress = (newAddress: Address) => {
+    const latestAddress = {
+      DeliveryInstructions: newAddress.DeliveryInstructions ?? false,
+      IsDefaultShippingAddress: newAddress.IsDefaultShippingAddress ?? false,
+      ShippingAddressLine1: newAddress.ShippingAddressLine1 ?? "",
+      ShippingAddressLine2: newAddress.ShippingAddressLine2 ?? "",
+      ShippingCity: newAddress.ShippingCity ?? "",
+      ShippingCountry: newAddress.ShippingCountry ?? "US",
+      ShippingFirstName: enteredAddress?.ShippingFirstName ?? "",
+      ShippingLastName: enteredAddress?.ShippingLastName ?? "",
+      ShippingState: newAddress.ShippingState ?? "",
+      ShippingZip: newAddress.ShippingZip ?? "",
+    };
+    if (newAddress.Id) {
+      latestAddress.Id = newAddress.Id;
+    }
+    if (!user) {
+      latestAddress.shoppingListId = storeData.cart.cartShoppingListId;
+    }
+    dispatch(
+      getResolvedAddressAction({
+        address: latestAddress,
+        isAuthenticated: user,
+        skipAddressSuggestion: true,
+      })
+    ).then(() => {
+      if (user) {
+        dispatch(getShippingAddressAction());
+      }
+      setSelectedAddress(null);
+    });
+    setShowSuggestedModal(false);
+    if (user) {
+      setTimeout(() => {
+        dispatch(getShippingAddressAction());
+      }, 2000);
+    }
+
+    onClose?.();
+    dispatch(submitVerifyAddressmodal(true));
   };
 
   useEffect(() => {
-    setChangeStore(storeData.checkout.storeSelected?.storeNumber);
-  }, [storeData.checkout.storeSelected]);
+    setDataLayer(AC.MODAL_VIEWED, {
+      modal: {
+        name: "Verify delivery address",
+      },
+    });
+  }, [])
 
+  return (
+    <div className={classNames(`my-address ${customClass ? customClass : ""}`)}>
+      <div className="my-address__header__title">
+        {isshippingcart ? (
+          <>
+          <p className="shippingcheckouthead">{SHIPPING_CHECKOUT.ADD_NEW_ADDRESS}</p>
+          <p className="shippingcheckouttitle">
+            {SHIPPING_CHECKOUT.FORM_INSTRUCTION}
+          </p>
+          </>
+        ) : null}
+        {userShippingAddresses?.length === 0 && (
+          <>
+            <div className="my-address__header__title">
+              {AddressData?.length > 0 ? "" : emptyAddressesTitle }
+            </div>
+            <div className="my-address__header__subtitle">
+              {AddressData?.length > 0 ? "" : emptyAddressesSubtitle}
+            </div>
+          </>
+        )}
+      </div>
 
+      {isshippingcart && showaddressmodal ? (
+        <AddressForm
+          customClass={customClass}
+          isshippingcart={isshippingcart}
+          onSubmit={handleAddressSubmit}
+          checkoutShipping={true}
+        />
+      ) : selectedAddress ? (
+        <EditForm
+          myaddressdata={JSON.stringify(AddressTexts)}
+          address={selectedAddress}
+          editFormNavSource={editFormNavSource}
+          onBackClick={() => setSelectedAddress(null)}
+          onSaveClick={handleSaveClick}
+          onDeleteClick={() => handleDeleteClick(selectedAddress)}
+          hideDeleteButton={hideDeleteButton}
+        />
+      ) : userShippingAddresses?.length > 0 && !isshippingcart ? (
+        <>
+          <div className="address__container">
+            {userShippingAddresses.map((address) => (
+              <AddressListComponent
+                key={address.Id}
+                address={address}
+                onEditClick={() => handleEditClick(address)}
+              />
+            ))}
+          </div>
+          <button
+            className="add-address-button"
+            onClick={handleAddAddressClick}
+          >
+            {"Add an address"}
+          </button>
+        </>
+      ) : (
+        <AddressForm
+          customClass={customClass}
+          isshippingcart={isshippingcart}
+          onSubmit={handleAddressSubmit}
+        />
+      )}
 
-          const settypepayload = {
-            newShoppingListTypeId: SHOPPINGLISTID_DELIVERY,
-            store: changeStore,
-            zipcode: addressdata?.zipCode,
-            hasPreviousList: false,
-            shoppingListId: shippinglistid,
-            removeItemsFromCart: 0,
-            DropOffAddress: {
-              addressId: addressdata?.dropOffAddress?.addressId,
-              firstName: addressdata?.dropOffAddress?.firstName,
-              lastName: addressdata?.dropOffAddress?.lastName,
-              contactPhoneNumber:
-                addressdata?.dropOffAddress?.contactPhoneNumber,
-              addressLine1: addressdata?.dropOffAddress?.addressLine1,
-              addressLine2: addressdata?.dropOffAddress?.addressLine2,
-              city: addressdata?.dropOffAddress?.city,
-              state: addressdata?.dropOffAddress?.state,
-              zipCode: addressdata?.dropOffAddress?.zipCode,
-            },
-          };
+      {showVerifyModal && (
+        <VerifyAddressModalComponent
+          onClose={() => setShowVerifyModal(false)}
+          onCustomButtonClick={() => setShowVerifyModal(false)}
+          address={formatVerifyAddress(enteredAddress)} 
+        />
+      )}
 
-       
-      });
-    }
-  };
+      {showSuggestedModal && enteredAddress && shippingsuggestedadd && (
+        <SuggestedAddressModalComponent
+          suggestedAddress={shippingsuggestedadd}
+          enteredAddress={enteredAddress}
+          onClose={() => setShowSuggestedModal(false)}
+          onConfirm={handleConfirmAddress}
+        />
+      )}
 
-
-  const handleConfirmAddress = async (newAddress: Address) => {
-    try {
-      // Update the enteredAddress with skipAddressSuggestion set to true
-      const latestAddress = {
-        DeliveryInstructions: newAddress.DeliveryInstructions ?? false,
-        IsDefaultShippingAddress: newAddress.IsDefaultShippingAddress ?? false,
-        ShippingAddressLine1: newAddress.ShippingAddressLine1 ?? "",
-        ShippingAddressLine2: newAddress.ShippingAddressLine2 ?? "",
-        ShippingCity: newAddress.ShippingCity ?? "",
-        ShippingCountry: newAddress.ShippingCountry ?? "US",
-        ShippingFirstName: enteredAddress?.ShippingFirstName ?? "",
-        ShippingLastName: enteredAddress?.ShippingLastName ?? "",
-        ShippingState: newAddress.ShippingState ?? "",
-        ShippingZip: newAddress.ShippingZip ?? "",
- 
-      // Call the API again with the updated address
-      dispatch(
-        getResolvedAddressAction({
-          address: latestAddress,
-        
-                  addressId: getAddressField(
-                    result,
-                    user,
-                    "Id",
-                    replaceaddressmodal
-                  ),
-                  zipCode: getAddressField(
-                    result,
-                    user,
-                    "ShippingZip",
-                    replaceaddressmodal
-                  ),
-                  dropOffAddress: {
-                    addressId: getAddressField(
-                      result,
-                      user,
-                      "Id",
-                      replaceaddressmodal
-                    ),
-                    firstName: getAddressField(
-                      result,
-                      user,
-                      "ShippingFirstName",
-                      replaceaddressmodal
-                    ),
-                    lastName: getAddressField(
-                      result,
-                      user,
-                      "ShippingLastName",
-                      replaceaddressmodal
-                    ),
-                  
-                };
-               
-                    );
-                  }
-                });
-              }
-            });
-          } else {
-            if (
-              data.payload.UserProfileShippingAddress?.ShippingAddresses
-                .length > 0 &&
-              !user
-            ) {
-              const addressdata = {
-                store: store,
-                cartType: SHOPPINGLISTID_DELIVERY,
-                addressId: getAddressField(data, user, "Id", false),
-                zipCode: getAddressField(data, user, "ShippingZip", false),
-                dropOffAddress: {
-                  addressId: getAddressField(data, user, "Id", false),
-                  firstName: getAddressField(
-                    data,
-                    user,
-                    "ShippingFirstName",
-                    false
-                  ),
-                  lastName: getAddressField(
-                    data,
-                    user,
-                    "ShippingLastName",
-                    false
-                  ),
-                  
-               
-                zipcode: addressdata.zipCode,
-                hasPreviousList: false,
-                shoppingListId: shippinglistid,
-                removeItemsFromCart: 0,
-                DropOffAddress: {
-                  addressId: addressdata?.dropOffAddress?.addressId,
-                  firstName: addressdata.dropOffAddress.firstName,
-                  lastName: addressdata.dropOffAddress.lastName,
-                  contactPhoneNumber:
-                    addressdata.dropOffAddress.contactPhoneNumber,
-                  addressLine1: addressdata.dropOffAddress.addressLine1,
-                  addressLine2: addressdata.dropOffAddress.addressLine2,
-                  city: addressdata.dropOffAddress.city,
-                  state: addressdata.dropOffAddress.state,
-       
-                        }
-                      );
-                    }
-                  );
-                }
-              });
-            } else {
-              dispatch(getShippingAddressAction()).then((result) => {
-                if (result.payload?.data?.ShippingAddresses?.length > 0) {
-                  setSavedAddresses(result.payload.data?.ShippingAddresses);
-                  const addressdata = {
-                    store: store,
-                    cartType: SHOPPINGLISTID_DELIVERY,
-                    
-                      firstName: getAddressField(
-                        result,
-                        user,
-                        "ShippingFirstName",
-                        replaceaddressmodal
-                      ),
-                      lastName: getAddressField(
-                        result,
-                        user,
-                        "ShippingLastName",
-                        replaceaddressmodal
-                      ),
-                      contactPhoneNumber: "",
-                  };
-                  const addressstring = `${addressdata.dropOffAddress.addressLine1},${addressdata.dropOffAddress.city},${addressdata.dropOffAddress.state},${addressdata.dropOffAddress.zipCode}`;
-                  const settypepayload = {
-                    newShoppingListTypeId: SHOPPINGLISTID_DELIVERY,
-                    store: store,
-                    zipcode: addressdata.zipCode,
-                    hasPreviousList: false,
-                    shoppingListId: shippinglistid,
-                    removeItemsFromCart: 0,
-                    DropOffAddress: {
-                      addressId: addressdata?.dropOffAddress?.addressId,
-                      firstName: addressdata.dropOffAddress.firstName,
-                      lastName: addressdata.dropOffAddress.lastName,
-                      contactPhoneNumber:
-                        addressdata.dropOffAddress.contactPhoneNumber,
-                      addressLine1: addressdata.dropOffAddress.addressLine1,
-                      addressLine2: addressdata.dropOffAddress.addressLine2,
-                      city: addressdata.dropOffAddress.city,
-                      state: addressdata.dropOffAddress.state,
-                      zipCode: addressdata.dropOffAddress.zipCode,
-                    },
-                  };
-                  dispatch(setCartTypeDelivery(settypepayload)).then(
-                    (result) => {
-                      // dispatch(getShippingAddressAction);
-
-                        );
-                      }
-                    }
-                  );
-                }
-              });
-            }
+      {showConnectModalOpen && (
+        <ReplaceAddressModal
+          onClose={closeConnectModal}
+          onOpenModal={handleReplaceAddress}
+          addressList={
+            AddressData.length > 0 ? AddressData : userShippingAddresses
           }
-        }
-      });
-    } catch (error) {
-      console.error("Failed to add delivery address", error);
-    }
-  };
-  return ReactDOM.createPortal(
-    <div>
-              >
-              ) : (
-                <AddressForm
-                  onSubmit={handleAddressSubmit}
-                  buttonText="Check for availability"
-                  yellowButton
-                  {...(savedAddresses?.ShippingAddresses?.length > 0 && {
-                    deliverycheckoutReplaceAddress: selectedAddress,
-                  })}
-                />
-              )}
+        />
+      )}
+    </div>
+  );
+};
 
+export default MyAddress;
 
-
-
-so what is happening is the firstname and lastname is prepopulating with these lines "  const [ShippingFirstName, setShippingFirstName] = useState(deliverycheckoutReplaceAddress?deliverycheckoutReplaceAddress.ShippingFirstName: gigyaProfile?.firstName || "" );
-  const [ShippingLastName, setShippingLastName] = useState(deliverycheckoutReplaceAddress?deliverycheckoutReplaceAddress.ShippingLastName: gigyaProfile?.LastName || "");"
-
-but not working with these lines : " setShippingFirstName(
-        selectedAddress?.ShippingFirstName || gigyaProfile?.firstName || ""
-      );
-      setShippingLastName(
-        selectedAddress?.ShippingLastName || gigyaProfile?.lastName || ""
-        "
-
-        Please help me here to understand why at one place names are populating whereas not at myaddress component
-
-        
-
-
-
-
+so here in this code, on use of setSelectedAddress(null) the address page is going back to the address list page which is great. Now on save click, I need this functionality whenever I edit anything on there. But if I make changes to address then the verify address modal or suggestion modal should come up which is coming, but it should stay on the form page. right now it is still going back to address list page and then showing the modals. I need to fix this please
