@@ -1,58 +1,55 @@
- const handleSaveClick = async (updatedAddress: Address) => {
-    // Update our local address list state immediately
-    setAddressData((prevAddressData) =>
-      prevAddressData?.map((address) =>
-        address.ShippingZip === updatedAddress.ShippingZip
-          ? updatedAddress
-          : { ...address, IsDefaultShippingAddress: false }
-      )
-    );
+const handleSaveClick = async (updatedAddress: Address) => {
+  // Update our local address list state immediately
+  setAddressData((prevAddressData) =>
+    prevAddressData?.map((address) =>
+      address.ShippingZip === updatedAddress.ShippingZip
+        ? updatedAddress
+        : { ...address, IsDefaultShippingAddress: false }
+    )
+  );
 
-    // Determine if address fields (not just name) have changed.
-    // Adjust these conditions as needed.
-    const isAddressChanged =
-      updatedAddress.ShippingAddressLine1 !== selectedAddress?.ShippingAddressLine1 ||
-      updatedAddress.ShippingCity !== selectedAddress?.ShippingCity ||
-      updatedAddress.ShippingState !== selectedAddress?.ShippingState ||
-      updatedAddress.ShippingZip !== selectedAddress?.ShippingZip;
-
-    let resolvedResult;
-    try {
-      if (selectedAddress?.Id) {
-        resolvedResult = await dispatch(
-          getResolvedAddressAction({
-            address: { ...updatedAddress, Id: selectedAddress.Id },
-            isAuthenticated: user,
-          })
-        ).unwrap();
-      } else {
-        resolvedResult = await dispatch(
-          getResolvedAddressAction({
-            address: updatedAddress,
-            isAuthenticated: user,
-          })
-        ).unwrap();
-      }
-    } catch (error) {
-      // Handle error if needed.
-      return;
-    }
-
-    // If the address fields have changed, trigger a modal.
-    if (isAddressChanged) {
-      setEnteredAddress(updatedAddress);
-      // Here we decide which modal to show based on the resolution result.
-      // If the response contains a ResolvedAddress, show the suggested modal.
-      // Otherwise, show the verify modal.
-      if (resolvedResult && resolvedResult.ResolvedAddress) {
-        setShowSuggestedModal(true);
-      } else {
-        setShowVerifyModal(true);
-      }
+  let resolvedResult;
+  try {
+    if (selectedAddress?.Id) {
+      resolvedResult = await dispatch(
+        getResolvedAddressAction({
+          address: { ...updatedAddress, Id: selectedAddress.Id },
+          isAuthenticated: user,
+        })
+      ).unwrap();
     } else {
-      // Simple update (like only a name change): go back to the address list.
-      setSelectedAddress(null);
+      resolvedResult = await dispatch(
+        getResolvedAddressAction({
+          address: updatedAddress,
+          isAuthenticated: user,
+        })
+      ).unwrap();
     }
-  };
+  } catch (error) {
+    // Handle error if needed. For now, simply return.
+    return;
+  }
 
-  const 
+  /*
+    Decide what to do based on the returned resolvedResult:
+    - If nothing is returned (or you determine that the address didn’t change in a way
+      that requires a modal), assume it’s a simple update: clear selectedAddress and go back.
+    - If the response has a suggestion (i.e. resolvedResult.ResolvedAddress exists),
+      then set the enteredAddress and show the suggestion modal.
+    - (Optionally, if you want to show a verify modal when no resolvedResult is returned,
+      you can do that here as well.)
+  */
+  if (!resolvedResult) {
+    // No resolved address returned → show verify modal.
+    setEnteredAddress(updatedAddress);
+    setShowVerifyModal(true);
+  } else if (resolvedResult.ResolvedAddress) {
+    // A suggested address is returned → remain on edit form and show the suggestion modal.
+    setEnteredAddress(updatedAddress);
+    setShowSuggestedModal(true);
+  } else {
+    // Otherwise (for example, when only a name is changed and no address suggestion is needed),
+    // clear selectedAddress immediately to return to the list.
+    setSelectedAddress(null);
+  }
+};
