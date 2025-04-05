@@ -1,46 +1,364 @@
-const handleSaveClick = async (updatedAddress: Address) => {
-  // Prepare address with ID if it exists
-  const addressWithId = selectedAddress?.Id
-    ? { ...updatedAddress, Id: selectedAddress?.Id }
-    : updatedAddress;
 
-  // Optimistically update local state
-  setAddressData((prevAddressData) =>
-    prevAddressData?.map?.((address) =>
-      address.ShippingZip === updatedAddress.ShippingZip
-        ? updatedAddress
-        : { ...address, IsDefaultShippingAddress: false }
-    )
+  const [isTouched, setIsTouched] = useState(false);
+
+  useEffect(() => {
+    const result = storeData.checkout.executehandlesubmit;
+    setExecuteguestsubmit(result);
+  }, [storeData.checkout.executehandlesubmit]);
+
+  // Validate fields on change
+  const handleShippingFirstNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingFirstName(e.target.value);
+    setIsTouched(true);
+    setShippingFirstNameError(
+      e.target.value.length <= 1
+        ? yellowButton || isshippingcart
+          ? myAddress?.firstNameRequired
+          : myAddress?.invalidFirstName
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingLastNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingLastName(e.target.value);
+    setIsTouched(true);
+    setShippingLastNameError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.LastNameRequired
+          : myAddress?.invalidLastName
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingAddressLine1Change = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingAddressLine1(e.target.value);
+    setIsTouched(true);
+
+    if (poBoxRegex.test(e.target.value)) {
+      setShippingAddressLine1Error(
+        myAddress?.poBoxInvalidAddress ||
+          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
+      );
+    } else {
+      setShippingAddressLine1Error(
+        e.target.value.length <= 1
+          ? yellowButton || isshippingcart
+            ? myAddress?.address1Required
+            : myAddress?.invalidAddress1
+          : ""
+      );
+    }
+    if (!updatebutton && editFormNavSource === "edit") {
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingAddressLine2Change = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingAddressLine2(e.target.value);
+    setIsTouched(true);
+    setShippingAddressLine2Error(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.Address2Required
+          : myAddress?.invalidAddress2
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setShippingZip(e.target.value);
+    setIsTouched(true);
+    if (!zipPattern.test(value)) {
+      setShippingZipError(
+        yellowButton ||  isshippingcart
+          ? myAddress?.zipCodeRequired
+          : myAddress?.invalidZipCode
+      );
+    } else {
+      setShippingZipError("");
+    }
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShippingCity(e.target.value);
+    setIsTouched(true);
+    setShippingCityError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.cityRequired
+          : myAddress?.invalidCity
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  
+
+  return (
+
+        {checkoutShipping && (
+          <>
+            <div
+              className={`my-address-form-group address-optional ${
+                ShippingaddressLine2Error ? "my-address-form-group__error" : ""
+              }`}
+            >
+              <label>{"Address 2"}</label>
+              <input
+                type="text"
+                value={ShippingAddressLine2}
+                onChange={handleShippingAddressLine2Change}
+                className={
+                  ShippingaddressLine2Error
+                    ? "my-address-form-group__field-error"
+                    : ""
+                }
+              />
+              {ShippingaddressLine2Error && (
+                <span className="my-address-form-group__error-message">
+                  {ShippingaddressLine2Error}
+                </span>
+              )}
+            </div>
+
+            <div
+              className={`my-address-form-group city ${
+                ShippingCityError ? "my-address-form-group__error" : ""
+              }`}
+            >
+              <label>{"city"}</label>
+              <input
+                type="text"
+                value={ShippingCity}
+                onChange={handleShippingCityChange}
+                className={
+                  ShippingCityError ? "my-address-form-group__field-error" : ""
+                }
+              />
+              {ShippingCityError && (
+                <span className="my-address-form-group__error-message">
+                  {ShippingCityError}
+                </span>
+              )}
+            </div>
+          </>
+        )}
+
+        {checkoutShipping && (
+          <div className="my-address-form-row">
+            <div
+              className={`my-address-form-group state ${
+                ShippingStateError ? "my-address-form-group__error" : ""
+              }`}
+            >
+              <label>{"state"}</label>
+              <div className="my-address-form-group__State-dropdown">
+                <select
+                  value={ShippingState}
+                  onChange={handleShippingStateChange}
+                  className={
+                    ShippingStateError
+                      ? "my-address-form-group__field-error"
+                      : ""
+                  }
+                >
+                  <option value="">{"state Option"}</option>
+                  {US_STATES.map((state) => (
+                    <option key={state.value}>{state.value}</option>
+                  ))}
+                </select>
+                <span className="my-address-form-group__icon web-icon filter-down"></span>
+              </div>
+              {ShippingStateError && (
+                <span className="my-address-form-group__error-message">
+                  {ShippingStateError}
+                </span>
+              )}
+            </div>
+
+            <div
+              className={`my-address-form-group zipcode ${
+                ShippingZipError ? "my-address-form-group__error" : ""
+              }`}
+            >
+              <label>{"ZipCode"}</label>
+              <input
+                type="text"
+                value={ShippingZip}
+                onChange={handleShippingZipChange}
+                className={
+                  ShippingZipError ? "my-address-form-group__field-error" : ""
+                }
+              />
+              {ShippingZipError && (
+                <span className="my-address-form-group__error-message">
+                  {ShippingZipError}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+        )}
+
+        <button
+          type="submit"
+          className={classNames("my-address-form__submit-btn", {
+            "yellow-button": yellowButton && !formerror,
+            "gray-button": formerror || !isTouched,
+            "d-none": !storeData.checkout.user && isshippingcart,
+          })}
+          onClick={(e) => validateForm(e)}
+        >
+          {editFormNavSource === "save" || !updatebutton ? "save" : "update address"}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default AddressForm;
+
+
+edit Form: 
+import React, { useState, useEffect } from "react";
+import {
+  byAttrVal,
+  createCustomElement,
+  DOMModel,
+  // @ts-ignore
+} from "@adobe/react-webcomponent";
+import "./index.scss";
+import AddressForm from "../addressForm";
+import DeleteAddressModalComponent from "../deleteAddressModal";
+import { Address } from "../myAddressesProps";
+
+
+interface addressTexts {
+  deleteAddressText?: string;
+  deleteAddressConfirmButtonText?: string;
+  deleteAddressCancelButtonText?: string;
+}
+
+interface EditFormProps {
+  myaddressdata?: string;
+  address?: Address;
+  onBackClick: () => void;
+  onSaveClick: (address: Address) => void;
+  onDeleteClick: () => void;
+  hideDeleteButton?: boolean;
+  editFormNavSource?: string
+}
+
+class EditFormModel extends DOMModel {
+  @byAttrVal myaddressdata?: string;
+}
+
+const EditForm: React.FC<EditFormProps> = (props) => {
+  const {setAsDefault, defaultAddress, deleteButton, myAddress} = window.DG?.aemData?.labels?.myAddress || {};
+
+  const { onBackClick, onSaveClick, onDeleteClick, address, hideDeleteButton, editFormNavSource } =
+    props;
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [IsDefaultShippingAddress, setIsDefault] = useState(
+    address?.IsDefaultShippingAddress || false
   );
 
-  // Submit address and resolve
-  let resolvedResult;
-  try {
-    setEnteredAddress(addressWithId);
-    resolvedResult = await dispatch(
-      getResolvedAddressAction({
-        address: addressWithId,
-        isAuthenticated: user,
-      })
-    ).unwrap();
-  } catch (error) {
-    return;
-  }
+  const handleDeleteAddress = () => {
+    setIsDeleteModalVisible(false);
+    onDeleteClick();
+  };
 
-  // Handle verification/suggestion modals
-  if (!resolvedResult) {
-    setShowVerifyModal(true);
-    return;
-  } else if (resolvedResult.ResolvedAddress) {
-    setShowSuggestedModal(true);
-    return;
-  }
+  const handleSaveClick = (updatedAddress: Address) => {
+    const changedAddress = {
+      DeliveryInstructions: updatedAddress.IsDefaultShippingAddress,
+      ShippingAddressLine1: updatedAddress.ShippingAddressLine1,
+      ShippingAddressLine2: updatedAddress?.ShippingAddressLine2 || "",
+      ShippingCity: updatedAddress.ShippingCity,
+      ShippingCountry: updatedAddress?.ShippingCountry || "US",
+      ShippingFirstName: updatedAddress?.ShippingFirstName,
+      ShippingLastName: updatedAddress?.ShippingLastName || "",
+      ShippingState: updatedAddress.ShippingState,
+      ShippingZip: updatedAddress?.ShippingZip,
+    };
+    onSaveClick({ ...changedAddress, IsDefaultShippingAddress });
+  };
 
-  // If no modal needed → update local state
-  const refreshedList = await dispatch(getShippingAddressAction()).unwrap();
-  const updatedShippingAddresses = refreshedList?.data?.ShippingAddresses || [];
+  return (
+    <div className="my-address-edit-form">
+      {/* Back Button */}
+      <div 
+        onClick={onBackClick}
+        className="my-address-edit-form__back-div"
+        role="button"
+        tabIndex={0}
+        >
+        <span className="my-address-edit-form__back-button global-icon arrow-left"></span>
+        <span className="my-address-edit-form__back">{"Back"}</span>
+      </div>
+      {address?.IsDefaultShippingAddress ? (
+        <h2 className="my-address-edit-form__title">{"defaultAddress"}</h2>
+      ) : (
+        <div className="my-address-edit-form__default-checkbox">
+          <input
+            type="checkbox"
+            checked={IsDefaultShippingAddress}
+            onChange={() => setIsDefault(!IsDefaultShippingAddress)}
+          />
+          <span className="my-address-edit-form__default">
+            {"setAsDefault"}
+          </span>
+        </div>
+      )}
+      {/* AddressForm Component */}
+      <AddressForm
+        onSubmit={(updatedAddress) =>
+          handleSaveClick({ ...address, ...updatedAddress })
+        }
+        selectedAddress={address}
+        editFormNavSource={editFormNavSource}
+      />
 
-  setUserShippingAddresses(updatedShippingAddresses);
-  setAddressData(updatedShippingAddresses);
-  setSelectedAddress(null);
+      {!hideDeleteButton && (
+        <button
+          className="my-address-edit-form__delete-button"
+          type="button"
+          onClick={() => setIsDeleteModalVisible(true)}
+        >
+          {"delete"}
+        </button>
+      )}
+      {isDeleteModalVisible && (
+        <DeleteAddressModalComponent
+          onClose={() => setIsDeleteModalVisible(false)}
+          onCustomButtonClick={handleDeleteAddress}
+        />
+      )}
+    </div>
+  );
 };
+
+export default EditForm;
+
+so here what should happen is that on checkbox of default tag on editForm, I should have the isTouched state here as well same way I have for other fields. I need the same functionality for checkbox too. help here
