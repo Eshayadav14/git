@@ -1,4 +1,24 @@
-editForm.tsx: 
+editForm.tsx:
+
+import React, { useState, useEffect } from "react";
+import {
+  byAttrVal,
+  createCustomElement,
+  DOMModel,
+  // @ts-ignore
+} from "@adobe/react-webcomponent";
+import "./index.scss";
+import AddressForm from "../addressForm";
+import DeleteAddressModalComponent from "../deleteAddressModal";
+import { Address } from "../myAddressesProps";
+
+
+interface addressTexts {
+  deleteAddressText?: string;
+  deleteAddressConfirmButtonText?: string;
+  deleteAddressCancelButtonText?: string;
+}
+
 interface EditFormProps {
   myaddressdata?: string;
   address?: Address;
@@ -8,8 +28,28 @@ interface EditFormProps {
   hideDeleteButton?: boolean;
   editFormNavSource?: string
 }
+
+class EditFormModel extends DOMModel {
+  @byAttrVal myaddressdata?: string;
+}
+
 const EditForm: React.FC<EditFormProps> = (props) => {
   const {setAsDefault, defaultAddress, deleteButton, myAddress} = window.DG?.aemData?.labels?.myAddress || {};
+
+  const { onBackClick, onSaveClick, onDeleteClick, address, hideDeleteButton, editFormNavSource } =
+    props;
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [IsDefaultShippingAddress, setIsDefault] = useState(
+    address?.IsDefaultShippingAddress || false
+  );
+  const [isTouched, setIsTouched] = useState(false);
+  const [updatebutton, setUpdatebutton] = useState(false);
+
+  const handleDeleteAddress = () => {
+    setIsDeleteModalVisible(false);
+    onDeleteClick();
+  };
+
   const handleSaveClick = (updatedAddress: Address) => {
     const changedAddress = {
       DeliveryInstructions: updatedAddress.IsDefaultShippingAddress,
@@ -27,6 +67,16 @@ const EditForm: React.FC<EditFormProps> = (props) => {
 
   return (
     <div className="my-address-edit-form">
+      {/* Back Button */}
+      <div 
+        onClick={onBackClick}
+        className="my-address-edit-form__back-div"
+        role="button"
+        tabIndex={0}
+        >
+        <span className="my-address-edit-form__back-button global-icon arrow-left"></span>
+        <span className="my-address-edit-form__back">{"Back"}</span>
+      </div>
       {address?.IsDefaultShippingAddress ? (
         <h2 className="my-address-edit-form__title">{"defaultAddress"}</h2>
       ) : (
@@ -34,7 +84,15 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           <input
             type="checkbox"
             checked={IsDefaultShippingAddress}
-            onChange={() => setIsDefault(!IsDefaultShippingAddress)}
+            onChange={() => {
+              setIsDefault(!IsDefaultShippingAddress)
+              setIsTouched(true);
+              if(!updatebutton && editFormNavSource === "edit"){
+                setUpdatebutton(true);
+                console.log(setUpdatebutton, "esha");
+              }
+            }}
+            
           />
           <span className="my-address-edit-form__default">
             {"setAsDefault"}
@@ -48,15 +106,152 @@ const EditForm: React.FC<EditFormProps> = (props) => {
         }
         selectedAddress={address}
         editFormNavSource={editFormNavSource}
+        isCheckboxTouched={isTouched}
       />
+
+      {!hideDeleteButton && (
+        <button
+          className="my-address-edit-form__delete-button"
+          type="button"
+          onClick={() => setIsDeleteModalVisible(true)}
+        >
+          {"delete"}
+        </button>
+      )}
+      {isDeleteModalVisible && (
+        <DeleteAddressModalComponent
+          onClose={() => setIsDeleteModalVisible(false)}
+          onCustomButtonClick={handleDeleteAddress}
+        />
+      )}
+    </div>
   );
 };
 
 export default EditForm;
 
-addressForm.tsx:
+const CustomEditForm = createCustomElement(EditForm, EditFormModel, "element");
+
+customElements.define("custom-edit-form", CustomEditForm);
+
+addressForm:
+
+class AddressFormModel extends DOMModel {}
+
+const AddressForm: React.FC<AddressFormProps> = (props) => {
+  const {
+    onSubmit,
+    yellowButton,
+    buttonText,
+    customClass,
+    isshippingcart,
+    selectedAddress,
+    editFormNavSource,
+    deliverycheckoutReplaceAddress,
+    checkoutShipping,
+    isCheckboxTouched,
+    isCheckboxUpdatebutton,
+  } = props;
+  const myAddress = window.DG?.aemData?.labels?.myAddress || {};
 
   const [isTouched, setIsTouched] = useState(false);
+
+  const [user, setUser] = useState(false);
+  const [updatebutton,setUpdatebutton] = useState(false);
+
+  useEffect(() => {
+    setUser(storeData.checkout.user);
+  }, [storeData.checkout.user]);
+
+  useEffect(() => {
+    if (editFormNavSource) {
+      setShippingFirstName(
+        selectedAddress?.ShippingFirstName || gigyaAccountData?.gigyaProfile?.profile?.firstName || ""
+      );
+      setShippingLastName(
+        selectedAddress?.ShippingLastName || gigyaAccountData?.gigyaProfile?.profile?.lastName || ""
+      );
+    }
+    if (editFormNavSource === "edit") {
+      setShippingAddressLine1(
+        selectedAddress?.ShippingAddressLine1
+          ? selectedAddress.ShippingAddressLine1
+          : ""
+      );
+      setShippingAddressLine2(
+        selectedAddress?.ShippingAddressLine2
+          ? selectedAddress.ShippingAddressLine2
+          : ""
+      );
+      setShippingZip(
+        selectedAddress?.ShippingZip ? selectedAddress.ShippingZip : ""
+      );
+      setShippingCity(
+        selectedAddress?.ShippingCity ? selectedAddress.ShippingCity : ""
+      );
+      setShippingState(
+        selectedAddress?.ShippingState ? selectedAddress.ShippingState : ""
+      );
+      setIsDefaultShippingAddress(
+        selectedAddress?.IsDefaultShippingAddress
+          ? selectedAddress.IsDefaultShippingAddress
+          : false
+      );
+    }
+  }, [gigyaAccountData, editFormNavSource]);
+
+  useEffect(() => {
+    if (editFormNavSource === "edit") {
+      setUpdatebutton(false);
+    } else {
+      setUpdatebutton(false);
+    }
+  },[editFormNavSource]);
+
+  useEffect(() => {
+    // Check if any error state is not empty
+    if (
+      ShippingFirstNameError ||
+      ShippingLastNameError ||
+      ShippingAddressLine1Error ||
+      ShippingaddressLine2Error ||
+      ShippingZipError ||
+      ShippingCityError ||
+      ShippingFirstName === "" ||
+      ShippingLastName === "" ||
+      ShippingAddressLine1 === "" ||
+      ShippingZip === "" ||
+      ShippingCity === "" ||
+      ShippingState === ""
+    ) {
+      SetFormerror(true);
+    } else {
+      SetFormerror(false);
+    }
+  }, [
+    ShippingFirstNameError,
+    ShippingLastNameError,
+    ShippingAddressLine1Error,
+    ShippingaddressLine2Error,
+    ShippingZipError,
+    ShippingCityError,
+    ShippingFirstName,
+    ShippingLastName,
+    ShippingAddressLine1,
+    ShippingAddressLine2,
+    ShippingZip,
+    ShippingCity,
+    ShippingState,
+  ]);
+
+  useEffect(() => {
+    dispatch(updateformenablebutton(formerror));
+  }, [formerror]);
+
+  useEffect(() => {
+    const result = storeData.checkout.executehandlesubmit;
+    setExecuteguestsubmit(result);
+  }, [storeData.checkout.executehandlesubmit]);
 
   // Validate fields on change
   const handleShippingFirstNameChange = (
@@ -93,18 +288,106 @@ addressForm.tsx:
     }
   };
 
-  return (
-    <div
-      className={classNames(
-        `my-address-form ${customClass ? customClass : ""}`
-      )
+  const handleShippingAddressLine1Change = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingAddressLine1(e.target.value);
+    setIsTouched(true);
 
-        ......
+    if (poBoxRegex.test(e.target.value)) {
+      setShippingAddressLine1Error(
+        myAddress?.poBoxInvalidAddress ||
+          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
+      );
+    } else {
+      setShippingAddressLine1Error(
+        e.target.value.length <= 1
+          ? yellowButton || isshippingcart
+            ? myAddress?.address1Required
+            : myAddress?.invalidAddress1
+          : ""
+      );
+    }
+    if (!updatebutton && editFormNavSource === "edit") {
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingAddressLine2Change = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShippingAddressLine2(e.target.value);
+    setIsTouched(true);
+    setShippingAddressLine2Error(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.Address2Required
+          : myAddress?.invalidAddress2
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setShippingZip(e.target.value);
+    setIsTouched(true);
+    if (!zipPattern.test(value)) {
+      setShippingZipError(
+        yellowButton ||  isshippingcart
+          ? myAddress?.zipCodeRequired
+          : myAddress?.invalidZipCode
+      );
+    } else {
+      setShippingZipError("");
+    }
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShippingCity(e.target.value);
+    setIsTouched(true);
+    setShippingCityError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.cityRequired
+          : myAddress?.invalidCity
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  const handleShippingStateChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setShippingState(e.target.value);
+    setIsTouched(true);
+    setShippingStateError(
+      e.target.value.length <= 1
+        ? yellowButton ||  isshippingcart
+          ? myAddress?.stateRequired
+          : myAddress?.invalidState
+        : ""
+    );
+    if(!updatebutton && editFormNavSource === "edit"){
+      setUpdatebutton(true);
+    }
+  };
+
+  return (
+    
+
         <button
           type="submit"
           className={classNames("my-address-form__submit-btn", {
             "yellow-button": yellowButton && !formerror,
-            "gray-button": formerror || !isTouched,
+            "gray-button": formerror || (!isTouched && !isCheckboxTouched && !isCheckboxUpdatebutton),
             "d-none": !storeData.checkout.user && isshippingcart,
           })}
           onClick={(e) => validateForm(e)}
@@ -119,118 +402,7 @@ addressForm.tsx:
 export default AddressForm;
 
 
-myadress.tsx:
+so here what needs to be done is that on click of checkbox button, the text on button should come up as "update address", right now it is coming as "save"
 
 
-  return (
-    <div className={classNames(`my-address ${customClass ? customClass : ""}`)}>
-      <div className="my-address__header__title">
-        {isshippingcart ? (
-          <>
-          <p className="shippingcheckouthead">{SHIPPING_CHECKOUT.ADD_NEW_ADDRESS}</p>
-          <p className="shippingcheckouttitle">
-            {SHIPPING_CHECKOUT.FORM_INSTRUCTION}
-          </p>
-          </>
-        ) : null}
-        {userShippingAddresses?.length === 0 && (
-          <>
-            <div className="my-address__header__title">
-              {AddressData?.length > 0 ? "" : emptyAddressesTitle }
-            </div>
-            <div className="my-address__header__subtitle">
-              {AddressData?.length > 0 ? "" : emptyAddressesSubtitle}
-            </div>
-          </>
-        )}
-      </div>
 
-      {isshippingcart && showaddressmodal ? (
-        <AddressForm
-          customClass={customClass}
-          isshippingcart={isshippingcart}
-          onSubmit={handleAddressSubmit}
-          checkoutShipping={true}
-        />
-      ) : selectedAddress ? (
-        <EditForm
-          myaddressdata={JSON.stringify(AddressTexts)}
-          address={selectedAddress}
-          editFormNavSource={editFormNavSource}
-          onBackClick={() => setSelectedAddress(null)}
-          onSaveClick={handleSaveClick}
-          onDeleteClick={() => handleDeleteClick(selectedAddress)}
-          hideDeleteButton={hideDeleteButton}
-        />
-      ) : userShippingAddresses?.length > 0 && !isshippingcart ? (
-        <>
-          <div className="address__container">
-            {userShippingAddresses.map((address) => (
-              <AddressListComponent
-                key={address.Id}
-                address={address}
-                onEditClick={() => handleEditClick(address)}
-              />
-            ))}
-          </div>
-          <button
-            className="add-address-button"
-            onClick={handleAddAddressClick}
-          >
-            {"Add an address"}
-          </button>
-        </>
-      ) : (
-        <AddressForm
-          customClass={customClass}
-          isshippingcart={isshippingcart}
-          onSubmit={handleAddressSubmit}
-        />
-      )}
-
-      {showVerifyModal && (
-        <VerifyAddressModalComponent
-          onClose={() => setShowVerifyModal(false)}
-          onCustomButtonClick={() => setShowVerifyModal(false)}
-          address={formatVerifyAddress(enteredAddress)} 
-        />
-      )}
-
-      {showSuggestedModal && enteredAddress && shippingsuggestedadd && (
-        <SuggestedAddressModalComponent
-          suggestedAddress={shippingsuggestedadd}
-          enteredAddress={enteredAddress}
-          onClose={() => setShowSuggestedModal(false)}
-          onConfirm={handleConfirmAddress}
-        />
-      )}
-
-      {showConnectModalOpen && (
-        <ReplaceAddressModal
-          onClose={closeConnectModal}
-          onOpenModal={handleReplaceAddress}
-          addressList={
-            AddressData.length > 0 ? AddressData : userShippingAddresses
-          }
-        />
-      )}
-    </div>
-  );
-};
-
-export default MyAddress;
-
-const CustomMyAddress = createCustomElement(
-  (props: any) => (
-    <ReduxProvider>
-      <MyAddress {...props}></MyAddress>
-    </ReduxProvider>
-  ),
-  MyAddressModel,
-  "element"
-);
-
-customElements.define("custom-my-address", CustomMyAddress);
-
-
-so here what I need to do is that I have a checkbox in editForm, so when I select on it then I need to set the setIsTouched(true) so that the functionality works the way it is working in address Form component. both the edit form and address form components are called in my-address component. Please tell me how I can achieve this functionality
