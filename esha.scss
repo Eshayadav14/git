@@ -1,243 +1,127 @@
-ARTICLE LIST:
 Overview
-Component Name: Article List
-Description: The article list component displays a collection of articles, each with an image, title, and button-text. If the image fails to load, an alt text will be shown to ensure accessibility and provide context to the user. The button text is customizable, and clicking on the button redirects the user to the article page in the same tab.
+
+Component Name: Category Tile
+Description:
+The Category Tile component displays a list of product categories in a grid or stacked view, depending on the device. Each tile consists of an image and a title. The tiles are responsive, clickable, and redirect users to their respective category pages in the same tab.
+
 Nature of the Component: Static Component
+
+⸻
+
 How the Component Works
+
 Functionality:
-The Article List component displays articles with an image, title, and button text.
-Shows alt text if the image fails to load, ensuring accessibility.
-It adjusts its layout and behavior based on the screen size to ensure responsiveness.
+	•	Displays a list of categories with images and titles.
+	•	Redirects users to the respective category page on tile click (in same tab).
+	•	Adjusts layout and tile size based on screen size for responsiveness.
+	•	Supports three background styles: Black, Grey, and Brand.
+	•	Accessible with appropriate alt text and ADA compliance.
+
 Major Elements:
-Image: Visual representation of the article.
-Title: The headline or name of the article.
-Button Text: Customizable call-to-action text displayed on the button.
-Alt Text: Descriptive text shown if the image fails to load.
-Button: Clickable element that redirects to the article page.
+	•	Category Image: Visual representation of the category.
+	•	Category Title: Textual name/label for the category.
+	•	Tile Wrapper: Encapsulates styling and handles redirection.
+	•	See All Categories Link: Redirects to a full category listing page (if enabled).
+
+⸻
+
 Integration Requirements with AEM (If Applicable)
+
 Integration Prerequisites:
-JSON data needs to be passed from AEM side.
-Integration Process:
-The following data needs to be passed from AEM to the Article List component
-‘article-list-bg-color’: Contains the Color, in authoring we can only add white or black color.
-‘articleList’: Contains the image URLs, alt text, title and button title.
-Map the JSON data from AEM to the corresponding fields in the Article List component.
-Data Configuration:
-Mapping Data:
-API Integration & Endpoints
-APIs Used: NA
-Component Variations & Visual References
-Variation Details:
-NA
-Visual Representations:
-Web View:
-Tablet & Mobile View:
-Major Functions & Behavior:
-Core Functions:
-Responsive Behavior: The article adjusts its layout for different screen sizes using CSS media queries.
-Content Display: Presents articles with their respective images, titles, and customizable call-to-action buttons.
-Fallback Mechanism: Ensures alt text is displayed when images fail to load, maintaining accessibility and user context.
-Redirection: Redirects the user to the article page in the same tab when the button is clicked, enhancing user navigation and experience.
-Resources & Related Files:
-Linked Files:
-article-list.hbs [Path: src\dgweb\ui.frontend\src\app\components\ article-list\ article-list.hbs]
-article-list.json [Path: src\dgweb\ui.frontend\src\app\components\ article-list\ article-list.json]
-article-list.scss [Path: src\dgweb\ui.frontend\src\app\components\ article-list \ article-list.scss]
-File Name(s):
-Figma Link:
-Figma URL – Article Tile Figma Design
-JIRA Story ID:
-JIRA Story ID
-https://jira.dolgen.net/browse/DSE-14498
-https://jira.dolgen.net/browse/DSE-14200
-https://jira.dolgen.net/browse/DSE-14364
-Additional Information
-Customization & Theming:
-The article-list can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
-Dependencies: NA
-Note:
-In the Article-list component, we can author the article-list-bg-color only to white or black, not any other colors.
-In the Article-list component, when we author the article-list-bg-color to white, the content background color will be white, and the text inside the content will turn black.
-In the Article-list component, when we author the article-list-bg-color to black, the content background color will be black, and the text inside the content will turn white.
+	•	JSON data must be passed from the AEM backend.
 
-HEADER: 
-Overview
-Component Name: Header
-Description: The Header component serves as the primary navigation and branding element for the application. It includes features such as a logo, navigation menu, search functionality, and user interaction buttons.
-Nature of the Component: Static Component
-How the Component Works
-Functionality:
-
-The Header component integrates with the frontend architecture to provide navigation, search, and user account-related functionalities.
-It adjusts its layout and behavior based on the screen size to ensure responsiveness.
-Major Elements:
-
-Logo/Branding: The logo is placed on the left side of the header and is clickable, redirecting users to the homepage. It supports both desktop and mobile versions.
-Navigation Menu: Includes dropdowns for categories and standalone links for other sections. Dropdowns are interactive and expand on click.
-Search Bar: Integrated with typeahead suggestions and recent searches. It allows users to search for products.
-User/Action Icons: Includes profile, sign in, and create account for user interaction.
-Integration Requirements with AEM (If Applicable)
-Integration Prerequisites:
-
-JSON data needs to be passed from AEM side.
 Integration Process:
 
+The following fields need to be included in the AEM JSON:
+	•	categoryTilesBgStyle: Controls background styling of the tiles. Accepted values: "black", "grey", "brand".
+	•	categoryTilesList: Array of objects containing:
+	•	image: Image URL for the category.
+	•	altText: Alt text for the image.
+	•	title: Name of the category.
+	•	link: URL for the category page.
+
 Data Configuration:
-The following data needs to be passed from AEM to the Header component:
-'headerData.logo': Contains the desktop and mobile logo URLs, alt text, and the homepage link.
-'headerData.categories': Includes the list of categories with their names and links.
-'headerData.menuLabel': Label for the menu button.
-'headerData.signOutLabel': Label for the sign-out button.
-'headerData.signInLabel': Label for the sign-in button.
-'headerData.searchLabel': Placeholder text for the search bar.
-'headerData.noProductsText': Text to display when no products are found.
-'headerData.wallet': Label for the wallet section.
-Mapping Data:
-Map the JSON data from AEM to the corresponding fields in the Header component.
+	•	Map each JSON object in categoryTilesList to an individual tile.
+	•	Background style is applied to the tile container based on categoryTilesBgStyle.
+
+⸻
+
 API Integration & Endpoints
-APIs Used:
-Endpoint 1: Search Results API
-URL:
-For logged In user: /search/shoppinglist/typeahead
-For Guest user: /search/shoppinglist/typeahead/provider
-Purpose: This API is used to fetch search results based on the users input in the search bar. It supports the typeahead functionality by providing suggestions as the user types.
-Endpoint 2: Recent Searches API
-URL: /shoppinglist/recent
-Purpose: This API retrieves the users recent search terms to display them in the typeahead suggestions under the "Recently Searched" section.
+
+APIs Used: N/A (Static Component, data handled via AEM)
+
+⸻
+
 Component Variations & Visual References
+
 Variation Details:
+	•	Tile Size Variants:
+	•	Small
+	•	Medium
+	•	Large
 
-NA
+Responsive Layout:
+	•	XXL, XL, L, M: 6 tiles per row, aligned left.
+	•	Tile Size: Large for XXL, XL, L; Medium for M.
+	•	S: 4 tiles per row
+	•	Tile Size: Large
+	•	XS (575px & 375px): 3 tiles per row
+	•	Tile Size: Small
+
 Visual Representations:
+	•	Web View: Grid layout with hover states and clickable tiles.
+	•	Mobile App View: Vertical stacked list layout (handled via JSON/data changes).
 
-Web View:
-
-
-Tablet & Mobile View:
-
+⸻
 
 Major Functions & Behavior
-Core Functions:
-Responsive Behavior: The header adjusts its layout for different screen sizes using CSS media queries.
-Interactive Elements: Dropdown menus, hover effects, and typeahead search.
-Accessibility Features: Includes ARIA attributes for dropdowns and keyboard navigation support.
-Resources & Related Files
-Linked Files:
 
-File Name(s):
-header.hbs [Path: src\dgweb\ui.frontend\src\app\components\header\header.hbs]
-header.json [Path: src\dgweb\ui.frontend\src\app\components\header\header.json]
-header.scss [Path: src\dgweb\ui.frontend\src\app\components\header\header.scss]
-header.ts [Path: src\dgweb\ui.frontend\src\app\components\header\header.ts]
+Core Functions:
+	•	Responsive Design: Tiles adapt in size and layout based on screen width.
+	•	Content Display: Each tile presents a category image and title.
+	•	Redirection: Clicking a tile navigates the user to the respective category page.
+	•	Custom Styling: Background style can be themed using AEM (Black, Grey, Brand).
+	•	Accessibility: Implements alt text and ADA standards for compliance.
+
+⸻
+
+Resources & Related Files
+
+Linked Files:
+	•	category-tile.hbs
+Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.hbs
+	•	category-tile.json
+Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.json
+	•	category-tile.scss
+Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.scss
+	•	category-tile.ts
+Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.ts
+
+⸻
+
 Figma Link:
 
-Figma URL – Header Figma Design
-JIRA Story ID:
+Figma URL – Category Tiles Design
 
-JIRA Story ID
-https://jira.dolgen.net/browse/DSE-14461
-https://jira.dolgen.net/browse/DSE-14007
+⸻
+
+JIRA Story IDs:
+	•	[DSE-XXXXX] View Category List
+	•	[DSE-XXXXX] Click Redirect for Tiles
+	•	[DSE-XXXXX] Responsive Layout Handling
+(Replace with actual ticket IDs)
+
+⸻
+
 Additional Information
+
 Customization & Theming:
+	•	Modify the SCSS for style changes.
+	•	Update JSON configuration in AEM for dynamic content.
 
-The header can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
-Dependencies:
+Dependencies: N/A
 
-External libraries such as 'js-cookie' for managing cookies.
-Utility functions for API calls and event handling:
-'getSearchResults' and 'getRecentSearchData' for search-related API calls.
-'debounce' from '../../utilities/debounce' to optimize input handling in the search functionality.
-'pushEventDataOnNavLinkClick' for data layer event tracking.
-
-Same way I need to create for Catogory-tiles: 
-here's the Jira description for component:
-As an end user, I want to be able to view categories in dollar general, so that I can know more about the categories and the products from the categories
-
-Business / Functional Goals:
-
-The categories should be visible in tiles view and should consists of below elements
-
-Category Image
-Category Title
-Note: The category tiles in carousel view will be covered with the development of dynamic carousels but this story should cover the list view of category tiles with the "see all categories" link
-
-The category tiles should be shown in a vertical list view in the APP but in the grid view in Web
-
-Category tiles have three different sizes 
-
-Small
-Medium
-Large
-AND different screen sizes show different sizes of category tiles (Please refer to Figma)
-
-Acceptance Criteria: 
-As an End User/ Customer, I should be able to see the “Category list” Component Contents as described below
-
-Note: 
-
-The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
-Category list should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
-AC1 | FE | View of the categories 
-
-GIVEN I am an end user on DG.COM
-
-WHEN I view a category list component
-
-THEN the categories appear in grid tile view with category image and title for each category
-
-AND the UI of the grid view of category tiles is as per Figma
-
-Note: JSON changes required to show the category tiles in a vertical stacked view to be checked with the Mobile APP team
-
-AC2 | FE | Click on the category tiles
-
-GIVEN I am an end user viewing the category tiles component
-
-WHEN I click on any category tile from the grid
-
-THEN I should be redirected to the category page of the same category in the same tab
-
-AC3 | FE | View of category tiles in different screen sizes
-
-GIVEN I am an end user using devices of different screen sizes
-
-WHEN I am viewing the category tile list in homepage
-
-THEN the view of the category list is as per Figma in different screen sizes
-
-XXL -
-6 categories should be fit per line, then wrapped and aligned to the left
-XXL should use large variant of category tile
-XL - 
-6 categories should be fit per line, then wrapped and aligned to the left
-XL should use large variant of category tile
-L - 
-6 categories should be fit per line, then wrapped and aligned to the left
-L should use large variant of category tile
-M- 
-6 categories should be fit per line, then wrapped and aligned to the left
-XXL should use Medium variant of category tile
-S - 
-4 categories should be fit per line, then wrapped and aligned to the left
-S should use Large variant of category tile
-XS (575 & 375) - 
-3 categories should be fit per line, then wrapped and aligned to the left
-XS should use Small variant of category tile{}
-AC4 | FE | View of styles in the category list component
-
-GIVEN I am viewing category list component
-
-WHEN the component is authored using the below styles
-
-Black
-Grey
-Brand
-THEN the background color of the tiles is as per the style selection
-
-Important note:
-
-Pls analyze the existing code of the category tiles component before starting with the dev of this story
-ADA Doc is attached in the attachments
-Figma link: https://www.figma.com/design/1qErIuhNxxqSEbPG03AKl2/%F0%9F%9A%80-AEM-Delivery---Cumberland?node-id=1996-49526&m=dev
-
-write me the documenation same way for cateogry-tile too
+Notes:
+	•	Ensure ADA compliance as per provided ADA best practices documentation.
+	•	Stacked layout for mobile app is a separate variation and must be coordinated with the mobile team.
+	•	Only "black", "grey", and "brand" are allowed background styles.
