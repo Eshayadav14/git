@@ -1,127 +1,378 @@
 Overview
-
-Component Name: Category Tile
-Description:
-The Category Tile component displays a list of product categories in a grid or stacked view, depending on the device. Each tile consists of an image and a title. The tiles are responsive, clickable, and redirect users to their respective category pages in the same tab.
-
+Component Name: Header
+Description: The Header component serves as the primary navigation and branding element for the application. It includes features such as a logo, navigation menu, search functionality, and user interaction buttons.
 Nature of the Component: Static Component
-
-⸻
-
 How the Component Works
-
 Functionality:
-	•	Displays a list of categories with images and titles.
-	•	Redirects users to the respective category page on tile click (in same tab).
-	•	Adjusts layout and tile size based on screen size for responsiveness.
-	•	Supports three background styles: Black, Grey, and Brand.
-	•	Accessible with appropriate alt text and ADA compliance.
 
+The Header component integrates with the frontend architecture to provide navigation, search, and user account-related functionalities.
+It adjusts its layout and behavior based on the screen size to ensure responsiveness.
 Major Elements:
-	•	Category Image: Visual representation of the category.
-	•	Category Title: Textual name/label for the category.
-	•	Tile Wrapper: Encapsulates styling and handles redirection.
-	•	See All Categories Link: Redirects to a full category listing page (if enabled).
 
-⸻
-
+Logo/Branding: The logo is placed on the left side of the header and is clickable, redirecting users to the homepage. It supports both desktop and mobile versions.
+Navigation Menu: Includes dropdowns for categories and standalone links for other sections. Dropdowns are interactive and expand on click.
+Search Bar: Integrated with typeahead suggestions and recent searches. It allows users to search for products.
+User/Action Icons: Includes profile, sign in, and create account for user interaction.
 Integration Requirements with AEM (If Applicable)
-
 Integration Prerequisites:
-	•	JSON data must be passed from the AEM backend.
 
+JSON data needs to be passed from AEM side.
 Integration Process:
 
-The following fields need to be included in the AEM JSON:
-	•	categoryTilesBgStyle: Controls background styling of the tiles. Accepted values: "black", "grey", "brand".
-	•	categoryTilesList: Array of objects containing:
-	•	image: Image URL for the category.
-	•	altText: Alt text for the image.
-	•	title: Name of the category.
-	•	link: URL for the category page.
-
 Data Configuration:
-	•	Map each JSON object in categoryTilesList to an individual tile.
-	•	Background style is applied to the tile container based on categoryTilesBgStyle.
-
-⸻
-
+The following data needs to be passed from AEM to the Header component:
+'headerData.logo': Contains the desktop and mobile logo URLs, alt text, and the homepage link.
+'headerData.categories': Includes the list of categories with their names and links.
+'headerData.menuLabel': Label for the menu button.
+'headerData.signOutLabel': Label for the sign-out button.
+'headerData.signInLabel': Label for the sign-in button.
+'headerData.searchLabel': Placeholder text for the search bar.
+'headerData.noProductsText': Text to display when no products are found.
+'headerData.wallet': Label for the wallet section.
+Mapping Data:
+Map the JSON data from AEM to the corresponding fields in the Header component.
 API Integration & Endpoints
-
-APIs Used: N/A (Static Component, data handled via AEM)
-
-⸻
-
+APIs Used:
+Endpoint 1: Search Results API
+URL:
+For logged In user: /search/shoppinglist/typeahead
+For Guest user: /search/shoppinglist/typeahead/provider
+Purpose: This API is used to fetch search results based on the users input in the search bar. It supports the typeahead functionality by providing suggestions as the user types.
+Endpoint 2: Recent Searches API
+URL: /shoppinglist/recent
+Purpose: This API retrieves the users recent search terms to display them in the typeahead suggestions under the "Recently Searched" section.
 Component Variations & Visual References
-
 Variation Details:
-	•	Tile Size Variants:
-	•	Small
-	•	Medium
-	•	Large
 
-Responsive Layout:
-	•	XXL, XL, L, M: 6 tiles per row, aligned left.
-	•	Tile Size: Large for XXL, XL, L; Medium for M.
-	•	S: 4 tiles per row
-	•	Tile Size: Large
-	•	XS (575px & 375px): 3 tiles per row
-	•	Tile Size: Small
-
+NA
 Visual Representations:
-	•	Web View: Grid layout with hover states and clickable tiles.
-	•	Mobile App View: Vertical stacked list layout (handled via JSON/data changes).
 
-⸻
+Web View:
+
+
+Tablet & Mobile View:
+
 
 Major Functions & Behavior
-
 Core Functions:
-	•	Responsive Design: Tiles adapt in size and layout based on screen width.
-	•	Content Display: Each tile presents a category image and title.
-	•	Redirection: Clicking a tile navigates the user to the respective category page.
-	•	Custom Styling: Background style can be themed using AEM (Black, Grey, Brand).
-	•	Accessibility: Implements alt text and ADA standards for compliance.
-
-⸻
-
+Responsive Behavior: The header adjusts its layout for different screen sizes using CSS media queries.
+Interactive Elements: Dropdown menus, hover effects, and typeahead search.
+Accessibility Features: Includes ARIA attributes for dropdowns and keyboard navigation support.
 Resources & Related Files
-
 Linked Files:
-	•	category-tile.hbs
-Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.hbs
-	•	category-tile.json
-Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.json
-	•	category-tile.scss
-Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.scss
-	•	category-tile.ts
-Path: src\dgweb\ui.frontend\src\app\components\category-tile\category-tile.ts
 
-⸻
-
+File Name(s):
+header.hbs [Path: src\dgweb\ui.frontend\src\app\components\header\header.hbs]
+header.json [Path: src\dgweb\ui.frontend\src\app\components\header\header.json]
+header.scss [Path: src\dgweb\ui.frontend\src\app\components\header\header.scss]
+header.ts [Path: src\dgweb\ui.frontend\src\app\components\header\header.ts]
 Figma Link:
 
-Figma URL – Category Tiles Design
+Figma URL – Header Figma Design
+JIRA Story ID:
 
-⸻
-
-JIRA Story IDs:
-	•	[DSE-XXXXX] View Category List
-	•	[DSE-XXXXX] Click Redirect for Tiles
-	•	[DSE-XXXXX] Responsive Layout Handling
-(Replace with actual ticket IDs)
-
-⸻
-
+JIRA Story ID
+https://jira.dolgen.net/browse/DSE-14461
+https://jira.dolgen.net/browse/DSE-14007
 Additional Information
-
 Customization & Theming:
-	•	Modify the SCSS for style changes.
-	•	Update JSON configuration in AEM for dynamic content.
 
-Dependencies: N/A
+The header can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
+Dependencies:
 
-Notes:
-	•	Ensure ADA compliance as per provided ADA best practices documentation.
-	•	Stacked layout for mobile app is a separate variation and must be coordinated with the mobile team.
-	•	Only "black", "grey", and "brand" are allowed background styles.
+External libraries such as 'js-cookie' for managing cookies.
+Utility functions for API calls and event handling:
+'getSearchResults' and 'getRecentSearchData' for search-related API calls.
+'debounce' from '../../utilities/debounce' to optimize input handling in the search functionality.
+'pushEventDataOnNavLinkClick' for data layer event tracking.
+
+now I need to create the same documentation for carousel-splide 
+
+
+article-tile JIRA: 
+As an end user, I want to be able to view the article tiles variation of dynamic carousel, so that I can scroll through the article tiles in the carousel and visit article pages
+
+Business / Functional Goals:
+
+The dynamic carousel component has the below variations:
+
+Category Product carousel
+Coupons carousel
+Category tile carousel
+Article tile carousel
+Product carousel
+Note: The scope of this story is only to add article tiles variation of the dynamic carousel and the other variations of dynamic carousel would be added in other stories
+
+The Dynamic carousel component should have four layout variations:
+
+Basic - All items inside the carousel should have the same size as per figma
+Small Content - First item of the carousel will be slightly enlarged as per figma
+Large content - First item will have a larger size than small content as per figma
+Large content + text - First item will be enlarged with text as per figma
+The article tile carousel variation of the Dynamic carousel should have the ability to add the article tiles inside the carousel with the Article Image, Title and Button link
+
+This story should also scope to build the carousel interactions as per Figma - such as the interactions with the carousel buttons, steppers etc. and adding all the four variations of the dynamic carousel component
+
+AC1 | FE | Article tile carousel in different screen sizes
+
+GIVEN I am viewing article tile carousel in different sizes
+
+THEN the look and feel of the carousel should be as per Figma
+
+XXL - 
+Strokes should be visible in the title
+Carousel buttons and steppers should be visible
+The design of all the four layout variations should be as per figma
+XL - 
+Strokes should be visible in the title
+Carousel buttons and steppers should be visible
+The design of all the four layout variations should be as per figma
+L - 
+Strokes should be visible in the title
+Carousel buttons and steppers should be visible
+The design of all the four layout variations should be as per figma
+M - 
+Strokes should be visible in the title
+Carousel buttons and steppers should be visible
+The design of all the four layout variations should be as per figma
+S - 
+Strokes should disappear in the title
+Only steppers should be visible
+The design of all the four layout variations should be as per figma
+The first item (image) and second item (text) in the large content + text and the first item (image) in large content layout variation should be stacked above the article tiles
+XS - 
+Strokes should disappear in the title
+Only steppers should be visible
+The design of all the four layout variations should be as per figma
+The first item (image) and second item (text) in the large content + text and the first item (image) in large content layout variation should be stacked above the article tiles
+Additional ACs:
+
+The component should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
+
+Category-tile JIRA:
+As a content author, I want to be able to author the dynamic carousel, so that I can show dynamic content inside a carousel view
+
+Business / Functional Goals:
+
+The dynamic carousel component should consolidate all the below existing dynamic carousel:
+
+Category carousel
+Coupons carousel
+Smart carousel
+Sponsored carousel
+The dynamic carousel component should also consolidate the below item added in the Figma:
+
+Category tiles inside the carousel
+And should have the ability to include the below items inside the carousel:
+
+Category tiles
+Product tiles
+Coupon tiles
+Penny punch card
+Note: The scope of this story is only to add category tiles in the dynamic carousel and coupon tiles, product tiles, penny punch card will be added inside the dynamic carousel component in other stories
+
+The Dynamic carousel component should have four variations:
+
+Basic - All items inside the carousel should have the same size as per figma
+Small Content - First item of the carousel will be slightly enlarged as per figma
+Large content - First item will have a larger size than small content as per figma
+Large content + text - First item will be enlarged with text as per figma
+The category tile carousel variation of the Dynamic carousel should have the ability to add all types of category tiles inside the carousel 
+
+Sample from live site:
+
+
+
+This scope of this story is to add the fields to author the category tile carousel and show the front end view of the category carousel (with the products) as per Figma
+
+This story should also scope to build the carousel interactions as per Figma - such as the interactions with the carousel buttons, steppers etc. and adding all the four variations of the dynamic carousel component
+
+Please note: The category tiles are added as images in the live site but with the approach to consolidate product tiles, coupon tiles in the dynamic carousel component, one variation will be added to add category tiles as well inside the dynamic carousel component
+
+Acceptance Criteria:
+
+As a Developer, I should be able to:
+1. Develop a “Dynamic carousel” Component in AEM, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
+2. Develop the Component in a way that it should display Marketing Content, as described in functional goals
+
+As an End User/ Customer, I should be able to see the 
+
+Note: 
+
+The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
+Dynamic carousel should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
+AC1 | FE | View of the Category tile Carousel in dynamic carousel
+
+GIVEN I am an end user in DG
+
+WHEN I am viewing the category tile carousel type of Dynamic carousel
+
+THEN the view of the carousel should be as per figma with the coupons
+
+AND the parent category root page path or the category links should fetch the category image, title and show in the category tile view as per Figma
+
+AND I should be able to get redirected to the category page upon clicking on the category tiles
+
+AND the title of the carousel should have light strokes as per Figma
+
+AND the View All link should appear at the right end corner of the title as per Figma
+
+AND the view all button should redirect the user to the link as authored in the component
+
+AND the strokes in the title should disappear in the S & XS screen size
+
+AND I am able to scroll the carousel with touch and the Carousel buttons at both ends
+
+AND the maximum number of items that I should see when the carousel loads should be 6 irrespective of the number of items from the category
+
+AND the carousel buttons should always be visible (be it disabled or enabled)
+
+AND the Carousel buttons should be disabled (grey in color) or enabled (blue in color) based on the number of items on each side (As per Figma)
+
+AND when I reach the end the arrow should become disabled
+
+AND Steppers should be visible with grey as an inactive stepper and black as an active stepper (As per Figma) with 2 products per stepper logic
+
+AND other carousel behaviors such as focused item view, hover state, transit time, scrolling behavior etc. is AS IS the live website
+
+AC2 | FE | Variations in Dynamic carousel
+
+GIVEN I am viewing the coupon carousel type of Dynamic carousel
+
+WHEN I view the carousels of different variations
+
+THEN the look & feel of the variations should be AS PER FIGMA
+
+Basic
+All the category tiles inside the carousel should be of the same size
+The Only items with 6 count, 5 count, 4 count, 3 count and 2 count should be as per Figma for all the screen sizes
+The product tiles at the end should be half visible when there is not enough screen space as per the below sample
+
+Small Content
+The first item should be an image whose size should be bigger than the product tiles and then product tiles should follow with small and equal sizes as per figma
+All other interactions should stay the same
+
+Large Content
+The first item should be an image whose size should be bigger than the product tiles and the small content variation and then product tiles should follow with small and equal sizes as per figma
+All other interactions should stay the same
+
+Large Content + text
+The first item should be an image and text whose size should be bigger than the product tiles and the small content variation and then product tiles should follow with small and equal sizes as per figma
+All other interactions should stay the same
+
+JSON of carousel-splide:
+{
+  "carouselLists": [
+    {
+      "heading": "Category Carousel",
+      "href": "#",
+      "linkText": "See More",
+      "isSmallImage": false,
+      "isLargeImage": false,
+      "isLargeImageWithText": false,
+      "ImageSmall": "https://www.dummyimage.com/400x400/000/fff.jpg&text=1:1+image",
+      "ImageLarge": "https://www.dummyimage.com/1080x1350/000/fff&text=5:4+or+4:5",
+      "ImageText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ",
+      "categoryTilesCarousel": false,
+      "articleListCarousel": true,
+      "id":"carousel1",
+      "categories": [
+        {
+          "imageSrc": "./clientlib-site/resources/logos/dg-sub-brand-logo-1.svg",
+          "alt": "image 1",
+          "title": "Sample Title 1",
+          "categoryLink": "#",
+          "bgColor": "category-carousel-tile__bg__blackColor"
+        },
+        {
+          "imageSrc": "./clientlib-site/resources/logos/dg-sub-brand-logo-1.svg",
+          "alt": " image 2",
+          "title": "Sample Title 2",
+          "categoryLink": "#",
+          "bgColor": "category-carousel-tile__bg__grayColor"
+        },
+	    ],
+	    "articleList": [
+        {
+          "imageSrc": "./clientlib-site/resources/images/banner.png",
+          "alt": "DIY Chalkboard Tray",
+          "title": "DIY Chalkboard Tray",
+          "buttonTitle": "Try It Yourself",
+          "bgColor": "article-list-carousel__item__content__blackColor"
+        },
+        {
+          "imageSrc": "./clientlib-site/resources/images/banner.png",
+          "alt": "DIY Macrame Keychain",
+          "title": "DIY Macrame Keychain",
+          "buttonTitle": "Try It Yourself",
+          "bgColor": "article-list-carousel__item__content__blackColor"
+        }, ]
+	}
+}
+carousel-splide.hbs:
+{{#each carouselLists}}<div class="dynamic-carousel__container">
+  {{! Heading }}
+  <div class="dynamic-carousel__header">
+    <h2 class="dynamic-carousel__header__heading">{{this.heading}}</h2>
+    <a class="dynamic-carousel__header__showMore" href="{{this.href}}">{{this.linkText}}</a>
+  </div>
+  {{! Mobile View }}
+  <div class="mobile-wrapper">
+    {{#if this.isLargeImageWithText}}
+    <div class="carousel-image-mobile-largeText">
+      <img src="{{this.ImageLarge}}" alt="{{this.alt}}" />
+      <div class="carousel-image__text">{{this.ImageText}}</div>
+    </div>
+    {{/if}}
+    {{#if this.isLargeImage}}
+    <div class="carousel-image-mobile-large">
+      <img src="{{this.ImageLarge}}" alt="{{this.alt}}" />
+    </div>
+    {{/if}}
+  </div>
+  <div class="splide_container">
+    <div data-target-static-id="{{this.id}}" class="splide splide_static" data-category-tiles="{{this.categoryTilesCarousel}}" data-article-list-carousel="{{this.articleListCarousel}}">
+      <div class="splide__track">
+        <ul class="splide__list {{#if this.isSmallImage}}small-content{{/if}} {{#if this.isLargeImage}}large-content{{/if}} {{#if this.isLargeImageWithText}}large-content-text{{/if}}">
+          {{!-- Variation 1: Small Image at Start --}}
+          {{#if this.isSmallImage}}
+          <li class="splide__slide small-content-container">
+            <div class="carousel-image carousel-image--small">
+              <img src="{{this.ImageSmall}}" alt="{{this.alt}}" />
+            </div>
+          </li>
+          {{/if}}
+
+          {{!-- Variation 2: Large Image at Start --}}
+          {{#if this.isLargeImage}}
+          <li class="splide__slide desktop_slide_only">
+            <div class="carousel-image carousel-image--large carousel-image-desktop">
+              <img src="{{this.ImageLarge}}" alt="{{this.alt}}"/>
+            </div>
+          </li>
+          {{/if}}
+
+          {{!-- Variation 3: Large Image with Text at Start --}}
+          {{#if this.isLargeImageWithText}}
+          <li class="splide__slide desktop_slide_only">
+            <div class="carousel-image carousel-image--large-text carousel-image-desktop">
+              <img src="{{this.ImageLarge}}" alt="{{this.alt}}" />
+              <div class="carousel-image__text">{{this.ImageText}}</div>
+            </div>
+          </li>
+          {{/if}}
+          {{!--Default basic variation--}}
+          {{#if this.categoryTilesCarousel}}
+          {{>category-tile-carousel}}
+          {{/if}}
+          {{#if this.articleListCarousel}}
+          {{>article-list-carousel}}
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{{/each}}
+
+so here what is happening is that we have a dynamic carousel and inside that we have 2 static components names category tile carousel and article list carousel and both these components are called in carousel splide component. please write the documentation for this. 
