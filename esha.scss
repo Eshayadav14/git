@@ -1,408 +1,243 @@
-editForm.tsx:
+ARTICLE LIST:
+Overview
+Component Name: Article List
+Description: The article list component displays a collection of articles, each with an image, title, and button-text. If the image fails to load, an alt text will be shown to ensure accessibility and provide context to the user. The button text is customizable, and clicking on the button redirects the user to the article page in the same tab.
+Nature of the Component: Static Component
+How the Component Works
+Functionality:
+The Article List component displays articles with an image, title, and button text.
+Shows alt text if the image fails to load, ensuring accessibility.
+It adjusts its layout and behavior based on the screen size to ensure responsiveness.
+Major Elements:
+Image: Visual representation of the article.
+Title: The headline or name of the article.
+Button Text: Customizable call-to-action text displayed on the button.
+Alt Text: Descriptive text shown if the image fails to load.
+Button: Clickable element that redirects to the article page.
+Integration Requirements with AEM (If Applicable)
+Integration Prerequisites:
+JSON data needs to be passed from AEM side.
+Integration Process:
+The following data needs to be passed from AEM to the Article List component
+‘article-list-bg-color’: Contains the Color, in authoring we can only add white or black color.
+‘articleList’: Contains the image URLs, alt text, title and button title.
+Map the JSON data from AEM to the corresponding fields in the Article List component.
+Data Configuration:
+Mapping Data:
+API Integration & Endpoints
+APIs Used: NA
+Component Variations & Visual References
+Variation Details:
+NA
+Visual Representations:
+Web View:
+Tablet & Mobile View:
+Major Functions & Behavior:
+Core Functions:
+Responsive Behavior: The article adjusts its layout for different screen sizes using CSS media queries.
+Content Display: Presents articles with their respective images, titles, and customizable call-to-action buttons.
+Fallback Mechanism: Ensures alt text is displayed when images fail to load, maintaining accessibility and user context.
+Redirection: Redirects the user to the article page in the same tab when the button is clicked, enhancing user navigation and experience.
+Resources & Related Files:
+Linked Files:
+article-list.hbs [Path: src\dgweb\ui.frontend\src\app\components\ article-list\ article-list.hbs]
+article-list.json [Path: src\dgweb\ui.frontend\src\app\components\ article-list\ article-list.json]
+article-list.scss [Path: src\dgweb\ui.frontend\src\app\components\ article-list \ article-list.scss]
+File Name(s):
+Figma Link:
+Figma URL – Article Tile Figma Design
+JIRA Story ID:
+JIRA Story ID
+https://jira.dolgen.net/browse/DSE-14498
+https://jira.dolgen.net/browse/DSE-14200
+https://jira.dolgen.net/browse/DSE-14364
+Additional Information
+Customization & Theming:
+The article-list can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
+Dependencies: NA
+Note:
+In the Article-list component, we can author the article-list-bg-color only to white or black, not any other colors.
+In the Article-list component, when we author the article-list-bg-color to white, the content background color will be white, and the text inside the content will turn black.
+In the Article-list component, when we author the article-list-bg-color to black, the content background color will be black, and the text inside the content will turn white.
 
-import React, { useState, useEffect } from "react";
-import {
-  byAttrVal,
-  createCustomElement,
-  DOMModel,
-  // @ts-ignore
-} from "@adobe/react-webcomponent";
-import "./index.scss";
-import AddressForm from "../addressForm";
-import DeleteAddressModalComponent from "../deleteAddressModal";
-import { Address } from "../myAddressesProps";
+HEADER: 
+Overview
+Component Name: Header
+Description: The Header component serves as the primary navigation and branding element for the application. It includes features such as a logo, navigation menu, search functionality, and user interaction buttons.
+Nature of the Component: Static Component
+How the Component Works
+Functionality:
 
+The Header component integrates with the frontend architecture to provide navigation, search, and user account-related functionalities.
+It adjusts its layout and behavior based on the screen size to ensure responsiveness.
+Major Elements:
 
-interface addressTexts {
-  deleteAddressText?: string;
-  deleteAddressConfirmButtonText?: string;
-  deleteAddressCancelButtonText?: string;
-}
+Logo/Branding: The logo is placed on the left side of the header and is clickable, redirecting users to the homepage. It supports both desktop and mobile versions.
+Navigation Menu: Includes dropdowns for categories and standalone links for other sections. Dropdowns are interactive and expand on click.
+Search Bar: Integrated with typeahead suggestions and recent searches. It allows users to search for products.
+User/Action Icons: Includes profile, sign in, and create account for user interaction.
+Integration Requirements with AEM (If Applicable)
+Integration Prerequisites:
 
-interface EditFormProps {
-  myaddressdata?: string;
-  address?: Address;
-  onBackClick: () => void;
-  onSaveClick: (address: Address) => void;
-  onDeleteClick: () => void;
-  hideDeleteButton?: boolean;
-  editFormNavSource?: string
-}
+JSON data needs to be passed from AEM side.
+Integration Process:
 
-class EditFormModel extends DOMModel {
-  @byAttrVal myaddressdata?: string;
-}
+Data Configuration:
+The following data needs to be passed from AEM to the Header component:
+'headerData.logo': Contains the desktop and mobile logo URLs, alt text, and the homepage link.
+'headerData.categories': Includes the list of categories with their names and links.
+'headerData.menuLabel': Label for the menu button.
+'headerData.signOutLabel': Label for the sign-out button.
+'headerData.signInLabel': Label for the sign-in button.
+'headerData.searchLabel': Placeholder text for the search bar.
+'headerData.noProductsText': Text to display when no products are found.
+'headerData.wallet': Label for the wallet section.
+Mapping Data:
+Map the JSON data from AEM to the corresponding fields in the Header component.
+API Integration & Endpoints
+APIs Used:
+Endpoint 1: Search Results API
+URL:
+For logged In user: /search/shoppinglist/typeahead
+For Guest user: /search/shoppinglist/typeahead/provider
+Purpose: This API is used to fetch search results based on the users input in the search bar. It supports the typeahead functionality by providing suggestions as the user types.
+Endpoint 2: Recent Searches API
+URL: /shoppinglist/recent
+Purpose: This API retrieves the users recent search terms to display them in the typeahead suggestions under the "Recently Searched" section.
+Component Variations & Visual References
+Variation Details:
 
-const EditForm: React.FC<EditFormProps> = (props) => {
-  const {setAsDefault, defaultAddress, deleteButton, myAddress} = window.DG?.aemData?.labels?.myAddress || {};
+NA
+Visual Representations:
 
-  const { onBackClick, onSaveClick, onDeleteClick, address, hideDeleteButton, editFormNavSource } =
-    props;
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [IsDefaultShippingAddress, setIsDefault] = useState(
-    address?.IsDefaultShippingAddress || false
-  );
-  const [isTouched, setIsTouched] = useState(false);
-  const [updatebutton, setUpdatebutton] = useState(false);
-
-  const handleDeleteAddress = () => {
-    setIsDeleteModalVisible(false);
-    onDeleteClick();
-  };
-
-  const handleSaveClick = (updatedAddress: Address) => {
-    const changedAddress = {
-      DeliveryInstructions: updatedAddress.IsDefaultShippingAddress,
-      ShippingAddressLine1: updatedAddress.ShippingAddressLine1,
-      ShippingAddressLine2: updatedAddress?.ShippingAddressLine2 || "",
-      ShippingCity: updatedAddress.ShippingCity,
-      ShippingCountry: updatedAddress?.ShippingCountry || "US",
-      ShippingFirstName: updatedAddress?.ShippingFirstName,
-      ShippingLastName: updatedAddress?.ShippingLastName || "",
-      ShippingState: updatedAddress.ShippingState,
-      ShippingZip: updatedAddress?.ShippingZip,
-    };
-    onSaveClick({ ...changedAddress, IsDefaultShippingAddress });
-  };
-
-  return (
-    <div className="my-address-edit-form">
-      {/* Back Button */}
-      <div 
-        onClick={onBackClick}
-        className="my-address-edit-form__back-div"
-        role="button"
-        tabIndex={0}
-        >
-        <span className="my-address-edit-form__back-button global-icon arrow-left"></span>
-        <span className="my-address-edit-form__back">{"Back"}</span>
-      </div>
-      {address?.IsDefaultShippingAddress ? (
-        <h2 className="my-address-edit-form__title">{"defaultAddress"}</h2>
-      ) : (
-        <div className="my-address-edit-form__default-checkbox">
-          <input
-            type="checkbox"
-            checked={IsDefaultShippingAddress}
-            onChange={() => {
-              setIsDefault(!IsDefaultShippingAddress)
-              setIsTouched(true);
-              if(!updatebutton && editFormNavSource === "edit"){
-                setUpdatebutton(true);
-                console.log(setUpdatebutton, "esha");
-              }
-            }}
-            
-          />
-          <span className="my-address-edit-form__default">
-            {"setAsDefault"}
-          </span>
-        </div>
-      )}
-      {/* AddressForm Component */}
-      <AddressForm
-        onSubmit={(updatedAddress) =>
-          handleSaveClick({ ...address, ...updatedAddress })
-        }
-        selectedAddress={address}
-        editFormNavSource={editFormNavSource}
-        isCheckboxTouched={isTouched}
-      />
-
-      {!hideDeleteButton && (
-        <button
-          className="my-address-edit-form__delete-button"
-          type="button"
-          onClick={() => setIsDeleteModalVisible(true)}
-        >
-          {"delete"}
-        </button>
-      )}
-      {isDeleteModalVisible && (
-        <DeleteAddressModalComponent
-          onClose={() => setIsDeleteModalVisible(false)}
-          onCustomButtonClick={handleDeleteAddress}
-        />
-      )}
-    </div>
-  );
-};
-
-export default EditForm;
-
-const CustomEditForm = createCustomElement(EditForm, EditFormModel, "element");
-
-customElements.define("custom-edit-form", CustomEditForm);
-
-addressForm:
-
-class AddressFormModel extends DOMModel {}
-
-const AddressForm: React.FC<AddressFormProps> = (props) => {
-  const {
-    onSubmit,
-    yellowButton,
-    buttonText,
-    customClass,
-    isshippingcart,
-    selectedAddress,
-    editFormNavSource,
-    deliverycheckoutReplaceAddress,
-    checkoutShipping,
-    isCheckboxTouched,
-    isCheckboxUpdatebutton,
-  } = props;
-  const myAddress = window.DG?.aemData?.labels?.myAddress || {};
-
-  const [isTouched, setIsTouched] = useState(false);
-
-  const [user, setUser] = useState(false);
-  const [updatebutton,setUpdatebutton] = useState(false);
-
-  useEffect(() => {
-    setUser(storeData.checkout.user);
-  }, [storeData.checkout.user]);
-
-  useEffect(() => {
-    if (editFormNavSource) {
-      setShippingFirstName(
-        selectedAddress?.ShippingFirstName || gigyaAccountData?.gigyaProfile?.profile?.firstName || ""
-      );
-      setShippingLastName(
-        selectedAddress?.ShippingLastName || gigyaAccountData?.gigyaProfile?.profile?.lastName || ""
-      );
-    }
-    if (editFormNavSource === "edit") {
-      setShippingAddressLine1(
-        selectedAddress?.ShippingAddressLine1
-          ? selectedAddress.ShippingAddressLine1
-          : ""
-      );
-      setShippingAddressLine2(
-        selectedAddress?.ShippingAddressLine2
-          ? selectedAddress.ShippingAddressLine2
-          : ""
-      );
-      setShippingZip(
-        selectedAddress?.ShippingZip ? selectedAddress.ShippingZip : ""
-      );
-      setShippingCity(
-        selectedAddress?.ShippingCity ? selectedAddress.ShippingCity : ""
-      );
-      setShippingState(
-        selectedAddress?.ShippingState ? selectedAddress.ShippingState : ""
-      );
-      setIsDefaultShippingAddress(
-        selectedAddress?.IsDefaultShippingAddress
-          ? selectedAddress.IsDefaultShippingAddress
-          : false
-      );
-    }
-  }, [gigyaAccountData, editFormNavSource]);
-
-  useEffect(() => {
-    if (editFormNavSource === "edit") {
-      setUpdatebutton(false);
-    } else {
-      setUpdatebutton(false);
-    }
-  },[editFormNavSource]);
-
-  useEffect(() => {
-    // Check if any error state is not empty
-    if (
-      ShippingFirstNameError ||
-      ShippingLastNameError ||
-      ShippingAddressLine1Error ||
-      ShippingaddressLine2Error ||
-      ShippingZipError ||
-      ShippingCityError ||
-      ShippingFirstName === "" ||
-      ShippingLastName === "" ||
-      ShippingAddressLine1 === "" ||
-      ShippingZip === "" ||
-      ShippingCity === "" ||
-      ShippingState === ""
-    ) {
-      SetFormerror(true);
-    } else {
-      SetFormerror(false);
-    }
-  }, [
-    ShippingFirstNameError,
-    ShippingLastNameError,
-    ShippingAddressLine1Error,
-    ShippingaddressLine2Error,
-    ShippingZipError,
-    ShippingCityError,
-    ShippingFirstName,
-    ShippingLastName,
-    ShippingAddressLine1,
-    ShippingAddressLine2,
-    ShippingZip,
-    ShippingCity,
-    ShippingState,
-  ]);
-
-  useEffect(() => {
-    dispatch(updateformenablebutton(formerror));
-  }, [formerror]);
-
-  useEffect(() => {
-    const result = storeData.checkout.executehandlesubmit;
-    setExecuteguestsubmit(result);
-  }, [storeData.checkout.executehandlesubmit]);
-
-  // Validate fields on change
-  const handleShippingFirstNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingFirstName(e.target.value);
-    setIsTouched(true);
-    setShippingFirstNameError(
-      e.target.value.length <= 1
-        ? yellowButton || isshippingcart
-          ? myAddress?.firstNameRequired
-          : myAddress?.invalidFirstName
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingLastNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingLastName(e.target.value);
-    setIsTouched(true);
-    setShippingLastNameError(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.LastNameRequired
-          : myAddress?.invalidLastName
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingAddressLine1Change = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingAddressLine1(e.target.value);
-    setIsTouched(true);
-
-    if (poBoxRegex.test(e.target.value)) {
-      setShippingAddressLine1Error(
-        myAddress?.poBoxInvalidAddress ||
-          ADDRESS_FORM_LABELS.WHERE_TO_MODAL_TEXT.PO_BOX_TEXT
-      );
-    } else {
-      setShippingAddressLine1Error(
-        e.target.value.length <= 1
-          ? yellowButton || isshippingcart
-            ? myAddress?.address1Required
-            : myAddress?.invalidAddress1
-          : ""
-      );
-    }
-    if (!updatebutton && editFormNavSource === "edit") {
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingAddressLine2Change = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShippingAddressLine2(e.target.value);
-    setIsTouched(true);
-    setShippingAddressLine2Error(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.Address2Required
-          : myAddress?.invalidAddress2
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setShippingZip(e.target.value);
-    setIsTouched(true);
-    if (!zipPattern.test(value)) {
-      setShippingZipError(
-        yellowButton ||  isshippingcart
-          ? myAddress?.zipCodeRequired
-          : myAddress?.invalidZipCode
-      );
-    } else {
-      setShippingZipError("");
-    }
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShippingCity(e.target.value);
-    setIsTouched(true);
-    setShippingCityError(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.cityRequired
-          : myAddress?.invalidCity
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  const handleShippingStateChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setShippingState(e.target.value);
-    setIsTouched(true);
-    setShippingStateError(
-      e.target.value.length <= 1
-        ? yellowButton ||  isshippingcart
-          ? myAddress?.stateRequired
-          : myAddress?.invalidState
-        : ""
-    );
-    if(!updatebutton && editFormNavSource === "edit"){
-      setUpdatebutton(true);
-    }
-  };
-
-  return (
-    
-
-        <button
-          type="submit"
-          className={classNames("my-address-form__submit-btn", {
-            "yellow-button": yellowButton && !formerror,
-            "gray-button": formerror || (!isTouched && !isCheckboxTouched && !isCheckboxUpdatebutton),
-            "d-none": !storeData.checkout.user && isshippingcart,
-          })}
-          onClick={(e) => validateForm(e)}
-        >
-          {editFormNavSource === "save" || !updatebutton ? "save" : "update address"}
-        </button>
-      </form>
-    </div>
-  );
-};
-
-export default AddressForm;
+Web View:
 
 
-so here what needs to be done is that on click of checkbox button, the text on button should come up as "update address", right now it is coming as "save"
+Tablet & Mobile View:
 
 
+Major Functions & Behavior
+Core Functions:
+Responsive Behavior: The header adjusts its layout for different screen sizes using CSS media queries.
+Interactive Elements: Dropdown menus, hover effects, and typeahead search.
+Accessibility Features: Includes ARIA attributes for dropdowns and keyboard navigation support.
+Resources & Related Files
+Linked Files:
 
+File Name(s):
+header.hbs [Path: src\dgweb\ui.frontend\src\app\components\header\header.hbs]
+header.json [Path: src\dgweb\ui.frontend\src\app\components\header\header.json]
+header.scss [Path: src\dgweb\ui.frontend\src\app\components\header\header.scss]
+header.ts [Path: src\dgweb\ui.frontend\src\app\components\header\header.ts]
+Figma Link:
+
+Figma URL – Header Figma Design
+JIRA Story ID:
+
+JIRA Story ID
+https://jira.dolgen.net/browse/DSE-14461
+https://jira.dolgen.net/browse/DSE-14007
+Additional Information
+Customization & Theming:
+
+The header can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
+Dependencies:
+
+External libraries such as 'js-cookie' for managing cookies.
+Utility functions for API calls and event handling:
+'getSearchResults' and 'getRecentSearchData' for search-related API calls.
+'debounce' from '../../utilities/debounce' to optimize input handling in the search functionality.
+'pushEventDataOnNavLinkClick' for data layer event tracking.
+
+Same way I need to create for Catogory-tiles: 
+here's the Jira description for component:
+As an end user, I want to be able to view categories in dollar general, so that I can know more about the categories and the products from the categories
+
+Business / Functional Goals:
+
+The categories should be visible in tiles view and should consists of below elements
+
+Category Image
+Category Title
+Note: The category tiles in carousel view will be covered with the development of dynamic carousels but this story should cover the list view of category tiles with the "see all categories" link
+
+The category tiles should be shown in a vertical list view in the APP but in the grid view in Web
+
+Category tiles have three different sizes 
+
+Small
+Medium
+Large
+AND different screen sizes show different sizes of category tiles (Please refer to Figma)
+
+Acceptance Criteria: 
+As an End User/ Customer, I should be able to see the “Category list” Component Contents as described below
+
+Note: 
+
+The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
+Category list should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
+AC1 | FE | View of the categories 
+
+GIVEN I am an end user on DG.COM
+
+WHEN I view a category list component
+
+THEN the categories appear in grid tile view with category image and title for each category
+
+AND the UI of the grid view of category tiles is as per Figma
+
+Note: JSON changes required to show the category tiles in a vertical stacked view to be checked with the Mobile APP team
+
+AC2 | FE | Click on the category tiles
+
+GIVEN I am an end user viewing the category tiles component
+
+WHEN I click on any category tile from the grid
+
+THEN I should be redirected to the category page of the same category in the same tab
+
+AC3 | FE | View of category tiles in different screen sizes
+
+GIVEN I am an end user using devices of different screen sizes
+
+WHEN I am viewing the category tile list in homepage
+
+THEN the view of the category list is as per Figma in different screen sizes
+
+XXL -
+6 categories should be fit per line, then wrapped and aligned to the left
+XXL should use large variant of category tile
+XL - 
+6 categories should be fit per line, then wrapped and aligned to the left
+XL should use large variant of category tile
+L - 
+6 categories should be fit per line, then wrapped and aligned to the left
+L should use large variant of category tile
+M- 
+6 categories should be fit per line, then wrapped and aligned to the left
+XXL should use Medium variant of category tile
+S - 
+4 categories should be fit per line, then wrapped and aligned to the left
+S should use Large variant of category tile
+XS (575 & 375) - 
+3 categories should be fit per line, then wrapped and aligned to the left
+XS should use Small variant of category tile{}
+AC4 | FE | View of styles in the category list component
+
+GIVEN I am viewing category list component
+
+WHEN the component is authored using the below styles
+
+Black
+Grey
+Brand
+THEN the background color of the tiles is as per the style selection
+
+Important note:
+
+Pls analyze the existing code of the category tiles component before starting with the dev of this story
+ADA Doc is attached in the attachments
+Figma link: https://www.figma.com/design/1qErIuhNxxqSEbPG03AKl2/%F0%9F%9A%80-AEM-Delivery---Cumberland?node-id=1996-49526&m=dev
+
+write me the documenation same way for cateogry-tile too
