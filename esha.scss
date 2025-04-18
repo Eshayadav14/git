@@ -1,334 +1,165 @@
 Overview
-Component Name: Header
-Description: The Header component serves as the primary navigation and branding element for the application. It includes features such as a logo, navigation menu, search functionality, and user interaction buttons.
+
+Component Name: Coupon Preview
+Description:
+The coupon-preview component is designed to showcase promotional coupon tiles with pricing, product images, and potential savings. It supports two distinct visual variations to accommodate different marketing styles.
+
 Nature of the Component: Static Component
+
+⸻
+
 How the Component Works
+
 Functionality:
+	•	Renders multiple coupon tiles based on JSON data.
+	•	Supports two variations:
+	1.	With Save Amount (below image)
+	2.	Without Save Amount (displays quantity instead)
+	•	Coupon tiles link to external or internal URLs, with optional “open in new tab” behavior.
+	•	ADA compliant and responsive across all screen sizes.
 
-The Header component integrates with the frontend architecture to provide navigation, search, and user account-related functionalities.
-It adjusts its layout and behavior based on the screen size to ensure responsiveness.
+⸻
+
 Major Elements:
+	•	Price Display:
+Variation 1 uses Saveprice; variation 2 uses price with quantity and “for” text.
+	•	Image and Alt Text:
+Displays a product image along with alt text for accessibility.
+	•	Save Amount:
+Variation 1 displays a text like “Save 50¢” below the image.
+	•	Quantity (Variation 2 only):
+Indicates the quantity and pricing (e.g., “3 for $7”).
+	•	Clickable Tile:
+Entire tile is wrapped in a link, supporting target="_blank" behavior.
+	•	Grey Background Header:
+Top half of each coupon tile includes a grey-colored background as per FIGMA specs.
+	•	Tracking Attributes:
+AEM analytics tracking data attributes are included in the tile container.
 
-Logo/Branding: The logo is placed on the left side of the header and is clickable, redirecting users to the homepage. It supports both desktop and mobile versions.
-Navigation Menu: Includes dropdowns for categories and standalone links for other sections. Dropdowns are interactive and expand on click.
-Search Bar: Integrated with typeahead suggestions and recent searches. It allows users to search for products.
-User/Action Icons: Includes profile, sign in, and create account for user interaction.
-Integration Requirements with AEM (If Applicable)
+⸻
+
+Integration Requirements with AEM
+
 Integration Prerequisites:
+	•	JSON content authored in AEM must be exposed to the UI layer.
+	•	Component variations and text fields configured through AEM dialog.
 
-JSON data needs to be passed from AEM side.
+⸻
+
 Integration Process:
 
 Data Configuration:
-The following data needs to be passed from AEM to the Header component:
-'headerData.logo': Contains the desktop and mobile logo URLs, alt text, and the homepage link.
-'headerData.categories': Includes the list of categories with their names and links.
-'headerData.menuLabel': Label for the menu button.
-'headerData.signOutLabel': Label for the sign-out button.
-'headerData.signInLabel': Label for the sign-in button.
-'headerData.searchLabel': Placeholder text for the search bar.
-'headerData.noProductsText': Text to display when no products are found.
-'headerData.wallet': Label for the wallet section.
+
+The following fields should be passed from AEM to the coupon-preview component:
+
+JSON Field
+Description
+coupons[].price
+Dollar value displayed above the image (for variation without save amount).
+coupons[].quantity
+Quantity used with “for” text (e.g., 3 for $7). Used in variation 2.
+coupons[].Saveprice
+Price value displayed for variation 1 (with save amount).
+coupons[].saveAmount
+Alphanumeric string displayed below image (e.g., “Save 50¢”).
+coupons[].image
+URL to the product/coupon image.
+coupons[].altText
+Descriptive alt text for the image.
+coupons[].variation
+Either with-save-amount or without-save-amount. Used for conditional rendering.
+coupons[].link
+URL to navigate on click.
+coupons[].openInNewTab
+Boolean to decide whether to open the link in a new tab (optional).
+
+
 Mapping Data:
-Map the JSON data from AEM to the corresponding fields in the Header component.
+
+Map the JSON structure from AEM directly into the coupon-preview component’s coupons array and render dynamically using Handlebars.
+
+⸻
+
 API Integration & Endpoints
-APIs Used:
-Endpoint 1: Search Results API
-URL:
-For logged In user: /search/shoppinglist/typeahead
-For Guest user: /search/shoppinglist/typeahead/provider
-Purpose: This API is used to fetch search results based on the users input in the search bar. It supports the typeahead functionality by providing suggestions as the user types.
-Endpoint 2: Recent Searches API
-URL: /shoppinglist/recent
-Purpose: This API retrieves the users recent search terms to display them in the typeahead suggestions under the "Recently Searched" section.
+
+N/A – This is a static content component and does not rely on external APIs for rendering.
+
+⸻
+
 Component Variations & Visual References
+
 Variation Details:
+	•	With Save Amount
+	•	Displays Saveprice above image
+	•	Displays saveAmount below image
+	•	Slightly increased bottom spacing to accommodate text
+	•	Font size differs per FIGMA
+	•	Without Save Amount
+	•	Displays quantity, “for”, and price stacked above the image
+	•	No saveAmount shown
+	•	Slightly reduced margin under image
+	•	Font style differs per FIGMA
 
-NA
 Visual Representations:
+	•	Web View: As per FIGMA
+	•	Tablet & Mobile View: Responsive behavior per FIGMA
 
-Web View:
-
-
-Tablet & Mobile View:
-
+⸻
 
 Major Functions & Behavior
+
 Core Functions:
-Responsive Behavior: The header adjusts its layout for different screen sizes using CSS media queries.
-Interactive Elements: Dropdown menus, hover effects, and typeahead search.
-Accessibility Features: Includes ARIA attributes for dropdowns and keyboard navigation support.
+	•	Responsive tile layout using Bootstrap grid (col-6 col-md-3 col-sm-4)
+	•	Variation-specific rendering using this.variation
+	•	Grey header background (SVG and CSS)
+	•	Fully clickable tiles
+	•	Supports analytics tracking via custom data attributes
+
+Accessibility Features:
+	•	Descriptive alt text
+	•	ARIA-compliant clickable tiles
+	•	Keyboard navigation support (inherited)
+
+⸻
+
 Resources & Related Files
+
 Linked Files:
+	•	coupon-preview.hbs
+Path: src\dgweb\ui.frontend\src\app\components\coupon-preview\coupon-preview.hbs
+	•	coupon-preview.json
+Path: src\dgweb\ui.frontend\src\app\components\coupon-preview\coupon-preview.json
+	•	coupon-preview.ts
+Path: src\dgweb\ui.frontend\src\app\components\coupon-preview\coupon-preview.ts
+	•	coupon-preview.scss
+(Assumed path): Styles specific to this component
 
-File Name(s):
-header.hbs [Path: src\dgweb\ui.frontend\src\app\components\header\header.hbs]
-header.json [Path: src\dgweb\ui.frontend\src\app\components\header\header.json]
-header.scss [Path: src\dgweb\ui.frontend\src\app\components\header\header.scss]
-header.ts [Path: src\dgweb\ui.frontend\src\app\components\header\header.ts]
 Figma Link:
+Refer to project’s shared Figma folder (Coupon Preview section)
 
-Figma URL – Header Figma Design
-JIRA Story ID:
+⸻
 
 JIRA Story ID
-https://jira.dolgen.net/browse/DSE-14461
-https://jira.dolgen.net/browse/DSE-14007
+	•	DSE-XXXXX - AEM Coupon Preview Development
+	•	DSE-XXXXX - FE Integration & Styling
+
+⸻
+
 Additional Information
+
 Customization & Theming:
+	•	Style variations controlled through AEM dialog (not style icon).
+	•	Font sizes, spacing, and colors follow Figma specs.
+	•	Add configurable margins (0, 8, 16) using class names margin-{top|bottom|left|right}-{value}.
 
-The header can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
 Dependencies:
+	•	pushEventOnComponentClicked() from apolloDataLayerUtil.ts for analytics.
+	•	CAROUSEL_TYPE.IMAGE for tracking events if part of carousel.
 
-External libraries such as 'js-cookie' for managing cookies.
-Utility functions for API calls and event handling:
-'getSearchResults' and 'getRecentSearchData' for search-related API calls.
-'debounce' from '../../utilities/debounce' to optimize input handling in the search functionality.
-'pushEventDataOnNavLinkClick' for data layer event tracking.
-
-I need to create the similar documentation for coupon-preview component now.
-
-coupon preview Jira: 
-As a content author, I want to be able to author the coupon preview, so that I can preview the details and benefits of coupons to make informed decisions.
-
-Business / Functional Goals:
-
-Author should be able to configure the Coupon Preview component in AEM. The coupon preview component should be a custom component with price, product image
-
-About the Coupon Preview Component:
-
-The coupon preview component has 2 variations:
-
-Variation 1: With the Save Amount below the coupon image
-Variation 2: Without the Save Amount below the coupon image
-Both the variations have a coupon image and price in dollar value above the image
-
-Variation 2 has the specific quantity number that the user can buy from the dollar amount.
-
-Both the variations have a background grey color that covers top half of the coupon preview component as shown in FIGMA.
-
-In variation 1, the spacing between the image and lower margin is slightly more in comparison to variation 2 to accommodate the save amount number as per FIGMA.
-
-The font size of price and save amount for both the variations are different as per FIGMA.
-
-Please Note:
-
-There are now four text fields: two for the price value of each variation, one for the quantity, and the final one for the amount saved beneath the image. The style variation will be introduced in a dialog box, where the author will have the option to select any variant—by default, none is selected. It does not originate from the style icon.
-The only fields that would be necessary are the image and the Alt text.
-The only fields that would be common are the image, alttext, link, and open in new tab.
-The "Save 50¢" will appear from the text field dialog box. Furthermore, the $ and for value are currently hardcoded.
-Acceptance Criteria:
-
-As a Developer, I should be able to:
-1. Develop a “Coupon Preview” Component in AEM, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
-2. Develop the Component in a way that it should display Marketing Content, as described in functional goals.
-
-As a Content Author, I should be able to:
-
-AC1 | AEM | Add the Coupon Preview component
-
-GIVEN I am a content author in DG.COM
-
-WHEN I add a coupon preview component
-
-THEN I should be able to configure the following fields
-
-Field Name	Field Type	Details/Business Requirements
-Text Field 1	Text Box	Content author should have the ability to add the amount in dollar.
-Image - Mandatory	Image with image picker	The content authors should have ability to add the image from the asset library or drag or drop the image
-Image Alt Text - Mandatory	Text Box	Content author should be able to add the alt text for the image
-Text Field 2	Text Box	Content author should have the ability to add the amount that the user can save. It is an alphanumeric field
-Open Link in new tab	Checkbox	When checked, the link will open in a new browser tab.
-Link	Text Box	Defines the link to a content page within AEM, an external resource, or an anchor
-AC2 | AEM | Coupon Preview Variations
-
-GIVEN I want to add different variations of Coupon Preview
-
-WHEN I click on the brush icon outside the edit dialog box
-
-THEN I should see the below options
-
-With the Save Amount 
-Without the Save Amount 
-AND I am able to change the variations with the above options
-
-As an End User/ Customer, I should be able to see the “Coupon Preview” Component Contents as described below:
-
-Note: 
-
-The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
-Header should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section) ** 
-AC1 | FE | View of the Coupon Preview component
-
-GIVEN I am an end user on DG.COM
-
-WHEN I view the coupon preview component in any page
-
-THEN the view of the coupon preview should be as per the signed off Figma designs 
-
-AND both the variations have a background grey color that covers top half of the coupon preview component as shown in FIGMA.
-
-AND the spacing between the image and lower margin of the container should be more in comparison to variation 2 to accommodate the save amount number as per FIGMA.
-
-AND the font color of content should be black as per FIGMA
-
-AND the font size of price and save amount for both the variations should be as per FIGMA.
-
-AND The look and feel of both the variations of the component are as per FIGMA
-
-AC2 | FE | View of the Coupon Preview component in all the screen sizes (L, M, S & XS)
-
-GIVEN I am an end user on DG.COM
-
-WHEN I see the coupon preview in any breakpoint
-
-THEN the view of the modal component should be as per the signed off Figma designs
-
-L - AS PER FIGMA
-M - AS PER FIGMA
-S - AS PER FIGMA
-XS – AS PER FIGMA
-Important note:
-
-Pls analyze the existing code of the product tiles component before starting with the dev/migration of this story 
-Developer should be updating AEM Cloud readiness mobile app JSON page with required JSON and its variations for specific component before actually start development / code of component development user story. 
-Margin values:
-Below Margin values should be added in the brush icon of the header component for the content authors to choose from:
-
-Values - 0, 8, 16
-
-Margin-top-{values}
-Margin-bottom--{values}
-Margin-left--{values}
-Margin-right--{values}
-
-Actual class names to be shared by FE team to AEM team
-
-Add AEM Analytics in the component with the below fields in a separate tab
-Enable Analytics click tracking (checkbox)
-Track click item
-Track Image title
-Section title tracking
-Campaign tracking
-Content week tracking
-
-coupon-preview.json:
-{
-    "coupons": [
-        {
-            "price": "7",
-            "quantity": "3",
-            "image": "./clientlib-site/resources/images/banner.png",
-            "altText": "Coupon Image Description 1",
-            "variation": "without-save-amount",
-            "link": "https://www.google.com"
-        },
-        {
-            "price": "7",
-            "quantity": "3",
-            "image": "./clientlib-site/resources/images/banner.png",
-            "altText": "Coupon Image Description 2",
-            "variation": "without-save-amount",
-            "link": "https://www.google.com"
-
-        },
-        {
-            "Saveprice": "5.75",
-            "image": "./clientlib-site/resources/images/banner.png",
-            "altText": "Coupon Image Description 3",
-            "saveAmount": "Save 50¢",
-            "variation": "with-save-amount",
-            "link": "https://www.google.com"
-
-        },
-        {
-            "Saveprice": "5.75",
-            "image": "./clientlib-site/resources/images/banner.png",
-            "altText": "Coupon Image Description 4",
-            "saveAmount": "Save 50¢",
-            "variation": "with-save-amount",
-            "link": "https://www.google.com"
-
-        },
-	]
-}
-coupon-preview.hbs:
-<div class="row">
-    {{#each coupons}}
-    <div class="col-6 col-md-3 col-sm-4">
-        <div class="coupon-preview">
-            <a href="{{this.link}}" target="_blank" class="coupon-preview-link">
-                <div class="coupon-preview-tile {{this.variation}}">
-                    <div class="coupon-preview-tile-header">
-                        <div class="coupon-preview-tile-header-top">
-                            <div class="coupon-preview-tile-header-top-quantity">{{this.quantity}}</div>
-                            <div class="coupon-preview-tile-header-top-for">for</div>
-                        </div>
-                        <div class="coupon-preview-tile-header-bottom-v2">
-                            <div class="coupon-preview-tile-header-bottom-v2-dollar">$</div>
-                            <div class="coupon-preview-tile-header-bottom-v2-price">{{this.price}}</div>
-                        </div>
-                        <div class="coupon-preview-tile-header-bottom-v1">
-                            <div class="coupon-preview-tile-header-bottom-v1-dollar">$</div>
-                            <div class="coupon-preview-tile-header-bottom-v1-price">{{this.Saveprice}}</div>
-                        </div>
-                    </div>
-                    <div class="coupon-preview-tile-body">
-                        <img src="{{this.image}}" alt="{{this.altText}}" class="coupon-preview-tile-body-image" />
-                        <div class="coupon-preview-tile-body-svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 201 146" fill="none">
-                                <path d="M0 15.0011C76.8704 -4.86596 120.86 -5.13435 201 15.0011V146.001H0V15.0011Z"
-                                    fill="white" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="coupon-preview-tile-footer">
-                        <div class="coupon-preview-tile-footer-save-amount">{{this.saveAmount}}</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-    {{/each}}
-</div>
-
-coupon-preview.ts:
-import { CAROUSEL_TYPE } from "../../utilities/datalayer/dgDataLayerConst";
-import { pushEventOnComponentClicked } from "../../utilities/datalayer/apolloDataLayerUtil";
-
-document.addEventListener("DOMContentLoaded", () => {
-  const links = document.querySelectorAll(".coupon-preview-link");
-  if (links.length > 0 ) {
-    links.forEach((link,index) => {
-    link.addEventListener("click", (event) =>
-      handleCouponPreviewClick(event, index)
-    );
-  });
-}
-});
-
-const handleCouponPreviewClick = (event: Event,index:number): void => {
-  const target = event.target as HTMLAnchorElement
-  event.preventDefault();
-  const couponContainer = target.closest(".coupon-preview")
-  if(!couponContainer) return;
- 
-  const data = {
-    campaignName: couponContainer.getAttribute("data-track-campaignName"),
-    contentWeek: couponContainer.getAttribute("data-track-contentWeek"),
-    trackPageSection: couponContainer.getAttribute("data-track-trackPageSection"),
-    sectionTitle: couponContainer.getAttribute("data-track-sectionTitle"),
-    trackPageType: couponContainer.getAttribute("data-track-pageType"),
-  };
-  const hasCarosuel =couponContainer.closest(".smartcarousel");
-
-  if(hasCarosuel){
-    pushEventOnComponentClicked(index,data,CAROUSEL_TYPE.IMAGE);
-  } else {
-    pushEventOnComponentClicked(index,data);
-  }
-  
-
-};
-
-Now create the same documentation for coupon-preview too.
+Analytics Tracking Fields (in AEM dialog):
+	•	Enable Analytics click tracking (Checkbox)
+	•	Track Click Item
+	•	Track Image Title
+	•	Section Title Tracking
+	•	Campaign Tracking
+	•	Content Week Tracking
