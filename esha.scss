@@ -1,165 +1,239 @@
+Banner: 
+
+
+Page header Jira: 
+As a content author, I want to be able to author the page header that give users an overview of the page and provide context for the information they are about to read.
+
+Business / Functional Goals:
 Overview
-
-Component Name: Coupon Preview
-Description:
-The coupon-preview component is designed to showcase promotional coupon tiles with pricing, product images, and potential savings. It supports two distinct visual variations to accommodate different marketing styles.
-
+Component Name: Banner
+Description: The Banner component is a versatile UI element used to display promotional content, images, and call-to-action (CTA) buttons. It supports multiple variations and is fully responsive.
 Nature of the Component: Static Component
-
-⸻
-
 How the Component Works
-
 Functionality:
-	•	Renders multiple coupon tiles based on JSON data.
-	•	Supports two variations:
-	1.	With Save Amount (below image)
-	2.	Without Save Amount (displays quantity instead)
-	•	Coupon tiles link to external or internal URLs, with optional “open in new tab” behavior.
-	•	ADA compliant and responsive across all screen sizes.
 
-⸻
-
+The Banner component displays promotional content with a background image, optional image, title, and CTA buttons.
+It supports multiple layout variations (a-z) and adjusts its behavior based on screen size for responsiveness.
 Major Elements:
-	•	Price Display:
-Variation 1 uses Saveprice; variation 2 uses price with quantity and “for” text.
-	•	Image and Alt Text:
-Displays a product image along with alt text for accessibility.
-	•	Save Amount:
-Variation 1 displays a text like “Save 50¢” below the image.
-	•	Quantity (Variation 2 only):
-Indicates the quantity and pricing (e.g., “3 for $7”).
-	•	Clickable Tile:
-Entire tile is wrapped in a link, supporting target="_blank" behavior.
-	•	Grey Background Header:
-Top half of each coupon tile includes a grey-colored background as per FIGMA specs.
-	•	Tracking Attributes:
-AEM analytics tracking data attributes are included in the tile container.
 
-⸻
-
-Integration Requirements with AEM
-
+Background Image: Displays a background image with alt text for accessibility.
+Content Image: Optional content image displayed within the banner.
+Title: A heading that supports up to two lines of text.
+CTA Buttons: Interactive buttons that redirect users to specific links.
+Integration Requirements with AEM (If Applicable)
 Integration Prerequisites:
-	•	JSON content authored in AEM must be exposed to the UI layer.
-	•	Component variations and text fields configured through AEM dialog.
 
-⸻
-
+JSON data needs to be passed from the AEM side.
 Integration Process:
 
 Data Configuration:
-
-The following fields should be passed from AEM to the coupon-preview component:
-
-JSON Field
-Description
-coupons[].price
-Dollar value displayed above the image (for variation without save amount).
-coupons[].quantity
-Quantity used with “for” text (e.g., 3 for $7). Used in variation 2.
-coupons[].Saveprice
-Price value displayed for variation 1 (with save amount).
-coupons[].saveAmount
-Alphanumeric string displayed below image (e.g., “Save 50¢”).
-coupons[].image
-URL to the product/coupon image.
-coupons[].altText
-Descriptive alt text for the image.
-coupons[].variation
-Either with-save-amount or without-save-amount. Used for conditional rendering.
-coupons[].link
-URL to navigate on click.
-coupons[].openInNewTab
-Boolean to decide whether to open the link in a new tab (optional).
-
-
+The following data needs to be passed from AEM to the Banner component:
+'bannerData.backgroundImageSrc': URL for the background image.
+'bannerData.backgroundImageAlt': Alt text for the background image.
+'bannerData.contentImageSrc': URL for the optional media image.
+'bannerData.contentImageAlt': Alt text for the media image.
+'bannerData.title': Title text for the banner.
+'bannerData.buttons': Array of button objects with href and text properties.
 Mapping Data:
-
-Map the JSON structure from AEM directly into the coupon-preview component’s coupons array and render dynamically using Handlebars.
-
-⸻
-
+Map the JSON data from AEM to the corresponding fields in the Banner component.
 API Integration & Endpoints
-
-N/A – This is a static content component and does not rely on external APIs for rendering.
-
-⸻
-
+APIs Used:
+No direct API integration is required for the Banner component. However, event tracking can be implemented using utility functions.
 Component Variations & Visual References
-
 Variation Details:
-	•	With Save Amount
-	•	Displays Saveprice above image
-	•	Displays saveAmount below image
-	•	Slightly increased bottom spacing to accommodate text
-	•	Font size differs per FIGMA
-	•	Without Save Amount
-	•	Displays quantity, “for”, and price stacked above the image
-	•	No saveAmount shown
-	•	Slightly reduced margin under image
-	•	Font style differs per FIGMA
 
+NA
 Visual Representations:
-	•	Web View: As per FIGMA
-	•	Tablet & Mobile View: Responsive behavior per FIGMA
 
-⸻
+Web View:
 
-Major Functions & Behavior
 
+Major Functions & Behavior:
 Core Functions:
-	•	Responsive tile layout using Bootstrap grid (col-6 col-md-3 col-sm-4)
-	•	Variation-specific rendering using this.variation
-	•	Grey header background (SVG and CSS)
-	•	Fully clickable tiles
-	•	Supports analytics tracking via custom data attributes
-
-Accessibility Features:
-	•	Descriptive alt text
-	•	ARIA-compliant clickable tiles
-	•	Keyboard navigation support (inherited)
-
-⸻
-
-Resources & Related Files
-
+Responsive Behavior: The banner adjusts its layout for different screen sizes using CSS media queries.
+Interactive Elements: CTA buttons trigger click events for navigation and analytics tracking.
+Accessibility Features: Includes alt text for images and ARIA attributes for buttons.
+Resources & Related Files:
 Linked Files:
-	•	coupon-preview.hbs
-Path: src\dgweb\ui.frontend\src\app\components\coupon-preview\coupon-preview.hbs
-	•	coupon-preview.json
-Path: src\dgweb\ui.frontend\src\app\components\coupon-preview\coupon-preview.json
-	•	coupon-preview.ts
-Path: src\dgweb\ui.frontend\src\app\components\coupon-preview\coupon-preview.ts
-	•	coupon-preview.scss
-(Assumed path): Styles specific to this component
 
+File Name(s):
+banner.hbs [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.hbs]
+banner.json [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.json]
+banner.scss [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.scss]
+banner.ts [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.ts]
 Figma Link:
-Refer to project’s shared Figma folder (Coupon Preview section)
 
-⸻
+Figma URL – Link
+JIRA Story ID:
 
-JIRA Story ID
-	•	DSE-XXXXX - AEM Coupon Preview Development
-	•	DSE-XXXXX - FE Integration & Styling
-
-⸻
-
-Additional Information
-
+JIRA Story ID –[DSE-14383] Components | AEM | FE | Create Banner component - Jira
+Additional Information:
 Customization & Theming:
-	•	Style variations controlled through AEM dialog (not style icon).
-	•	Font sizes, spacing, and colors follow Figma specs.
-	•	Add configurable margins (0, 8, 16) using class names margin-{top|bottom|left|right}-{value}.
 
+The Banner component can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
 Dependencies:
-	•	pushEventOnComponentClicked() from apolloDataLayerUtil.ts for analytics.
-	•	CAROUSEL_TYPE.IMAGE for tracking events if part of carousel.
 
-Analytics Tracking Fields (in AEM dialog):
-	•	Enable Analytics click tracking (Checkbox)
-	•	Track Click Item
-	•	Track Image Title
-	•	Section Title Tracking
-	•	Campaign Tracking
-	•	Content Week Tracking
+No external libraries are required.
+Utility functions:
+'pushEventOnComponentClicked' for analytics tracking.
+'CAROUSEL_TYPE' for data layer constants.
+Variations:
+
+The Banner component supports A to Z variations, each with unique styles and layouts.
+Note:
+
+When adding banners in a grid-like structure, you must author them using the Column Control Component to ensure proper alignment and responsiveness.
+Author should be able to configure the PAGE HEADER component in AEM. The page header component should be a custom component with fields to author the title & the help text
+
+The Page Header Component is a section at the top of the webpage that includes the title of the content described on the page.
+
+Author should be able to configure the Header component with the title and the help text
+
+The page header should have a title, back button and helper text.
+
+The maximum limit of the page title is 50 characters as the title component
+
+If the page title is longer, then the helper text appears below the page title.
+
+The helper text is clickable and is hyperlinked to the content page.
+
+Acceptance Criteria:
+
+As a Developer, I should be able to:
+1. Develop a “Page Header” Component in AEM, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
+2. Develop the Component in a way that it should display Marketing Content, as described in functional goals.
+
+As a Content Author, I should be able to:
+
+AC1 | AEM | Add the Page Header component
+
+GIVEN I am a content author in DG.COM and APP
+
+WHEN I drag & drop a Page Header component
+
+THEN I should be able to configure the following fields
+
+Field Name	Field Type	Details/Business Requirements
+Title	Text Box	The content authors should get an ability to author the page title
+Title link 	Text box	Author should be able to add the link for the page header title here
+Open Link in new tab	Checkbox	When checked, the link will open in a new browser tab.
+Type / Size	Dropdown	Defines the heading level of the title
+The dropdown should have options - H1, H2, H3, H4 & H5 
+Helper Text	Text Box	Should enable the author to add the helper text
+Link for helper text	Text Box	Defines the content to which the helper text is linked. This can be a path to a content page.
+Open Link in new tab	Checkbox	When checked, the link will open in a new browser tab.
+ID	Text/Numeric	Author should be able to add the component ID here
+AND There should be a maximum character limit to the page title which is 50 characters.
+AND The helper text should have a link which should route the user to the desired/authored page.
+
+AC2 | AEM | FE | Select the variations FOR Typographies 
+
+GIVEN I am authoring page header component for DG
+
+WHEN I want to select the variations for typographies as per Figma design
+
+AND I click on the style brush option outside the edit dialog box
+
+THEN I am able to select a variation from the below list
+
+Title weight (Group D) - 
+
+aem-title-weight-500
+aem-title-weight-600
+aem-title-weight-700
+aem-title-weight-900
+AC2 | AEM | FE | Styles for Page Header
+
+As an End User/ Customer, I should be able to see the “Page Header” Component Contents as described below:
+
+Note: 
+
+The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
+ Page Header should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
+AC1 | FE | View of the Page Header component
+
+GIVEN I am an end user on DG.COM and APP
+
+WHEN I view the page header component in any page
+
+THEN the view of the page header should be as per the signed off Figma designs 
+
+AND the font color of the page title should black and bold as per FIGMA
+
+AND the font color of the helper text should be blue as per FIGMA
+
+AND the help text should be underlined with blue color when the user hovers over it
+
+AND the click action of the user on the help text should take them to the authored page in the same or new tab as per the author's selection in the AEM Dialog Box
+
+AC2 | FE | View of the Page Header component in all the screen sizes (XXL, XL, L, M, S & XS)
+
+GIVEN I am an end user on DG.COM and APP
+
+WHEN I see the page header in any breakpoint
+
+THEN the view of the page header component should be as per the signed off Figma designs
+
+XXL - Columns should stay at a max of 1200px width, but margins keep growing based on screen of device
+XL  AS PER FIGMA
+L - AS PER FIGMA. The helper text appears below if the page title is longer.
+M - AS PER FIGMA. The helper text appears below if the page title is longer.
+S - The helper text should appear below if the page title and the page title should get wrapped to two lines
+XS – The helper text should appear below if the page title and the page title should get wrapped to two lines. ** The font size of the page header title changes to md size (18px)
+Important note:
+
+Pls analyze the existing code of the product tiles component before starting with the dev/migration of this story 
+Developer should be updating AEM Cloud readiness mobile app JSON page with required JSON and its variations for specific component before actually start development / code of component development user story. 
+Margin values:
+Below Margin values should be added in the brush icon of the header component for the content authors to choose from:
+
+Values - 0, 8, 16
+
+Margin-top-{values}
+Margin-bottom--{values}
+Margin-left--{values}
+Margin-right--{values}
+
+Actual class names to be shared by FE team to AEM team
+
+Add AEM Analytics in the component with the below fields in a separate tab
+Enable Analytics click tracking (checkbox)
+Track click item
+Track Image title
+Section title tracking
+Campaign tracking
+Content week tracking
+Component should meet the ADA standards as mentioned in the doc attached 
+
+Pageheader.json:
+{
+    "page": {
+      "id" : 1,
+      "titleText": "Page Title",
+      "titleUrl": "#",
+      "helperText": "Learn how to use coupons",
+      "helperUrl": "#",
+      "titleStyle": "aem-title-weight-900",
+      "titleType": "h4"
+    }
+  }
+
+pageheader.hbs:
+{{#each this}}
+<div class="{{titleStyle}}">
+  <div class="page-header" id="{{id}}">
+    <{{this.titleType}} class="page-header__title">
+      <a href="{{this.titleUrl}}">
+        {{this.titleText}}
+      </a>
+    </{{this.titleType}}>
+    <span class="page-header__helper-text">
+      <a href="{{this.helperUrl}}" data-modal-toggle="modal" data-modal-target="aemmodal-{{this.id}}">{{this.helperText}}</a>
+    </span>
+  </div>
+</div>
+{{/each}}
+
+
+
+I need to create a similar documentation for page header as well. Please help here
