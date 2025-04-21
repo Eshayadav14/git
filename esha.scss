@@ -1,10 +1,4 @@
 Banner: 
-
-
-Page header Jira: 
-As a content author, I want to be able to author the page header that give users an overview of the page and provide context for the information they are about to read.
-
-Business / Functional Goals:
 Overview
 Component Name: Banner
 Description: The Banner component is a versatile UI element used to display promotional content, images, and call-to-action (CTA) buttons. It supports multiple variations and is fully responsive.
@@ -84,6 +78,11 @@ Note:
 
 When adding banners in a grid-like structure, you must author them using the Column Control Component to ensure proper alignment and responsiveness.
 Author should be able to configure the PAGE HEADER component in AEM. The page header component should be a custom component with fields to author the title & the help text
+
+Page header Jira: 
+As a content author, I want to be able to author the page header that give users an overview of the page and provide context for the information they are about to read.
+
+Business / Functional Goals:
 
 The Page Header Component is a section at the top of the webpage that includes the title of the content described on the page.
 
