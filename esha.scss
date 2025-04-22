@@ -1,406 +1,113 @@
-CTA component Jira:
-As a content author, I want to add a CTA component in AEM, so that the end user can click on the call to action buttons and redirect to pages
-
-Business / Functional Goals:
-
-The Call to Action component will be a custom component to include the different button types, button sizes, shapes, states, semantics and icons inside it
-
-Props of CTA component - 
-
-CTA Types - Primary, secondary, Tertiary, Outline dark, Outline, Dashed, Link, Underline blue, Underline black
-CTA Sizes - Small, Medium, Large
-CTA Shapes - Standard, Pill, Circle, Square
-Danger Semantic - Red color buttons
-Positive Semantic - Green color buttons
-CTA states - Default, Hover, Active, Focus, Disabled
-Circle & Square button shapes should have only icons authored within it with no title/text
-
-CTA states is not authored but are different states when the end user interacts with the buttons
-
-All different permutations and combinations of the above the button props can be used by the authors to achieve different types of buttons
-
-Acceptance Criteria:
-
-As a Developer, I should be able to:
-1. Add "CTA" component, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
-2. Develop the Component in a way that it should display Marketing Content, as described in functional goals
-
-
-As an End User/ Customer, I should be able to see the 
-
-Note: 
-
-The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
-CTA should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
-AC1 | FE | Buttons Variants Design
-
-GIVEN I am a user in DG Web or APP
-
-WHEN I see a CTA either as a standalone item or inside a component
-
-AND the CTA is one among the different
-
-Button Types
-Button Sizes
-Button Shapes
-Positive – True or False
-Danger – True or False
-THEN the designs of the CTA component is AS PER Figma
-
-AC2 | FE | Button states
-
-GIVEN I am a user in DG Web or APP
-
-WHEN I see a CTA either as a standalone item or inside a component
-
-THEN I see the below states of the buttons for all button Types, Shapes & Sizes for Danger & Positive according to Figma
-
-Button state	Action by the user	View example of Primary Button type
-Default	Default state of the button without any action	
-Focus	The focused state is for when the user is navigating through the web with the keyboard, it's the indicator to let the user know where they're located	
-Hover	When the user hovers over the button	
-Active	The active state is when the user make a click on the button, that moment when the user maintain pressed the button is the active state	
-Disabled 	When a field is required to fill & until then the next button is disabled (For example in Forms)	
-THEN the designs of the buttons and the states i.e. the border, surface and text colors are as per the signed off Figma design
-
-AC3 | FE | Button Font sizes
-
-GIVEN I am a user in DG Web or APP
-
-WHEN I see a CTA either as a standalone item or inside a component
-
-AND I see different Button sizes – Small, Medium, Large
-
-THEN the font sizes of the button title are as per the Button Sizes i.e.
-
-Small Button – Font size of Button title – 2XS
-Medium Button – Font size of Button title – XS
-Large Button – Font size of Button title – Base
-
-
-Pls check the typography section in Part 1 Figma
-
-AC4 | FE | Circle and Square shaped buttons
-
-GIVEN I am an end user in DG
-
-WHEN I see a Circle and Square shaped buttons
-
-AND the content author has added an icon in the icon left field
-
-THEN I see the circle and square shaped buttons with an icon inside it
-
-Tooltip and popovers Jira:
-
-As a content author, I want to add tooltips and popovers to CTA component, so that the end user can see extra information/options/guidance with the CTA component
-
-Business / Functional Goals:
-
-Tooltips and Popovers are added in some components to give small messages to the user and show small dropdown with action buttons respectively.
-
-Tooltips & Popovers should be attached with the CTA component
-
-Tooltips - 
-
-Tooltips has 3 variations - Black, Yellow & Tonal which will be achieved through the styles
-Tooltips has 8 different directions of arrow (Achieved through styles)
-Tooltips can use any text and the size of the tooltip should grow based on the text entered but there should be a character limit defined for the tooltips as these are meant to provide small messages to the user
-Tooltips can be attached to the button component
-Tooltips attached to a button component should appear on hover action by user
-Popovers - 
-
-Popovers have 3 types of content - Title, description and action buttons (CTAs)
-Popovers are bigger than tooltips and open as small dropdowns 
-Popovers can use a combination of title, description and action button filed to add information 
-Popovers should appear on click action
-Additional notes:
-
-Tooltips and Popovers will not be added as a separate component in AEM since they are attached with components like CTA to the end user
-The authoring dialog box of CTA component will have additional fields to authors tooltips or popovers with it
-The different variations of Tooltips and Popovers will be achieved through the styles option outside the edit dialog box
-Acceptance Criteria:
-
-As a Developer, I should be able to:
-1. Add additional fields and styles to CTA Component in AEM to author tooltips and popovers, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
-2. Develop the Component in a way that it should display Marketing Content, as described in functional goals
-
-AC1 | AEM | FE|  Variations and Directions of the Tooltip and Popover
-
-GIVEN I have added tooltip or Popover to a component
-
-WHEN I want to choose different variations of Tooltips and Popovers
-
-AND I click on the style brush icon on the component in which I have added Tooltips or Popovers
-
-THEN I see the following groups of styles to choose from with headings and options
-
-Group 1 - 
-
-Tooltip Color
-
-Black
-Yellow
-Tonal
-Default value should be black
-
-Group 2 - 
-
-Tooltip and Popover Directions
-
-Top left
-Top center
-Top right
-Bottom left
-Bottom center
-Bottom right
-Left top
-Left center
-Left bottom
-Right top
-Right center
-Right bottom
-Default value should be Top center
-
-AND the designs of all variations achieved with all the above styling options should be AS PER Figma
-
-Note: The directions option would be same for Tooltips and Popovers and the content authors should be able to achieve the left direction tooltips with the options -  left top, left center & left bottom 
-
-And right direction tooltips with the options -  right top, right center & right bottom 
-
-As an End User/ Customer, I should be able to see the 
-
-Note: 
-
-The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
-Tooltips & Popovers should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
-AC1 | FE | View of Tooltips 
-
-GIVEN I am an end user on DG website or APP
-
-WHEN I move my mouse around or Hover on a component on which a tooltip is added
-
-THEN I am able to see the tooltip with the text, color and direction as authored with the below styles chosen as per the Figma design
-
-Group 1 - 
-
-Tooltip Color - Heading
-
-Black
-Yellow
-Tonal
-Default value should be black
-
-Group 2 - 
-
-Tooltip and Popover Directions- Heading
-
-Top left
-Top center
-Top right
-Bottom left
-Bottom center
-Bottom right
-Left top
-Left center
-Left bottom
-Right top
-Right center
-Right bottom
-Default value should be Top center
-
-Note: The directions option would be same for Tooltips and Popovers and the content authors should be able to achieve the left direction tooltips with the options -  left top, left center & left bottom 
-
-And right direction tooltips with the options -  right top, right center & right bottom 
-
-AC2 | FE | View of Popovers
-
-GIVEN  I am an end user on DG website or APP
-
-WHEN I hover or click on a component on which a Popover is added
-
-THEN I am able to see the Popover with the Title, description and action buttons as authored with the below styles as per the Figma design
-
-Group 2 - 
-
-Tooltip and Popover Directions- Heading
-
-Top left
-Top center
-Top right
-Bottom left
-Bottom center
-Bottom right
-Left top
-Left center
-Left bottom
-Right top
-Right center
-Right bottom
-Default value should be Top center
-
-CTA 1 and CTA 2 type should always be Primary and tertiary respectively with all the button states such as hover, focus, active as per Figma
-
-CTA 1 and CTA 2 shape and size should always be standard and small respectively
-
-AC3 | FE | View of a single CTA Popover
-
-GIVEN I am a end user on DG
-
-WHEN I see a popover attached with a component
-
-AND the popover has a single action button
-
-THEN the button is left aligned in the popover
-
-AC4 | FE | Background of Popover
-
-GIVEN I am a end user on DG
-
-WHEN I see a popover attached with a component
-
-THEN the background is not blurred while the popover is open
-
-tooltip.json:
-{
-    "direction": [
-        {
-            "direction": "tp-top",
-            "title": "Top",
-            "tooltip":true,
-            "popover":false,
-            "black": false,
-            "yellow": false,
-            "tonal": true
-        },
-        {
-            "direction": "tp-top-right",
-            "title": "top-right",
-            "tooltip":true,
-            "popover":false,
-            "black": false,
-            "yellow": false,
-            "tonal": true
-         },]}
-cta-button.json:
-{
-    "buttons": [
-      {  
-        "id" : 1,
-        "button-type": "btn-dashed",
-        "button-size": "btn-sm",
-        "button-shape": "btn-standard",
-        "isAnchor": false,
-        "icon-left": "global-icon camera",
-        "button-semantic": "btn-positives-primary"
-      },
-      {
-        "button-type": "link-positives",
-        "title": "Anchor Button",
-        "isAnchor": true,
-        "href": "#"
-      },
-      {
-        "button-type": "btn-outline",
-        "button-size": "btn-sm",
-        "button-shape": "btn-standard",
-        "isAnchor": false,
-        "icon-left": "global-icon heart",
-        "button-semantic": "btn-danger-primary"
-      },
-      {
-        "button-type": "btn-dashed",
-        "button-size": "btn-lg",
-        "button-shape":"btn-standard",
-        "title": "Contact Us",
-        "isAnchor": false,
-        "icon-left": "global-icon camera"
-      },
-      {
-        "button-type": "btn-danger-primary",
-        "button-size": "btn-md",
-        "title": "Button",
-        "isAnchor": false,
-        "icon-right": "global-icon camera"
-      },]}
-
-banner component documentation:
 Overview
-Component Name: Banner
-Description: The Banner component is a versatile UI element used to display promotional content, images, and call-to-action (CTA) buttons. It supports multiple variations and is fully responsive.
-Nature of the Component: Static Component
+
+Component Name: CTA (Call To Action)
+Description: The CTA component is a flexible and interactive UI element designed for various user actions. It supports a wide range of button styles, icons, semantics, tooltips, popovers, and modal interactions.
+Nature of the Component: Static Component (with dynamic behavior)
+
+⸻
+
 How the Component Works
-Functionality:
 
-The Banner component displays promotional content with a background image, optional image, title, and CTA buttons.
-It supports multiple layout variations (a-z) and adjusts its behavior based on screen size for responsiveness.
-Major Elements:
+Functionality
 
-Background Image: Displays a background image with alt text for accessibility.
-Content Image: Optional content image displayed within the banner.
-Title: A heading that supports up to two lines of text.
-CTA Buttons: Interactive buttons that redirect users to specific links.
-Integration Requirements with AEM (If Applicable)
-Integration Prerequisites:
+The CTA component renders interactive buttons that can trigger navigations, tooltips, popovers, or modals based on authored configurations.
+It supports various button types, sizes, shapes, and semantics, as well as ADA-compliant states and behaviors.
 
-JSON data needs to be passed from the AEM side.
-Integration Process:
+⸻
 
-Data Configuration:
-The following data needs to be passed from AEM to the Banner component:
-'bannerData.backgroundImageSrc': URL for the background image.
-'bannerData.backgroundImageAlt': Alt text for the background image.
-'bannerData.contentImageSrc': URL for the optional media image.
-'bannerData.contentImageAlt': Alt text for the media image.
-'bannerData.title': Title text for the banner.
-'bannerData.buttons': Array of button objects with href and text properties.
-Mapping Data:
-Map the JSON data from AEM to the corresponding fields in the Banner component.
+Major Elements
+	•	Button Type: Primary, Secondary, Tertiary, Outline (dark/light), Dashed, Link, Underline (blue/black)
+	•	Button Size: Small, Medium, Large
+	•	Button Shape: Standard, Pill, Circle, Square
+	•	Semantics: Danger (Red), Positive (Green)
+	•	Button States: Default, Hover, Focus, Active, Disabled (handled on interaction, not authored)
+	•	Icons: Optional icon-left or icon-right support
+	•	Tooltip: Shows brief messages on hover
+	•	Popover: Shows title, description, and action buttons on click
+	•	Modal Trigger: Buttons can open a modal if modalId is authored and matches an ID in a modal component
+
+⸻
+
+Integration Requirements with AEM
+
+Integration Prerequisites
+
+JSON data must be passed from AEM including CTA button configurations and optional Tooltip/Popover/Modal data.
+
+Mapping Data
+
+Map the JSON fields to corresponding UI logic and styles in the component:
+	•	button-type, button-size, and button-shape map directly to CSS classes
+	•	tooltip and popover are conditional elements rendered based on existence
+	•	modalId triggers modal logic if matched with a modal component
+
+⸻
+
 API Integration & Endpoints
-APIs Used:
-No direct API integration is required for the Banner component. However, event tracking can be implemented using utility functions.
-Component Variations & Visual References
-Variation Details:
 
-NA
-Visual Representations:
+No external API is required. Optional analytics can be implemented using:
+	•	pushEventOnComponentClicked for click tracking
+
+⸻
+
+Component Variations & Visual References
+
+Variation Details
+
+All permutations of:
+	•	Type × Size × Shape × Semantic × State
+	•	Tooltip color (black, yellow, tonal) and direction (12 directions)
+	•	Popover content layout (with 1 or 2 CTAs)
+
+⸻
+
+Visual Representations
 
 Web View:
+	•	Default view with all button variations
+	•	Hover + Focus states for ADA compliance
+	•	Circle & Square buttons with icon-only appearance
+	•	Tooltip preview on hover
+	•	Popover view on click with optional single or dual CTAs
+	•	Modal triggering example
 
+⸻
 
-Major Functions & Behavior:
-Core Functions:
-Responsive Behavior: The banner adjusts its layout for different screen sizes using CSS media queries.
-Interactive Elements: CTA buttons trigger click events for navigation and analytics tracking.
-Accessibility Features: Includes alt text for images and ARIA attributes for buttons.
-Resources & Related Files:
+Major Functions & Behavior
+
+Core Functions
+	•	Button Styling: Dynamically styled based on authored types, sizes, shapes
+	•	Tooltip Integration: Appears on hover, varies by style and direction
+	•	Popover Integration: Appears on click, supports full content layout with two standard-small buttons
+	•	Modal Triggering: Uses modalId for opening associated modal
+	•	Accessibility: Focus indicators, semantic roles, ARIA labels per ADA guidelines
+
+⸻
+
+Resources & Related Files
+
 Linked Files:
+	•	cta-button.hbs – [Path: src\components\cta-button\cta-button.hbs]
+	•	cta-button.json – [Path: src\components\cta-button\cta-button.json]
+	•	cta-button.scss – [Path: src\components\cta-button\cta-button.scss]
+	•	cta-button.ts – [Path: src\components\cta-button\cta-button.ts]
 
-File Name(s):
-banner.hbs [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.hbs]
-banner.json [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.json]
-banner.scss [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.scss]
-banner.ts [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.ts]
-Figma Link:
+Tooltip Config:
+	•	tooltip.json – [Path: src\components\cta-button\tooltip.json]
 
-Figma URL – Link
-JIRA Story ID:
+Utility Functions:
+	•	pushEventOnComponentClicked – Analytics tracking
 
-JIRA Story ID –[DSE-14383] Components | AEM | FE | Create Banner component - Jira
-Additional Information:
-Customization & Theming:
+⸻
 
-The Banner component can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
-Dependencies:
+Accessibility
 
-No external libraries are required.
-Utility functions:
-'pushEventOnComponentClicked' for analytics tracking.
-'CAROUSEL_TYPE' for data layer constants.
-Variations:
+CTA Buttons, Tooltips, and Popovers all meet ADA standards as outlined in the ADA Best Practices Document. States are visually and programmatically defined.
 
-The Banner component supports A to Z variations, each with unique styles and layouts.
-Note:
+⸻
 
-When adding banners in a grid-like structure, you must author them using the Column Control Component to ensure proper alignment and responsiveness.
-Please prepare a documentation for CTA component just like banner component. CTA button functionality includes everything about button and tooltips and popovers come up on the button. Also there's an ID that we author on cta button and modal component both, which will basically open the modal. if ID is authored then modal functionality works otherwise tooltips and popovers are there. 
-
+Notes
+	•	Tooltip and Popover styles are configured via the style brush in AEM
+	•	Circle and Square buttons only render icons—text should not be authored
+	•	Background remains unblurred during Popover display
+	•	Tooltips should be concise (character limit recommended)
