@@ -1,104 +1,264 @@
-Substitutions
+CTA component Jira:
+As a content author, I want to add a CTA component in AEM, so that the end user can click on the call to action buttons and redirect to pages
 
-Component Name: Substitutions
-Tag Name: <cart-substitutional>
-Nature of the Component: Dynamic Component
-Location: ui.frontend.react/src/components/Substitution
+Business / Functional Goals:
 
-⸻
+The Call to Action component will be a custom component to include the different button types, button sizes, shapes, states, semantics and icons inside it
 
-Description
+Props of CTA component - 
 
-The Substitutions component enables users to choose substitution options for products in their cart that may go out of stock. It allows users to either individually enable substitution per item or apply the substitution rule to all eligible products in a single click. The component includes a modal explaining what a substitution is.
+CTA Types - Primary, secondary, Tertiary, Outline dark, Outline, Dashed, Link, Underline blue, Underline black
+CTA Sizes - Small, Medium, Large
+CTA Shapes - Standard, Pill, Circle, Square
+Danger Semantic - Red color buttons
+Positive Semantic - Green color buttons
+CTA states - Default, Hover, Active, Focus, Disabled
+Circle & Square button shapes should have only icons authored within it with no title/text
 
-⸻
+CTA states is not authored but are different states when the end user interacts with the buttons
 
-How the Component Works
+All different permutations and combinations of the above the button props can be used by the authors to achieve different types of buttons
 
-Functionality:
-	•	Displays all substitutable products in the cart.
-	•	Provides individual checkboxes for each product to allow substitutions.
-	•	Provides a master checkbox to apply substitution settings to all products.
-	•	Clicking on the “What’s a substitution?” link opens an informational modal.
-	•	Clicking the “Continue” button takes the user to the checkout page.
+Acceptance Criteria:
 
-⸻
-
-Major Elements
-	•	Substitution Info Link: Opens a modal explaining substitutions.
-	•	Master Checkbox: Allows enabling/disabling substitutions for all eligible products.
-	•	Individual Checkbox: Shown per substitutable product to enable substitution individually.
-	•	Continue Button: Proceeds to checkout.
-	•	Modal Component: Displays the explanation of substitutions.
-
-⸻
-
-Integration Requirements with AEM
-
-Integration:
-
-Component is configured using a JSON object passed via substitutionaldata attribute:
+As a Developer, I should be able to:
+1. Add "CTA" component, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
+2. Develop the Component in a way that it should display Marketing Content, as described in functional goals
 
 
-API Integration & Endpoints
-	•	getCartSubtitutionApi: API call dispatched when substitution settings are changed. Payload includes shopping list and product IDs along with substitution preferences.
+As an End User/ Customer, I should be able to see the 
 
-⸻
+Note: 
 
-Component Behavior
-	•	Default State:
-	•	All checkboxes are unchecked.
-	•	Master checkbox is not selected and shows indeterminate state if some but not all individual checkboxes are selected.
-	•	User Interaction:
-	•	Toggling master checkbox sets all individual checkboxes.
-	•	Toggling individual checkboxes updates master checkbox state accordingly.
-	•	Modal link triggers a modal with substitution info and CTA.
-	•	Clicking “Continue” redirects to checkout page.
+The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
+CTA should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
+AC1 | FE | Buttons Variants Design
 
-⸻
+GIVEN I am a user in DG Web or APP
 
-Component Variations & UI States
-	1.	All Products Substitutable
-	•	Master checkbox is available.
-	•	Each product row shows individual substitution toggle.
-	2.	Some Products Substitutable
-	•	Only substitutable products are shown.
-	•	Master checkbox supports indeterminate state.
-	3.	Modal Opened
-	•	Displays substitution info with:
-	•	Title
-	•	Description
-	•	Optional second paragraph
-	•	OK button to close modal
+WHEN I see a CTA either as a standalone item or inside a component
 
-⸻
+AND the CTA is one among the different
 
-Visual Reference & Styling Notes
-	•	Checkboxes:
-	•	Square, outlined in grey.
-	•	Checked state shows a tick in white over black background.
-	•	Continue Button:
-	•	Yellow brand background.
-	•	Black font.
-	•	Modal:
-	•	Standard modal layout with cross icon, title, body text, and CTA.
+Button Types
+Button Sizes
+Button Shapes
+Positive – True or False
+Danger – True or False
+THEN the designs of the CTA component is AS PER Figma
 
-⸻
+AC2 | FE | Button states
 
-Analytics Events
-	•	SUBSTITUTION_DISPLAYED: Triggered on load with allSelected state.
-	•	SUBSTITUTION_SELECTED: Triggered when individual or master checkbox is changed.
+GIVEN I am a user in DG Web or APP
 
-⸻
+WHEN I see a CTA either as a standalone item or inside a component
 
-Linked Files
-	•	ReduxProvider – app/ReduxProvider
-	•	Actions – app/actions.ts (getCartSubtitutionApi)
-	•	SubstitutionItems – components/Substitution/substitutionItems.tsx
-	•	ModalComponent – components/modals/index.tsx
-	•	Styles – components/Substitution/index.scss
+THEN I see the below states of the buttons for all button Types, Shapes & Sizes for Danger & Positive according to Figma
 
-⸻
+Button state	Action by the user	View example of Primary Button type
+Default	Default state of the button without any action	
+Focus	The focused state is for when the user is navigating through the web with the keyboard, it's the indicator to let the user know where they're located	
+Hover	When the user hovers over the button	
+Active	The active state is when the user make a click on the button, that moment when the user maintain pressed the button is the active state	
+Disabled 	When a field is required to fill & until then the next button is disabled (For example in Forms)	
+THEN the designs of the buttons and the states i.e. the border, surface and text colors are as per the signed off Figma design
 
-Figma Reference
-	•	Figma File: AEM Delivery - Cumberland
+AC3 | FE | Button Font sizes
+
+GIVEN I am a user in DG Web or APP
+
+WHEN I see a CTA either as a standalone item or inside a component
+
+AND I see different Button sizes – Small, Medium, Large
+
+THEN the font sizes of the button title are as per the Button Sizes i.e.
+
+Small Button – Font size of Button title – 2XS
+Medium Button – Font size of Button title – XS
+Large Button – Font size of Button title – Base
+
+
+Pls check the typography section in Part 1 Figma
+
+AC4 | FE | Circle and Square shaped buttons
+
+GIVEN I am an end user in DG
+
+WHEN I see a Circle and Square shaped buttons
+
+AND the content author has added an icon in the icon left field
+
+THEN I see the circle and square shaped buttons with an icon inside it
+
+Tooltip and popovers Jira:
+
+As a content author, I want to add tooltips and popovers to CTA component, so that the end user can see extra information/options/guidance with the CTA component
+
+Business / Functional Goals:
+
+Tooltips and Popovers are added in some components to give small messages to the user and show small dropdown with action buttons respectively.
+
+Tooltips & Popovers should be attached with the CTA component
+
+Tooltips - 
+
+Tooltips has 3 variations - Black, Yellow & Tonal which will be achieved through the styles
+Tooltips has 8 different directions of arrow (Achieved through styles)
+Tooltips can use any text and the size of the tooltip should grow based on the text entered but there should be a character limit defined for the tooltips as these are meant to provide small messages to the user
+Tooltips can be attached to the button component
+Tooltips attached to a button component should appear on hover action by user
+Popovers - 
+
+Popovers have 3 types of content - Title, description and action buttons (CTAs)
+Popovers are bigger than tooltips and open as small dropdowns 
+Popovers can use a combination of title, description and action button filed to add information 
+Popovers should appear on click action
+Additional notes:
+
+Tooltips and Popovers will not be added as a separate component in AEM since they are attached with components like CTA to the end user
+The authoring dialog box of CTA component will have additional fields to authors tooltips or popovers with it
+The different variations of Tooltips and Popovers will be achieved through the styles option outside the edit dialog box
+Acceptance Criteria:
+
+As a Developer, I should be able to:
+1. Add additional fields and styles to CTA Component in AEM to author tooltips and popovers, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
+2. Develop the Component in a way that it should display Marketing Content, as described in functional goals
+
+AC1 | AEM | FE|  Variations and Directions of the Tooltip and Popover
+
+GIVEN I have added tooltip or Popover to a component
+
+WHEN I want to choose different variations of Tooltips and Popovers
+
+AND I click on the style brush icon on the component in which I have added Tooltips or Popovers
+
+THEN I see the following groups of styles to choose from with headings and options
+
+Group 1 - 
+
+Tooltip Color
+
+Black
+Yellow
+Tonal
+Default value should be black
+
+Group 2 - 
+
+Tooltip and Popover Directions
+
+Top left
+Top center
+Top right
+Bottom left
+Bottom center
+Bottom right
+Left top
+Left center
+Left bottom
+Right top
+Right center
+Right bottom
+Default value should be Top center
+
+AND the designs of all variations achieved with all the above styling options should be AS PER Figma
+
+Note: The directions option would be same for Tooltips and Popovers and the content authors should be able to achieve the left direction tooltips with the options -  left top, left center & left bottom 
+
+And right direction tooltips with the options -  right top, right center & right bottom 
+
+As an End User/ Customer, I should be able to see the 
+
+Note: 
+
+The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
+Tooltips & Popovers should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
+AC1 | FE | View of Tooltips 
+
+GIVEN I am an end user on DG website or APP
+
+WHEN I move my mouse around or Hover on a component on which a tooltip is added
+
+THEN I am able to see the tooltip with the text, color and direction as authored with the below styles chosen as per the Figma design
+
+Group 1 - 
+
+Tooltip Color - Heading
+
+Black
+Yellow
+Tonal
+Default value should be black
+
+Group 2 - 
+
+Tooltip and Popover Directions- Heading
+
+Top left
+Top center
+Top right
+Bottom left
+Bottom center
+Bottom right
+Left top
+Left center
+Left bottom
+Right top
+Right center
+Right bottom
+Default value should be Top center
+
+Note: The directions option would be same for Tooltips and Popovers and the content authors should be able to achieve the left direction tooltips with the options -  left top, left center & left bottom 
+
+And right direction tooltips with the options -  right top, right center & right bottom 
+
+AC2 | FE | View of Popovers
+
+GIVEN  I am an end user on DG website or APP
+
+WHEN I hover or click on a component on which a Popover is added
+
+THEN I am able to see the Popover with the Title, description and action buttons as authored with the below styles as per the Figma design
+
+Group 2 - 
+
+Tooltip and Popover Directions- Heading
+
+Top left
+Top center
+Top right
+Bottom left
+Bottom center
+Bottom right
+Left top
+Left center
+Left bottom
+Right top
+Right center
+Right bottom
+Default value should be Top center
+
+CTA 1 and CTA 2 type should always be Primary and tertiary respectively with all the button states such as hover, focus, active as per Figma
+
+CTA 1 and CTA 2 shape and size should always be standard and small respectively
+
+AC3 | FE | View of a single CTA Popover
+
+GIVEN I am a end user on DG
+
+WHEN I see a popover attached with a component
+
+AND the popover has a single action button
+
+THEN the button is left aligned in the popover
+
+AC4 | FE | Background of Popover
+
+GIVEN I am a end user on DG
+
+WHEN I see a popover attached with a component
+
+THEN the background is not blurred while the popover is open
+
+Please prepare a documentation for CTA component. CTA button functionality includes everything about button and tooltips and popovers come up on the button. Also there's an ID that we author on cta button and modal component both, which will basically open the modal. if ID is authored then modal functionality works otherwise tooltips and popovers are there. 
+
