@@ -260,5 +260,147 @@ WHEN I see a popover attached with a component
 
 THEN the background is not blurred while the popover is open
 
-Please prepare a documentation for CTA component. CTA button functionality includes everything about button and tooltips and popovers come up on the button. Also there's an ID that we author on cta button and modal component both, which will basically open the modal. if ID is authored then modal functionality works otherwise tooltips and popovers are there. 
+tooltip.json:
+{
+    "direction": [
+        {
+            "direction": "tp-top",
+            "title": "Top",
+            "tooltip":true,
+            "popover":false,
+            "black": false,
+            "yellow": false,
+            "tonal": true
+        },
+        {
+            "direction": "tp-top-right",
+            "title": "top-right",
+            "tooltip":true,
+            "popover":false,
+            "black": false,
+            "yellow": false,
+            "tonal": true
+         },]}
+cta-button.json:
+{
+    "buttons": [
+      {  
+        "id" : 1,
+        "button-type": "btn-dashed",
+        "button-size": "btn-sm",
+        "button-shape": "btn-standard",
+        "isAnchor": false,
+        "icon-left": "global-icon camera",
+        "button-semantic": "btn-positives-primary"
+      },
+      {
+        "button-type": "link-positives",
+        "title": "Anchor Button",
+        "isAnchor": true,
+        "href": "#"
+      },
+      {
+        "button-type": "btn-outline",
+        "button-size": "btn-sm",
+        "button-shape": "btn-standard",
+        "isAnchor": false,
+        "icon-left": "global-icon heart",
+        "button-semantic": "btn-danger-primary"
+      },
+      {
+        "button-type": "btn-dashed",
+        "button-size": "btn-lg",
+        "button-shape":"btn-standard",
+        "title": "Contact Us",
+        "isAnchor": false,
+        "icon-left": "global-icon camera"
+      },
+      {
+        "button-type": "btn-danger-primary",
+        "button-size": "btn-md",
+        "title": "Button",
+        "isAnchor": false,
+        "icon-right": "global-icon camera"
+      },]}
+
+banner component documentation:
+Overview
+Component Name: Banner
+Description: The Banner component is a versatile UI element used to display promotional content, images, and call-to-action (CTA) buttons. It supports multiple variations and is fully responsive.
+Nature of the Component: Static Component
+How the Component Works
+Functionality:
+
+The Banner component displays promotional content with a background image, optional image, title, and CTA buttons.
+It supports multiple layout variations (a-z) and adjusts its behavior based on screen size for responsiveness.
+Major Elements:
+
+Background Image: Displays a background image with alt text for accessibility.
+Content Image: Optional content image displayed within the banner.
+Title: A heading that supports up to two lines of text.
+CTA Buttons: Interactive buttons that redirect users to specific links.
+Integration Requirements with AEM (If Applicable)
+Integration Prerequisites:
+
+JSON data needs to be passed from the AEM side.
+Integration Process:
+
+Data Configuration:
+The following data needs to be passed from AEM to the Banner component:
+'bannerData.backgroundImageSrc': URL for the background image.
+'bannerData.backgroundImageAlt': Alt text for the background image.
+'bannerData.contentImageSrc': URL for the optional media image.
+'bannerData.contentImageAlt': Alt text for the media image.
+'bannerData.title': Title text for the banner.
+'bannerData.buttons': Array of button objects with href and text properties.
+Mapping Data:
+Map the JSON data from AEM to the corresponding fields in the Banner component.
+API Integration & Endpoints
+APIs Used:
+No direct API integration is required for the Banner component. However, event tracking can be implemented using utility functions.
+Component Variations & Visual References
+Variation Details:
+
+NA
+Visual Representations:
+
+Web View:
+
+
+Major Functions & Behavior:
+Core Functions:
+Responsive Behavior: The banner adjusts its layout for different screen sizes using CSS media queries.
+Interactive Elements: CTA buttons trigger click events for navigation and analytics tracking.
+Accessibility Features: Includes alt text for images and ARIA attributes for buttons.
+Resources & Related Files:
+Linked Files:
+
+File Name(s):
+banner.hbs [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.hbs]
+banner.json [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.json]
+banner.scss [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.scss]
+banner.ts [Path: src\dgweb\ui.frontend\src\app\components\banner\banner.ts]
+Figma Link:
+
+Figma URL – Link
+JIRA Story ID:
+
+JIRA Story ID –[DSE-14383] Components | AEM | FE | Create Banner component - Jira
+Additional Information:
+Customization & Theming:
+
+The Banner component can be customized by modifying the SCSS file and updating the JSON configuration from AEM.
+Dependencies:
+
+No external libraries are required.
+Utility functions:
+'pushEventOnComponentClicked' for analytics tracking.
+'CAROUSEL_TYPE' for data layer constants.
+Variations:
+
+The Banner component supports A to Z variations, each with unique styles and layouts.
+Note:
+
+When adding banners in a grid-like structure, you must author them using the Column Control Component to ensure proper alignment and responsiveness.
+Please prepare a documentation for CTA component just like banner component. CTA button functionality includes everything about button and tooltips and popovers come up on the button. Also there's an ID that we author on cta button and modal component both, which will basically open the modal. if ID is authored then modal functionality works otherwise tooltips and popovers are there. 
 
