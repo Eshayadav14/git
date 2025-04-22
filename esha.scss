@@ -1,386 +1,104 @@
-cart: 
-Overview
-Component Name: Cart
+Substitutions
 
-Description: Cart is used to show added products, price summary, eligibility and quantity with respective order-type.
-
+Component Name: Substitutions
+Tag Name: <cart-substitutional>
 Nature of the Component: Dynamic Component
+Location: ui.frontend.react/src/components/Substitution
+
+⸻
+
+Description
+
+The Substitutions component enables users to choose substitution options for products in their cart that may go out of stock. It allows users to either individually enable substitution per item or apply the substitution rule to all eligible products in a single click. The component includes a modal explaining what a substitution is.
+
+⸻
 
 How the Component Works
+
 Functionality:
+	•	Displays all substitutable products in the cart.
+	•	Provides individual checkboxes for each product to allow substitutions.
+	•	Provides a master checkbox to apply substitution settings to all products.
+	•	Clicking on the “What’s a substitution?” link opens an informational modal.
+	•	Clicking the “Continue” button takes the user to the checkout page.
 
-On click of "Cart icon" user will going to redirect to cart, cart will show specific products added for order type selected from fulfilment picker. On confirming quantity, summary  eligibility of products we can move forward to checkout.
+⸻
 
-Major Elements:
+Major Elements
+	•	Substitution Info Link: Opens a modal explaining substitutions.
+	•	Master Checkbox: Allows enabling/disabling substitutions for all eligible products.
+	•	Individual Checkbox: Shown per substitutable product to enable substitution individually.
+	•	Continue Button: Proceeds to checkout.
+	•	Modal Component: Displays the explanation of substitutions.
 
-Summary - used to show total price , tax ,discount , offers applied for added products.
-Integration Requirements with AEM (If Applicable)
+⸻
+
+Integration Requirements with AEM
+
 Integration:
 
-Labels and a flag need to be passed from the AEM side.
-  <dg-cart
-            cartdata="{
-  'storeLabel': 'label',
-  'changeStoreButtonText': 'text',
-  'emptyCartTitle': 'title',
-  'emptyCartText': 'text',
-  'emptyShippingCartText': 'car text',
-  'emptyShippingCartButtonText': 'text',
-  'howDeliveryWorksButtonText':'How does delivery work?',
-  'startShoppingPath': '/content/cq:graphql',
-  'startShoppingText': 'button text',
-  'signInDescription': 'description',
-  'signInButtonText': 'button text',
-  'helpPagePath': '/content',
-  'helpPageLinkText': 'text',
-  'offerTutorialButton': 'button text',
-  'tutorialCouponButtonText': 'coupon button',
-  'checkoutWarningTitle': 'quires attention',
-  'checkoutWarningModalMessage': 'limited quantities available *',
-  'checkoutWarningCloseBtn': 'odal Close Button',
-  'incrementButtonLabel': 'incrt Button Label',
-  'decrementButtonLabel': 'dcr button label',
-  'removeButtonText': 'Remove Button Text',
-  'lowStockText': 'Low Stock Text',
-  'outOfStockText': 'Out of Stock Text',
-  'dealsAppliedText': 'Deals Applied Text',
-  'couponLabel': 'Coupon Label',
-  'cashBackLabel': 'Cash Back Label',
-  'offerLabel': 'Offer Label',
-  'bagsTitle': 'Bags Title',
-  'bringBagsLabel': 'Bring Bags Label',
-  'orderSummaryTitle': 'Order Summary Title',
-  'originalTotalLabel': 'Original Total Label',
-  'dealsValueLabel': 'Deals Applied',
-  'subtotalLabel': 'Subtotal',
-  'textLabel': 'Text label',
-  'totalLabel': 'TOTAL LABEL',
-  'belowMinimumText': 'Below Minimum Text',
-  'aboveMaximumText': 'Above Maximum Text',
-  'checkoutPagePath': 'Checkout Page Path',
-  'checkOutLinkText': 'Check Out Link Text',
-  'cartMininumAmountText' : 'order minimum not met',
-  'cartMaxinumAmountText': 'order maximun met',
-  'heading':'Summary',
-  'pickupSubheading':'',
-  'shippingSubheading':'Shipping',
-  'salesValueLabel':'',
-  'estimatedDriverTipLabel':'Estimated shopper tip 15%',
-  'shopperTipInfoTitle':'Shopper tip',
-  'shopperTipInfoMessage':'100% of your tip goes directly to your shopper. You can change the amount during the checkout before you place your order.',
-  'taxLabel':'Tax',
-  'shippingCostNotice':'',
-  'deliveryTipInfoTitle':'Delivery fee',
-  'originalPriceLabel':'Original price',
-  'onSaleLabel':'On Sale',
-  'deliveryTipInfoContent':'Delivery fees are not adjustable should the order size change due to out of stocks, substitutions, or refunds and returns.',
-  'analytics': [
-    {
-      'trackClick': true,
-      'clickItem': 'Track',
-      'imageTitle': 'track image',
-      'sectionTitle': 'JBHJBB',
-      'campaignName': 'HBBHBHB',
-      'contentWeek': 2
-    }
-  ]
-}"
-          ></dg-cart>
+Component is configured using a JSON object passed via substitutionaldata attribute:
+
 
 API Integration & Endpoints
-APIs Used:
+	•	getCartSubtitutionApi: API call dispatched when substitution settings are changed. Payload includes shopping list and product IDs along with substitution preferences.
 
-/bopisshoppinglist - used to fetch list of products with their availability and eligibility.
-/bopisshoppinglist/item - used to add, reduce or delete item from cart.
-/bopis/bagfees/bringmyownbags - used to render price, tax, discount, total of cart.
-Major Functions & Behavior
-Core Functions:
+⸻
 
-Showing price summary and product list for order type selected on fulfillment picker.
-How it works: 
+Component Behavior
+	•	Default State:
+	•	All checkboxes are unchecked.
+	•	Master checkbox is not selected and shows indeterminate state if some but not all individual checkboxes are selected.
+	•	User Interaction:
+	•	Toggling master checkbox sets all individual checkboxes.
+	•	Toggling individual checkboxes updates master checkbox state accordingly.
+	•	Modal link triggers a modal with substitution info and CTA.
+	•	Clicking “Continue” redirects to checkout page.
 
-When the user navigates to the cart page, the items they have added will be displayed on the screen with their specific quantities. The user will also be able to see a total price summary for all added products.
-In case some items are not eligible for the selected order type on the fulfillment picker or are out of stock, the user will not be able to proceed to checkout. The user cannot move forward with the "in-store" method to checkout.
-The user can add, reduce, or delete items as per their requirements.
-Component Variations & Visual References
-Cart with no products added by user - 
+⸻
 
+Component Variations & UI States
+	1.	All Products Substitutable
+	•	Master checkbox is available.
+	•	Each product row shows individual substitution toggle.
+	2.	Some Products Substitutable
+	•	Only substitutable products are shown.
+	•	Master checkbox supports indeterminate state.
+	3.	Modal Opened
+	•	Displays substitution info with:
+	•	Title
+	•	Description
+	•	Optional second paragraph
+	•	OK button to close modal
 
-Cart on (shipping) order type with added products - 
+⸻
 
+Visual Reference & Styling Notes
+	•	Checkboxes:
+	•	Square, outlined in grey.
+	•	Checked state shows a tick in white over black background.
+	•	Continue Button:
+	•	Yellow brand background.
+	•	Black font.
+	•	Modal:
+	•	Standard modal layout with cross icon, title, body text, and CTA.
 
-In case if product is out of stock or not eligible for order type - 
+⸻
 
+Analytics Events
+	•	SUBSTITUTION_DISPLAYED: Triggered on load with allSelected state.
+	•	SUBSTITUTION_SELECTED: Triggered when individual or master checkbox is changed.
 
-If product is not eligible for order type or out of stock and user will be clicking on checkout then below modal will appear - 
+⸻
 
+Linked Files
+	•	ReduxProvider – app/ReduxProvider
+	•	Actions – app/actions.ts (getCartSubtitutionApi)
+	•	SubstitutionItems – components/Substitution/substitutionItems.tsx
+	•	ModalComponent – components/modals/index.tsx
+	•	Styles – components/Substitution/index.scss
 
+⸻
 
-
-Resources & Related Files
-Path:
-
-Cart - ui.frontend.react\src\components\Cart
-Linked Files:
-
-CartIcon - ui.frontend.react\src\components\cartIcon
-Summary - ui.frontend.react\src\components\summary
-Figma - AEM Delivery - Cumberland – Figma
-
-substitutions Jira:
-
-As a signed in user, I want to see my cart, so that I am able see the items that I have added and learn how much it will cost, get deals, and estimate their total.
-
-User Journey Flow of Delivery: CART
-
-Scope of the Story: Please note that the scope of the story includes checkout button flow on the cart page.
-
-The Checkout button
-
-The checkout button is present below the Estimated Total. 
-
-It has text in black font against the brand color background.
-Upon hovering over the CTA button, the user can see an outline on the CTA button.
-
-Please Note: If there are any items in their cart that need to be removed because they are now OOS, not sold at that store, or not eligible for their current fulfillment method, the customer will receive a message immediately after tapping on this button, letting them know that they need to take action before they can actually begin the checkout process.
-
-Scenario 1:
-
-When the ** user clicks on the checkout button and the products added to the cart does not have any deals or substitutions available, then the user will be redirected directly to checkout page.
-
-Scenario 2:
-
-When the user clicks the Checkout Button, You Missed Some Deals modal will be displayed.
-
-The modal has a title, description, 2 CTA Buttons and cross icon on the top right corner of the modal.
-Back to Cart CTA Button: It has white text against black background. It is clickable and upon clicking takes the user back to cart page.
-Continue to checkout link button: It has a text in blue font color. It is also clickable by default. 
-In hover state, an underline appears below the text, as shown in the screenshot below:
-
-Upon clicking the Checkout button the user is either taken to the checkout page or a substitution page if the product has a substitute option available:
-
-
-
-The title substitution is clickable CTA link and has a hover state. When the user hovers over it, an underline appears below the text.
-
-
-
-Upon clicking on the CTA link, the user can see the following What's Substitution modal:
-
-  
-
-The modal has title, description, cross icon on the top right corner of the modal and Ok CTA button with black background and text in white font.
-Upon clicking on the CTA button or the cross icon, the user gets redirected to the substitution page.
-The substitution page, the use can see the substitution options available for all the products. It has the following elements:
-Allow Substitution text with square shaped checkbox on the left of the text
-Upon clicking on the checkbox, all the checkboxes below gets checked automatically.
-When the user selects the checkbox, a tick mark appears within the checkbox in white font against black background.
-
-Each product is present within separate rectangular boxes with grey outline and no background color.
-Each rectangular box is divided into two columns with a separator in between.
-The first column has within the box has Product image and description
-The second column has Checkbox with a text 'Allow Substitution' on the right of the checkbox.
-
-By default, the checkbox is square in shape with no background color and grey outline.
-When the user clicks on the checkbox, the user can view a tick mark in white font against the black background.
-Continue Button: The button has text in black font color and yellow brand color background.
-
-Upon clicking the Continue CTA button, the user is redirected to the checkout page.
-
-please write this for substitutions component:
-
-
- <cart-substitutional substitutionaldata="{
-    'substitutionsTitle':'What\u0027s a substitution?',
-    'substitutionsLabel':'Allow substitution',
-    'allSubstitutionsLabel':'Allow substitutions for all',
-    'substitutionsButton':'Continue',
-    'titleLink': ''What\u0027s a substitution?'
-    'modalTitle':'What\u0027s a substitution?',
-    'modalDesc':'Many products have an eligible alternative that we can substitute if the exact item you want isn’t in stock.',
-    'modalDesc2':'Substituted items may not be eligible for discounts and offers that were applicable to the original items in your order. You will be charged the retail price of the substituted item and not the retail price of the original item in your order.',
-    'modalButtonText':'Ok',
-    'analytics':[{'trackClick':false,'trackPageSection':'none'}]}">
-  </cart-substitutional>
-import React, { useEffect, useState, useRef } from "react";
-import {
-  createCustomElement,
-  byAttrVal,
-  DOMModel,
-  //   @ts-ignore
-} from "@adobe/react-webcomponent";
-import "./index.scss";
-import ModalComponent from "../modals";
-import SubstitutionItems from "./substitutionItems";
-import { useRedux } from "../../hooks/useRedux";
-import { getCartSubtitutionApi } from "../../app/actions";
-import ReduxProvider from "../../app/ReduxProvider";
-import { AC } from "../../const/analyticsConstants";
-import { pushEventsDataOnClick, pushEventsDataOnLoad, setDataLayer } from "../../app/analytics";
-
-interface SubstitutionsProps {
-  substitutionaldata?: string;
-}
-class SubstitutionsModel extends DOMModel {
-  @byAttrVal substitutionaldata?: string;
-}
-/**
- * Renders a modal component with the contents.
- *
- * @param {SubstitutionsProps} props - Props for the ModalComponent.
- * @returns {React.ReactElement} JSX element representing the modal.
- */
-const Substitution: React.FC<SubstitutionsProps> = (props) => {
-  const { substitutionaldata } = props;
-  const [allowSubstitution, setAllowSubstitution] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [individualSelections, setIndividualSelections] = useState<boolean[]>([]);
-  const allowSubstitutionRef = useRef<HTMLInputElement | null>(null);
-  const {dispatch, storeData} = useRedux();
-  const cartData = storeData?.cart?.cartData;
-  const correctedSubstitutionLabels = substitutionaldata?.replace(/'/g, '"');
-  const parsedSubstitutionLabels = correctedSubstitutionLabels
-    ? JSON.parse(correctedSubstitutionLabels)
-    : null;
-  useEffect(() => {
-    if (cartData?.products) {
-      setIndividualSelections(cartData?.products?.map((product) => product.canSubstitute));
-    }
-  }, [cartData]);
-
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-  // Handle "Select All" functionality
-  const handleAllowSubstitutionChange = async (checked: boolean) => {
-    setAllowSubstitution(checked);
-    setIndividualSelections(individualSelections.map(() => checked));
-    const payload = {
-      store: cartData.store,
-      shoppingListGuid: cartData.shoppingListId,
-      items: cartData?.products?.map((product: any) => ({
-        listItemId: product.listItemId,
-        allowSubstitution: checked,
-      })),
-    };
-    try {
-      await dispatch(getCartSubtitutionApi(payload));
-
-      setDataLayer(AC.SUBSTITUTION_SELECTED, {
-        substitutionDisplayed: checked
-
-      });
-    } catch (e) {
-      console.error("Error dispatching getCartSubtitutionApi", e);
-    }
-  };
-    // Update the indeterminate state
-    useEffect(() => {
-      const totalSelected = individualSelections.filter(Boolean).length;
-      const allSelected = totalSelected ===cartData?.products?.length;
-
-      if (allowSubstitutionRef.current) {
-        allowSubstitutionRef.current.indeterminate =
-          totalSelected > 0 && totalSelected < cartData?.products?.length;
-      }
-      setAllowSubstitution(allSelected);
-    }, [individualSelections, cartData?.products?.length]);
-
-    useEffect(() => {
-      const totalSelected = individualSelections.filter(Boolean).length;
-      const allSelected = totalSelected === cartData?.products?.length;
-
-      pushEventsDataOnLoad(
-        {
-          event: AC.SUBSTITUTION_DISPLAYED,
-          allSelected,
-        },
-        true
-      );
-    }, []);
-  
-  
-    // Handle individual product substitution checkbox change
-    const handleIndividualSelectionChange = (
-      index: number,
-      checked: boolean
-    ) => {
-      const newSelections = [...individualSelections];
-      newSelections[index] = checked;
-      setIndividualSelections(newSelections);
-      pushEventsDataOnClick({
-        event: AC.SUBSTITUTION_SELECTED,
-        substitutionDisplayed: newSelections,
-      });
-    };
-
-  return (
-    <div className="substitution-modal">
-      <div className="substitution-modal__content">
-        <div className="substitution-modal__link">
-          <div className="cta-button">
-            <a onClick={handleModalOpen}><span className="cta-button__text">{parsedSubstitutionLabels?.titleLink}</span>
-            </a>
-          </div>
-        </div>
-
-      {/* Main "Allow Substitution" Checkbox */}
-      <div className="substitution-product__allow-substitution-checkbox">
-        <input
-          type="checkbox"
-          id="all-substitution-checkbox"
-          ref={allowSubstitutionRef}
-          checked={allowSubstitution}
-          onChange={(e) => handleAllowSubstitutionChange(e.target.checked)}
-        />
-        <label htmlFor="all-substitution-checkbox">{parsedSubstitutionLabels?.allSubstitutionsLabel}</label>
-      </div>
-      {cartData?.products?.map((product: any,  index: number) => {
-        if(product.isSubstitutable) {
-          return <SubstitutionItems 
-          product={product} 
-          key={index}
-          isSelected={individualSelections[index]}
-          substitutionLabels={parsedSubstitutionLabels}
-          onSelectionChange={(checked: boolean) =>
-            handleIndividualSelectionChange(index, checked)
-          }
-          />;
-        }
-      })}
-      <div className="substitution-modal__continue-button">
-        <button 
-        onClick={() => (window.location.href = window.DG?.aemData?.config?.checkOutPageUrl)}
-        >{parsedSubstitutionLabels?.substitutionsButton}</button>
-      </div>
-      {isModalOpen && (
-        <ModalComponent
-          onClose={handleModalClose}
-          title={parsedSubstitutionLabels?.modalTitle }
-          description={parsedSubstitutionLabels?.modalDesc}
-          description2={parsedSubstitutionLabels?.modalDesc2}
-          buttonText={parsedSubstitutionLabels?.modalButtonText}
-          onCustomButtonClick={() => setIsModalOpen(false)}
-          customClass="show"
-        />
-      )}
-    </div>
-    </div>
-  );
-};
-
-export default Substitution;
-
-const SubstitutionComponent = createCustomElement((props: any) => (
-<ReduxProvider>
-  <Substitution {...props}></Substitution>
-</ReduxProvider>
-),
-  SubstitutionsModel,
-  "element"
-);
-
-customElements.define("cart-substitutional", SubstitutionComponent);
+Figma Reference
+	•	Figma File: AEM Delivery - Cumberland
