@@ -1,113 +1,100 @@
-Overview
+smart-carousel jira:
+As a content author, I want to be able to author Smart carousel fields in the Cloud Static Carousel component, so that I am able to get Smart carousel features in the static carousel
 
-Component Name: CTA (Call To Action)
-Description: The CTA component is a flexible and interactive UI element designed for various user actions. It supports a wide range of button styles, icons, semantics, tooltips, popovers, and modal interactions.
-Nature of the Component: Static Component (with dynamic behavior)
+Business / Functional Goals:
 
-⸻
+The content author should be able to author the Carousel options fields of the Smart carousel component in AMS in the future Static carousel component so that they are able to get the capabilities of the Smart carousel component
 
-How the Component Works
+AC1 | FE | Smart carousel features properties
 
-Functionality
+GIVEN I am an end user in DG.COM
 
-The CTA component renders interactive buttons that can trigger navigations, tooltips, popovers, or modals based on authored configurations.
-It supports various button types, sizes, shapes, and semantics, as well as ADA-compliant states and behaviors.
+WHEN I am viewing the Smart carousel variation of the static carousel component
 
-⸻
+THEN I should be able to view the below features with the properties added:
 
-Major Elements
-	•	Button Type: Primary, Secondary, Tertiary, Outline (dark/light), Dashed, Link, Underline (blue/black)
-	•	Button Size: Small, Medium, Large
-	•	Button Shape: Standard, Pill, Circle, Square
-	•	Semantics: Danger (Red), Positive (Green)
-	•	Button States: Default, Hover, Focus, Active, Disabled (handled on interaction, not authored)
-	•	Icons: Optional icon-left or icon-right support
-	•	Tooltip: Shows brief messages on hover
-	•	Popover: Shows title, description, and action buttons on click
-	•	Modal Trigger: Buttons can open a modal if modalId is authored and matches an ID in a modal component
+Disable auto width feature - Selecting the checkbox should disable auto width for 100% width items such as images as per the current implementation in AMS instance. This should be applicable for images in the static carousel
+Carousel item spacing - The Small, medium and large spacings should apply as per the specifications in the AMS instance
+No. of items visible per page on Desktop - The number selected here should decide the no. of items visible per page on Desktop
+No. of items visible per page on Tablet/Mobile - The number selected here should decide the no. of items visible per page on Tablet/Mobile
+Max Desktop Slides Per Page - This should control the maximum no. of slides that show in the carousel in the desktop view
+Max Desktop Scroll By Count - This should control the maximum no. of slides to scroll by for each next or previous navigation for desktop view 
+Max Mobile Slides Per Page -  This should control the maximum no. of slides that show in the carousel in the mobile view
+Max Mobile Scroll By Count - This should control the maximum no. of slides to scroll by for each next or previous navigation for mobile view
 
-⸻
 
-Integration Requirements with AEM
+As a content author, I want to be able to author Smart carousel fields in the Cloud Static Carousel component, so that I am able to get Smart carousel features in the static carousel
 
-Integration Prerequisites
+Business / Functional Goals:
 
-JSON data must be passed from AEM including CTA button configurations and optional Tooltip/Popover/Modal data.
+The content author should be able to author the Carousel options fields of the Smart carousel component in AMS in the future Static carousel component so that they are able to get the capabilities of the Smart carousel component
 
-Mapping Data
+Acceptance Criteria:
 
-Map the JSON fields to corresponding UI logic and styles in the component:
-	•	button-type, button-size, and button-shape map directly to CSS classes
-	•	tooltip and popover are conditional elements rendered based on existence
-	•	modalId triggers modal logic if matched with a modal component
+AC1 | FE | View of the Static and Smart carousel variations
 
-⸻
+GIVEN I am an end user on DG.COM
 
-API Integration & Endpoints
+WHEN I am viewing Static and Smart carousels
 
-No external API is required. Optional analytics can be implemented using:
-	•	pushEventOnComponentClicked for click tracking
+THEN the carousel design should be as per Figma
 
-⸻
+AND the no. of items visible in the carousel per page on the Desktop/Tablet/Mobile should be as per the authors selection
 
-Component Variations & Visual References
+AND as Banner have a min width, for that reason even if the author add a 4 count is not being displayed as 4 per page. But if other components are used, then authors should be able to choose size of each using layout column control
 
-Variation Details
+AND the view of the only items with 4 count per page, 3 count per page, 2 count per page and 1 count per page should be as per Figma in all the screen size
 
-All permutations of:
-	•	Type × Size × Shape × Semantic × State
-	•	Tooltip color (black, yellow, tonal) and direction (12 directions)
-	•	Popover content layout (with 1 or 2 CTAs)
+AND the carousel container should change the size based on the layout
 
-⸻
+AND the carousel buttons and steppers should be visible in XXL, XL, L and M screen size
 
-Visual Representations
+AND the carousel buttons should not be visible in S and XS screen size
 
-Web View:
-	•	Default view with all button variations
-	•	Hover + Focus states for ADA compliance
-	•	Circle & Square buttons with icon-only appearance
-	•	Tooltip preview on hover
-	•	Popover view on click with optional single or dual CTAs
-	•	Modal triggering example
+AND only the steppers should be visible in S and XS screen size
 
-⸻
+AND as images have aspect ratio, they should maintain that aspect ratio in the carousel
 
-Major Functions & Behavior
+Note: Other items such as Featured tiles, shoppable images, coupon preview would be added later to the static and smart carousel
 
-Core Functions
-	•	Button Styling: Dynamically styled based on authored types, sizes, shapes
-	•	Tooltip Integration: Appears on hover, varies by style and direction
-	•	Popover Integration: Appears on click, supports full content layout with two standard-small buttons
-	•	Modal Triggering: Uses modalId for opening associated modal
-	•	Accessibility: Focus indicators, semantic roles, ARIA labels per ADA guidelines
+smart-carousel.json: 
 
-⸻
+{
+    "carouselItems": [
+        {
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum suscipit, erat vitae placerat suscipit, lectus mauris malesuada lacus, vitae aliquam urna ipsum eget nisl.",
+            "link":"https://picsum.photos/id/10/200/300"
+        },
+        {
+            "text": "Nulla facilisi. Proin placerat ipsum turpis, id hendrerit neque sodales vitae. Aenean tristique leo eget mauris luctus, at eleifend ipsum pharetra.",
+            "link":"https://picsum.photos/id/11/200/300"
+        },
+        {
+            "text": "Nam vitae lorem lectus. Fusce eleifend tincidunt purus vel tincidunt. Aliquam erat volutpat. Vivamus vel justo vitae leo mollis dignissim.",
+            "link":"https://picsum.photos/id/12/200/300"
+        },
+        {
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum suscipit, erat vitae placerat suscipit, lectus mauris malesuada lacus, vitae aliquam urna ipsum eget nisl.",
+            "link":"https://picsum.photos/id/13/200/300"
+        },
+        {
+            "text": "Nulla facilisi. Proin placerat ipsum turpis, id hendrerit neque sodales vitae. Aenean tristique leo eget mauris luctus, at eleifend ipsum pharetra.",
+            "link":"https://picsum.photos/id/14/200/300"
+        },
+        {
+            "text": "Nam vitae lorem lectus. Fusce eleifend tincidunt purus vel tincidunt. Aliquam erat volutpat. Vivamus vel justo vitae leo mollis dignissim.",
+            "link":"https://picsum.photos/id/15/200/300"
+        }
+    ],
+    "carouselID": "smartCarousel",
+    "spacing": "32px",
+    "disableAutoWidth": true,
+    "arrows": true,
+    "maxSlides": 4,
+    "scrollByCount": 2,
+    "mobileMaxPerSlides": 2,
+    "mobileScrollByCount": 1,
+    "shouldRenderPagination": true
+}
 
-Resources & Related Files
-
-Linked Files:
-	•	cta-button.hbs – [Path: src\components\cta-button\cta-button.hbs]
-	•	cta-button.json – [Path: src\components\cta-button\cta-button.json]
-	•	cta-button.scss – [Path: src\components\cta-button\cta-button.scss]
-	•	cta-button.ts – [Path: src\components\cta-button\cta-button.ts]
-
-Tooltip Config:
-	•	tooltip.json – [Path: src\components\cta-button\tooltip.json]
-
-Utility Functions:
-	•	pushEventOnComponentClicked – Analytics tracking
-
-⸻
-
-Accessibility
-
-CTA Buttons, Tooltips, and Popovers all meet ADA standards as outlined in the ADA Best Practices Document. States are visually and programmatically defined.
-
-⸻
-
-Notes
-	•	Tooltip and Popover styles are configured via the style brush in AEM
-	•	Circle and Square buttons only render icons—text should not be authored
-	•	Background remains unblurred during Popover display
-	•	Tooltips should be concise (character limit recommended)
+Please write me the documentation for smart carousel just like banner documentation. 
