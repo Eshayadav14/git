@@ -1,45 +1,63 @@
+Carousel Component Documentation
+
 Overview
 
-Component Name: Smart Carousel
-Description:
-The Smart Carousel is a dynamic carousel component that enhances the capabilities of the Cloud Static Carousel by introducing advanced layout controls and support for multiple child components. It adapts responsively to screen sizes and enables authors to configure behavior through authoring dialogs in AEM.
+Component Name: Carousel
+Type: Dynamic
+Component Variations:
+	•	Static Carousel (OOTB)
+	•	Smart Carousel (Enhanced/Configurable)
 
-Nature of the Component: Dynamic
-Variation of: Cloud Static Carousel
+The Carousel component serves as a container for scrollable, horizontally arranged content. It supports two variations:
+	1.	Static Carousel – a simple out-of-the-box (OOTB) implementation that renders one item per page with minimal configuration.
+	2.	Smart Carousel – an enhanced version that introduces layout flexibility, responsive behavior, and authoring controls via AEM.
 
 ⸻
 
-How the Component Works
+Component Variations
 
-The Smart Carousel takes in authored configuration options and renders a scrollable layout of authored child components (like banners, images, and videos). It supports customizable spacing, visible slide count, scroll behavior, and layout responsiveness across devices.
+1. Static Carousel
+	•	Behavior: Displays one item per page.
+	•	Customization: Limited.
+	•	Splide Configuration: Minimal; mostly hardcoded or default.
+	•	Use Case: Simple banners, single-tile showcases.
+	•	OOTB: Yes.
+
+2. Smart Carousel
+	•	Behavior: Displays multiple items per page (customizable per screen size).
+	•	Customization: Extensive configuration through AEM dialogs.
+	•	Splide Configuration: Fully customizable with authoring fields.
+	•	Use Case: Flexible layouts using a mix of components like banners, videos, and more.
+
+Key Difference:
+Static Carousel is limited to 1 slide per page and is mostly unconfigurable.
+Smart Carousel gives full control over spacing, scroll behavior, layout responsiveness, and item visibility.
+
+⸻
+
+How the Smart Carousel Works
+
+The Smart Carousel builds on the foundation of the Static Carousel by introducing configurable layout logic, carousel behavior controls, and responsive display management.
 
 
-table
-
-Supported Item Types
-
-The Smart Carousel supports a flexible mix of content. Authors can include the following components within the carousel:
-	•	Banner
-	•	Coupon Preview
-	•	Dynamic Media Featured Tile
-	•	Image
-	•	Shoppable Image
-	•	Text
-	•	YouTube Video
-
-Authors can arrange, reorder, and configure these components within the carousel container. The Smart Carousel ensures each component maintains its native behavior and layout styling.
-
-AEM Integration
-
-Authoring Experience
-
-Content authors can configure the Smart Carousel by enabling its variation within the Cloud Static Carousel and then selecting:
-	•	Number of visible items per screen size
-	•	Spacing size (small, medium, large)
-	•	Scroll behavior
-	•	Whether to disable auto width for image-type content
-	•	Child components to include
-
-JSON Configuration Sample
-
+Feature
+Description
+Disable Auto Width
+Prevents 100% width for image-type items
+Carousel Item Spacing
+Choose between small, medium, or large spacing
+Max Slides per Page (Desktop)
+Number of visible items per screen on desktop
+Scroll By Count (Desktop)
+How many slides scroll on arrow click (desktop)
+Max Slides per Page (Mobile/Tablet)
+Number of visible items per screen on smaller devices
+Scroll By Count (Mobile/Tablet)
+How many slides scroll on arrow click (mobile/tablet)
+Aspect Ratio Retention
+Ensures image components maintain their aspect ratio
+Button & Stepper Visibility
+Arrows on large screens, steppers on small screens
+Responsive Layout Handling
+Adjusts based on screen size and layout columns
 
