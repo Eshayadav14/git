@@ -1,100 +1,118 @@
-smart-carousel jira:
-As a content author, I want to be able to author Smart carousel fields in the Cloud Static Carousel component, so that I am able to get Smart carousel features in the static carousel
+Overview
 
-Business / Functional Goals:
+Component Name: Smart Carousel
+Description: The Smart Carousel is an enhanced variation of the Static Carousel component. It incorporates advanced features like dynamic spacing, responsive item counts per device, and controlled scroll behavior to offer a flexible and performance-optimized carousel experience.
+Nature of the Component: Dynamic Component
 
-The content author should be able to author the Carousel options fields of the Smart carousel component in AMS in the future Static carousel component so that they are able to get the capabilities of the Smart carousel component
+⸻
 
-AC1 | FE | Smart carousel features properties
+How the Component Works
 
-GIVEN I am an end user in DG.COM
+Functionality:
 
-WHEN I am viewing the Smart carousel variation of the static carousel component
+The Smart Carousel enables users to swipe or click through multiple carousel items (e.g., banners, tiles, or promotional content). It gives authors fine-grained control over spacing, visible items per screen size, and scroll behavior through AEM configuration.
 
-THEN I should be able to view the below features with the properties added:
+Major Elements:
+	•	Carousel Items: Configurable slides with image and text content.
+	•	Navigation Controls: Arrows and steppers for navigation, conditionally visible based on screen size.
+	•	Pagination: Optional pagination dots.
+	•	Responsive Layout: Adapts visible items per page and scroll count based on device size.
 
-Disable auto width feature - Selecting the checkbox should disable auto width for 100% width items such as images as per the current implementation in AMS instance. This should be applicable for images in the static carousel
-Carousel item spacing - The Small, medium and large spacings should apply as per the specifications in the AMS instance
-No. of items visible per page on Desktop - The number selected here should decide the no. of items visible per page on Desktop
-No. of items visible per page on Tablet/Mobile - The number selected here should decide the no. of items visible per page on Tablet/Mobile
-Max Desktop Slides Per Page - This should control the maximum no. of slides that show in the carousel in the desktop view
-Max Desktop Scroll By Count - This should control the maximum no. of slides to scroll by for each next or previous navigation for desktop view 
-Max Mobile Slides Per Page -  This should control the maximum no. of slides that show in the carousel in the mobile view
-Max Mobile Scroll By Count - This should control the maximum no. of slides to scroll by for each next or previous navigation for mobile view
+⸻
 
+Integration Requirements with AEM
 
-As a content author, I want to be able to author Smart carousel fields in the Cloud Static Carousel component, so that I am able to get Smart carousel features in the static carousel
+Integration Prerequisites:
+	•	Authoring of Smart Carousel JSON fields via AMS interface.
+	•	JSON configuration includes both content (carousel items) and carousel behavior settings.
 
-Business / Functional Goals:
+Integration Process:
 
-The content author should be able to author the Carousel options fields of the Smart carousel component in AMS in the future Static carousel component so that they are able to get the capabilities of the Smart carousel component
+Data Configuration:
+The following data must be passed from AEM to the Smart Carousel component:
 
-Acceptance Criteria:
+JSON
 
-AC1 | FE | View of the Static and Smart carousel variations
+Mapping Data:
+Each JSON field should be mapped accordingly to control the carousel rendering logic in the frontend layer.
 
-GIVEN I am an end user on DG.COM
+⸻
 
-WHEN I am viewing Static and Smart carousels
+API Integration & Endpoints
 
-THEN the carousel design should be as per Figma
+APIs Used:
+No external API calls are made by the Smart Carousel. Internal tracking or analytics can be added using utility functions.
 
-AND the no. of items visible in the carousel per page on the Desktop/Tablet/Mobile should be as per the authors selection
+⸻
 
-AND as Banner have a min width, for that reason even if the author add a 4 count is not being displayed as 4 per page. But if other components are used, then authors should be able to choose size of each using layout column control
+Component Variations & Visual References
 
-AND the view of the only items with 4 count per page, 3 count per page, 2 count per page and 1 count per page should be as per Figma in all the screen size
+Variation Details:
+	•	Based on authoring, the carousel adapts its layout, scroll behavior, and visible item count.
+	•	Can be authored to show 1, 2, 3, or 4 items per page depending on screen size and layout width.
 
-AND the carousel container should change the size based on the layout
+Visual Representations:
+View in XXL, XL, L, M sizes includes:
+	•	Arrows and steppers
 
-AND the carousel buttons and steppers should be visible in XXL, XL, L and M screen size
+View in S, XS sizes includes:
+	•	Steppers only
 
-AND the carousel buttons should not be visible in S and XS screen size
+⸻
 
-AND only the steppers should be visible in S and XS screen size
+Major Functions & Behavior
 
-AND as images have aspect ratio, they should maintain that aspect ratio in the carousel
+Core Functions:
+	•	Responsive Visibility:
+	•	Items per page adjust for Desktop, Tablet, and Mobile based on authoring.
+	•	Max slides and scroll count vary per device.
+	•	Auto Width Control:
+	•	disableAutoWidth disables automatic sizing for images, ensuring consistent widths.
+	•	Item Spacing:
+	•	Small, medium, and large spacing options control gutter size between items.
+	•	Scroll Configuration:
+	•	Author-controlled scrollByCount and mobileScrollByCount define how many items to shift per navigation.
+	•	Aspect Ratio Maintenance:
+	•	Images retain their original aspect ratio regardless of carousel container width.
 
-Note: Other items such as Featured tiles, shoppable images, coupon preview would be added later to the static and smart carousel
+⸻
 
-smart-carousel.json: 
+Accessibility Features
+	•	Alt text for images (must be authored)
+	•	ARIA roles for navigation controls
+	•	Keyboard navigability for steppers and arrows
 
-{
-    "carouselItems": [
-        {
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum suscipit, erat vitae placerat suscipit, lectus mauris malesuada lacus, vitae aliquam urna ipsum eget nisl.",
-            "link":"https://picsum.photos/id/10/200/300"
-        },
-        {
-            "text": "Nulla facilisi. Proin placerat ipsum turpis, id hendrerit neque sodales vitae. Aenean tristique leo eget mauris luctus, at eleifend ipsum pharetra.",
-            "link":"https://picsum.photos/id/11/200/300"
-        },
-        {
-            "text": "Nam vitae lorem lectus. Fusce eleifend tincidunt purus vel tincidunt. Aliquam erat volutpat. Vivamus vel justo vitae leo mollis dignissim.",
-            "link":"https://picsum.photos/id/12/200/300"
-        },
-        {
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum suscipit, erat vitae placerat suscipit, lectus mauris malesuada lacus, vitae aliquam urna ipsum eget nisl.",
-            "link":"https://picsum.photos/id/13/200/300"
-        },
-        {
-            "text": "Nulla facilisi. Proin placerat ipsum turpis, id hendrerit neque sodales vitae. Aenean tristique leo eget mauris luctus, at eleifend ipsum pharetra.",
-            "link":"https://picsum.photos/id/14/200/300"
-        },
-        {
-            "text": "Nam vitae lorem lectus. Fusce eleifend tincidunt purus vel tincidunt. Aliquam erat volutpat. Vivamus vel justo vitae leo mollis dignissim.",
-            "link":"https://picsum.photos/id/15/200/300"
-        }
-    ],
-    "carouselID": "smartCarousel",
-    "spacing": "32px",
-    "disableAutoWidth": true,
-    "arrows": true,
-    "maxSlides": 4,
-    "scrollByCount": 2,
-    "mobileMaxPerSlides": 2,
-    "mobileScrollByCount": 1,
-    "shouldRenderPagination": true
-}
+⸻
 
-Please write me the documentation for smart carousel just like banner documentation. 
+Resources & Related Files
+
+Linked Files:
+	•	smart-carousel.hbs [Path: src/dgweb/ui.frontend/src/app/components/smart-carousel/smart-carousel.hbs]
+	•	smart-carousel.json [Path: src/dgweb/ui.frontend/src/app/components/smart-carousel/smart-carousel.json]
+	•	smart-carousel.scss [Path: src/dgweb/ui.frontend/src/app/components/smart-carousel/smart-carousel.scss]
+	•	smart-carousel.ts [Path: src/dgweb/ui.frontend/src/app/components/smart-carousel/smart-carousel.ts]
+
+Figma Link:
+Figma URL – Link (Please refer to project repository)
+
+⸻
+
+JIRA Story ID:
+
+JIRA Story ID: [DSE-XXXXX] Components | AEM | FE | Create Smart Carousel Component
+
+⸻
+
+Additional Information
+
+Customization & Theming:
+	•	Carousel appearance and behavior can be fully themed via SCSS and JSON.
+	•	Layout responsiveness is managed via CSS grid/flex rules combined with SplideJS configuration.
+
+Dependencies:
+	•	Utilizes SplideJS for carousel logic.
+	•	No third-party service dependency.
+
+Utility Functions:
+	•	trackCarouselNavigation() for analytics events
+	•	getResponsiveBreakpoint() to dynamically switch carousel config based on viewport
