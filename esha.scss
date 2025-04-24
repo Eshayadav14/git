@@ -1,78 +1,47 @@
-Featured Tile Component Documentation
+Functionality
 
-Overview
-
-Component Name: Featured Tile
-Type: Dynamic
-Variation(s):
-	•	Hoverable A
-
-The Featured Tile component highlights key promotions or products using visually engaging tiles. Each tile includes a background, image, hover image, text content (title, subtitle, description), and a CTA button. It is designed to be responsive and supports accessibility standards (ADA compliance).
+The Featured Tiles component allows content authors to create visually engaging tiles that showcase key content with interactive features. Each tile highlights an item or offer with image transitions on hover, detailed content, and actionable CTAs. It supports responsive layouts and maintains accessibility standards.
 
 ⸻
 
-Variation: Hoverable A
-
-Behavior:
-When the user hovers over a tile (desktop) or performs a long tap (mobile), the primary image swaps to a hover image while retaining the title, subtitle, description, and CTA.
+Major Elements
+	1.	Tile Container
+	•	Responsive grid layout that adjusts based on screen size.
+	2.	Image
+	•	Default display image shown initially.
+	3.	Hover Image
+	•	Secondary image that appears on hover or long-tap (mobile).
+	4.	Title
+	•	Bold and prominent title for the tile content.
+	5.	Subtitle (optional)
+	•	Additional context displayed beneath the title.
+	6.	Description
+	•	Scrollable content block with text truncation if it exceeds the tile space.
+	7.	CTA Button
+	•	Supports Primary, Secondary, Outlined, and Outlined Dark styles.
+	•	Includes all interactive states: hover, focus, active, and default.
 
 ⸻
 
-Key Features
+Core Functions
+	1.	Hover Interaction
+	•	On desktop: hovering triggers the hover image and interactive states.
+	•	On mobile: short tap = click; long tap = hover effect.
+	2.	Tile Responsiveness
+	•	Tiles rearrange into a grid layout based on screen size:
+	•	XXL–M: Grid view after 4+ tiles
+	•	S: Grid view after 3+ tiles
+	•	XS (375px): Tiles stack vertically
+	3.	Dynamic Styling via JSON
+	•	Authors can set background color, font colors, image alt texts, and button labels through authored JSON or AEM fields.
+	4.	Description Scroll
+	•	Allows users to scroll the tile description while keeping the image and title fixed (if enabled).
 
-Element
-Description
-Image
-Main visual shown by default
-Hover Image
-Alternate image shown on hover or long tap
-Title
-Bold styled text, remains visible on hover
-Subtitle
-Supporting text line beneath title
-Description
-Scrollable description; truncated based on available space
-CTA Button
-Supports all CTA styles: Primary, Secondary, Outlined, Outlined Dark
-Background Color
-Fully authorable via dialog field
-Mobile Behavior
-Tap = Click, Long Tap = Hover
+⸻
 
-
-
-Component Behavior
-table:
-Action
-Result
-Hover (Desktop)
-Image switches to hover image
-Click on CTA
-Opens authored link in a new tab
-Short Tap (Mobile)
-Triggers click behavior
-Long Tap (Mobile)
-Triggers hover behavior
-Resize (Responsive)
-Layout adapts to screen size in grid format
-
-Responsive Grid Behavior
-
-Screen Size
-Grid Behavior
-XXL, XL, L, M
-Fourth and following tiles display in grid view
-S (≤575px)
-Third and following tiles display in grid view
-XS (375px)
-All tiles stack vertically
-
-
-
-Accessibility (ADA) Compliance
-	•	All image elements require alt attributes.
-	•	Button interaction states (hover, focus, active) meet contrast requirements.
-	•	Tile content is keyboard accessible.
-	•	Description area is scrollable without requiring precise mouse interaction.
-
-
+Behavior
+	•	Image aspect ratios are preserved on all screen sizes.
+	•	Tiles adapt layout according to device screen width.
+	•	Hover image and styling are rendered exactly as authored.
+	•	Buttons redirect to authored URLs and open in a new tab by default.
+	•	All interactive elements are ADA-compliant per provided guidelines.
