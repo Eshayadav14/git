@@ -1,123 +1,78 @@
-Featured tiles jira: 
-As an end user, I should be able to view the featured tile component, so that I can view and interact with the featured tile component as per Figma
+Featured Tile Component Documentation
 
-Business / Functional Goals:
+Overview
 
-The featured tile component should show important information in a tile view and should consist of elements like Image, Title, Subtitle & Description, hover image and CTA
+Component Name: Featured Tile
+Type: Dynamic
+Variation(s):
+	•	Hoverable A
 
-The Featured Tile component has 1 variations
+The Featured Tile component highlights key promotions or products using visually engaging tiles. Each tile includes a background, image, hover image, text content (title, subtitle, description), and a CTA button. It is designed to be responsive and supports accessibility standards (ADA compliance).
 
-Hoverable A
-The Hoverable A variation should show a different view when a user hovers over these variations
+⸻
 
-The user should be able to scroll the description of the Scrollable variation with the Image and title being fixed
+Variation: Hoverable A
 
-Acceptance Criteria:
+Behavior:
+When the user hovers over a tile (desktop) or performs a long tap (mobile), the primary image swaps to a hover image while retaining the title, subtitle, description, and CTA.
 
-As an End User/ Customer, I should be able to see the 
+⸻
 
-Note: 
+Key Features
 
-The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
-Featured tile component should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
-AC1 | FE | View of the Featured Tile Component Variation 1
+Element
+Description
+Image
+Main visual shown by default
+Hover Image
+Alternate image shown on hover or long tap
+Title
+Bold styled text, remains visible on hover
+Subtitle
+Supporting text line beneath title
+Description
+Scrollable description; truncated based on available space
+CTA Button
+Supports all CTA styles: Primary, Secondary, Outlined, Outlined Dark
+Background Color
+Fully authorable via dialog field
+Mobile Behavior
+Tap = Click, Long Tap = Hover
 
-GIVEN I am end user in DG
 
-WHEN I am viewing Variation 1 (Hoverable A) of the Featured Tile component
 
-THEN the view of the Hoverable A variation should be AS PER FIGMA
+Component Behavior
+table:
+Action
+Result
+Hover (Desktop)
+Image switches to hover image
+Click on CTA
+Opens authored link in a new tab
+Short Tap (Mobile)
+Triggers click behavior
+Long Tap (Mobile)
+Triggers hover behavior
+Resize (Responsive)
+Layout adapts to screen size in grid format
 
-AND the image should change upon hovering on the tile
+Responsive Grid Behavior
 
-AND the title, description and CTA should stay the same upon hovering
+Screen Size
+Grid Behavior
+XXL, XL, L, M
+Fourth and following tiles display in grid view
+S (≤575px)
+Third and following tiles display in grid view
+XS (375px)
+All tiles stack vertically
 
-AND the view of the title, description and CTA should be AS PER FIGMA
 
-Title in Bold
-Description truncated if it exceeds the surface area of the tile
-CTA can be of Primary, Secondary ,Outlined or Outlined dark type and should have all states as per CTA type - Hover, Focused, Active etc.
-The default button state should be Primary type
-https:
-AND I should be redirected to a new link upon clicking on the CTA in the hoverable A variation
 
-AND the hover image should be the same as authored in the Hover Image field by the content author
+Accessibility (ADA) Compliance
+	•	All image elements require alt attributes.
+	•	Button interaction states (hover, focus, active) meet contrast requirements.
+	•	Tile content is keyboard accessible.
+	•	Description area is scrollable without requiring precise mouse interaction.
 
-AND the background color of the container should be the one as authored in the container background color field
 
-AND in mobile devices, If user makes a short tap, that will work as a click. If user makes a long tap, that will work as a hover.
-
-AND the featured tile component should take a grid view when it exceeds the screen size in different screen sizes AS PER FIGMA
-
-AND the fourth and the following tiles should show in a Grid view in screen sizes , XXL, XL, L and M
-
-AND the third and the following tiles should show in a Grid View in screen sizes S and XS (575px) screen sizes
-
-AND the tiles should be stacked on top of each other in the XS (375px) Screen size
-
-AC2 | AEM | Add featured tiles within container
-
-GIVEN I am adding featured tiles within a container
-
-WHEN I select the below policy at the container level
-
-Featured tiles (to be updated)
-THEN I should see the Variation A in the grid view as per Figma
-
-hbs: 
-<div class="{{buttonType}} row">
-  {{#each featuredTiles}}
-    <div class="col-6 col-sm-6 col-md-4 col-lg-3">
-      <div class="featured-tile" style="background-color: {{this.backgroundColor}};">
-        <div class="featured-tile__image">
-          <img src="{{this.image}}" alt="{{this.imageAltText}}" class="featured-tile__image__default-image"/>
-          <img src="{{this.hoverImage}}" alt="{{this.hoverImageAltText}}" class="featured-tile__image__hover-image"/>
-        </div>
-        <div class="featured-tile__content">
-          <div class="featured-tile__content__title" style="color: {{this.titleFontColor}}">{{this.title}}</div>
-          <div class="featured-tile__content__subtitle" style="color: {{this.subtitleFontColor}}">{{this.subtitle}}</div>
-          <div class="featured-tile__content__description" style="color: {{this.descriptionFontColor}}">
-            <p>
-              {{this.description}}
-            </p>
-          </div>
-          <div class="cta-button">
-            <a href="{{ButtonLink}}" target="_blank" class="featured-tile__content__button">{{this.ButtonLabel}}</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  {{/each}}
-</div>
-
-json: 
-{
-  "buttonType": "btn-secondary",
-  "featuredTiles": [
-    {
-      "backgroundColor": "#FFF200",
-      "image": "./clientlib-site/resources/images/banner.png",
-      "imageAltText": "Image 1 Alt Text",
-      "hoverImage": "https://dummyimage.com/600x400/d617d6/0011ff",
-      "hoverImageAltText": "Hover Image 1 Alt Text",
-      "title": "Purex",
-      "subtitle": "Here goes the subtitle here goes the subtitle",
-      "description": "Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consectetur",
-      "ButtonLabel": "Shop Purex",
-      "ButtonLink": "#"
-    },
-    {
-      "backgroundColor": "#FFF200",
-      "image": "./clientlib-site/resources/images/banner.png",
-      "imageAltText": "Image 2 Alt Text",
-      "hoverImage": "https://dummyimage.com/600x400/d617d6/0011ff",
-      "hoverImageAltText": "Hover Image 2 Alt Text",
-      "title": "Purex",
-      "subtitle": "Here goes the subtitle here goes the subtitle",
-      "description": "Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consectetur",
-      "ButtonLabel": "Shop all",
-      "ButtonLink": "#",
-      "descriptionFontColor": "#8a2be2"
-    },
-
-write documentation for this in same way as banner component. 
