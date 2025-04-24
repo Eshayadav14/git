@@ -1,47 +1,151 @@
-Functionality
+{{#each title}}
+  <div class="{{titleStyle}}" id="{{id}}">
+    <div
+      class="title-wrapper {{#if this.backgroundColor}}title-wrapper--padding{{/if}}"
+      style="background-color: {{this.backgroundColor}};"
+    >
+      {{#if this.url}}
+        <a href="{{this.url}}" class="title__link">
+          <div class="title__text {{this.titleVariation}}">
+            <{{this.titleType}} class="title__text" style="color: {{this.fontColor}}">
+              {{this.titleText}}
+            </{{this.titleType}}>
+          </div>
+        </a>
+      {{else}}
+        <div class="title__text {{this.titleVariation}}">
+          <{{this.titleType}} class="text" style="color: {{this.fontColor}}">
+            {{this.titleText}}
+          </{{this.titleType}}>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+{{/each}}
 
-The Featured Tiles component allows content authors to create visually engaging tiles that showcase key content with interactive features. Each tile highlights an item or offer with image transitions on hover, detailed content, and actionable CTAs. It supports responsive layouts and maintains accessibility standards.
+.title {
+  &__link {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
-⸻
+  &__text {
+    color: inherit;
+    min-height: toRem(40);
+    display: flex;
+    align-items: center;
+  }
+  &-wrapper {
+    &--padding {
+      padding: 24px 32px;
+      @include media-breakpoint-down(sm) {
+        padding: 16px 32px;
+      }
+      .title__text {
+        text-align: center;
+      }
+    }
+  }
+}
+//Title-Variations
+.aem-title {
+  &-v3 {
+    //background color variation
+    background-color: $dg-surface-brand-default-primary;
+    padding: 0 $dg-spacing-3;
+    min-height: toRem(104);
+    display: flex;
+    align-items: center;
 
-Major Elements
-	1.	Tile Container
-	•	Responsive grid layout that adjusts based on screen size.
-	2.	Image
-	•	Default display image shown initially.
-	3.	Hover Image
-	•	Secondary image that appears on hover or long-tap (mobile).
-	4.	Title
-	•	Bold and prominent title for the tile content.
-	5.	Subtitle (optional)
-	•	Additional context displayed beneath the title.
-	6.	Description
-	•	Scrollable content block with text truncation if it exceeds the tile space.
-	7.	CTA Button
-	•	Supports Primary, Secondary, Outlined, and Outlined Dark styles.
-	•	Includes all interactive states: hover, focus, active, and default.
+    @include media-breakpoint-down(xl) {
+      min-height: toRem(80);
+    }
 
-⸻
+    @include media-breakpoint-down(sm) {
+      min-height: toRem(48);
+    }
+  }
+  // font weights
+  .aem-title-weight {
+    &-500 {
+      @include title-weight($font-weight-medium);
+    }
+    &-600 {
+      @include title-weight($font-weight-semibold);
+    }
+    &-700 {
+      @include title-weight($font-weight-bold);
+    }
+    &-900 {
+      @include title-weight($font-weight-black);
+    }
+  }
+}
+.title__text {
+  &.left {
+    //Left aligned variation
+    justify-content: left;
+    text-align: left;
+  }
+  &.center {
+    //Center aligned variation
+    justify-content: center;
+    text-align: center;
+  }
+  &.right {
+    //Right aligned variation
+    justify-content: right;
+    text-align: right;
+  }
+  &.light {
+    //light strokes variation
+    width: 100%;
+    gap: toRem(16);
 
-Core Functions
-	1.	Hover Interaction
-	•	On desktop: hovering triggers the hover image and interactive states.
-	•	On mobile: short tap = click; long tap = hover effect.
-	2.	Tile Responsiveness
-	•	Tiles rearrange into a grid layout based on screen size:
-	•	XXL–M: Grid view after 4+ tiles
-	•	S: Grid view after 3+ tiles
-	•	XS (375px): Tiles stack vertically
-	3.	Dynamic Styling via JSON
-	•	Authors can set background color, font colors, image alt texts, and button labels through authored JSON or AEM fields.
-	4.	Description Scroll
-	•	Allows users to scroll the tile description while keeping the image and title fixed (if enabled).
+    &::before,
+    &::after {
+      content: "";
+      width: 100%;
+      min-width: 10%;
+      height: toRem(1);
+      flex: 1;
+      background-color: $dg-neutral-gray-default-neutrals-200;
+    }
 
-⸻
+    @include media-breakpoint-up(lg) {
+      gap: $dg-spacing-4;
+    }
+  }
+  &.dark {
+    //Dark strokes variation
+    @extend .light;
 
-Behavior
-	•	Image aspect ratios are preserved on all screen sizes.
-	•	Tiles adapt layout according to device screen width.
-	•	Hover image and styling are rendered exactly as authored.
-	•	Buttons redirect to authored URLs and open in a new tab by default.
-	•	All interactive elements are ADA-compliant per provided guidelines.
+    &::before,
+    &::after {
+      background-color: $dg-text-secondary-gray-500;
+    }
+  }
+  @include media-breakpoint-down(md) {
+    h1 {
+      font-size: $font-size-xl;
+      line-height: $line-height-xl;
+    }
+    h2 {
+      font-size: $font-size-lg;
+      line-height: $line-height-lg;
+    }
+    h3 {
+      font-size: $font-size-md;
+      line-height: $line-height-md;
+    }
+    h4 {
+      font-size: $font-size-base;
+      line-height: $line-height-base;
+    }
+  }
+}
+
+the --padding on wrapper is not getting applied, why so?
