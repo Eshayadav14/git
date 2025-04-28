@@ -1,9 +1,247 @@
-Hey [Team Lead’s Name],
+title component jira:
+As a content author, I want to be able to author the title component in AEM, so that I am able to add titles on pages
 
-As today is my last day on the project, I just wanted to say a heartfelt thank you. You’ve been an incredible team lead—your calm approach, problem-solving, and guidance have truly made an impact, and I’ve learned so much from you.
+Business / Functional Goals:
 
-I know I haven’t been very vocal recently with all the defect fixes going on, but I’ve always admired how smoothly you handled everything and led the team. That one-on-one chat really stuck with me—it made me reflect on staying better connected with you, and that’s something I’ll definitely work on going forward.
+The Title Component is intended to be used as the title or heading of a section of content
 
-I’ve always enjoyed supporting teammates like Harshitha, Suhas, and new joiners whenever possible, and I’ll continue doing that in future projects too. I’ve also been using the recent downtime to focus on upskilling through some courses.
+The title component can be used as a standalone component by the content authors to add titles to pages/articles etc.
+The title component can be added on the top of the pages to give headings or in between components to define title of a RTE, Image component etc.
+The title should have a text field to author the title and fields to choose font color with color picker, background color with color picker and Title typography - H1 to H5 
+Title component has 5 variations - 
 
-Thanks again for all the support. Hope we get to work together again soon. Wishing you the very best!
+Variation 1 - Title with only text (Left aligned)
+Variation 2 - Title with only text (Center aligned)
+Variation 3 - Title with background color
+Variation 4 - Title with light strokes on both sides
+Variation 5 - Title with dark strokes on both sides
+As a Developer, I should be able to:
+1. Develop a “Title” Component in AEM, based on the requirements of Content Author & End User and should be able to expose the content via a JSON for consumption in the UI Layer.
+2. Develop the Component in a way that it should display Marketing Content, as described in functional goals
+
+
+AC1 | FE | Title component Font color and Background color
+
+GIVEN I am an end user on DG.COM or APP
+
+WHEN I see the title component on any page
+
+THEN the view of the title component should show
+
+The font color chosen by the content author
+The background color picked by the content author 
+Note: The default selections for font color and background color are white
+
+AC2 | FE | Title component variations
+
+GIVEN I am an end user on DG.COM or APP
+
+WHEN I see the title component on any page
+
+THEN the below variations of the title component achieved through the styling brush icons are as per Figma designs
+
+Styles in brush icon:
+
+Alignment (Group A)-
+
+Left
+Center 
+Background color (Group B)-
+
+Title with background color
+ Strokes (Group C) - 
+
+Light strokes
+Dark strokes
+ Title weight (Group D) - 
+
+aem-title-weight-500
+aem-title-weight-600
+aem-title-weight-700
+aem-title-weight-900
+Multi-select should not be applicable in title variations
+
+Since H5 do not have different title weight options in designs, the author should be able to select different title weight options for H5 but there should be no difference in the UI
+
+Title component has 5 variations - 
+
+Variation 1 - Title with only text (Left aligned)
+Variation 2 - Title with only text (Center aligned)
+Variation 3 - Title with background color
+Variation 4 - Title with light strokes on both sides
+Variation 5 - Title with light strokes on both sides
+The Look & Feel of the variations should be achieved as per Figma with the styling options under brush icon
+
+AC3 | FE | Title component typographies
+
+GIVEN I am an end user on DG.COM or APP
+
+WHEN I see the title component on any page
+
+THEN the below typographies options selected by the content authors should have the same font size, line height and font weight as specified in Figma
+
+H1
+H2
+H3
+H4
+H5 
+H1 500
+H1 600
+H1 700
+H1 900
+H2 500
+H2 600
+H2 700
+H2 900
+H3 500
+H3 600
+H3 700
+H3 900
+H4 500
+H4 600
+H4 700
+H4 900
+AC4 | FE | Title component in different breakpoints
+
+GIVEN I am an end user on DG.COM or APP
+
+WHEN I see the title component in any breakpoint
+
+THEN the design of the title component should match with Figma for the below screen sizes 
+
+XXL
+XL 
+L - The title height should start scaling down to 80px instead of 104px from this screen size
+M
+S
+XS - The title height should start scaling down to 48px instead of 80px from this screen size
+
+json:
+{
+  "title": [
+    {
+      "id": "title-1",
+      "titleText": "Lorem ipsum",
+      "titleVariation": "left",
+      "titleStyle": "aem-title-weight-500",
+      "titleType": "h1",
+      "fontColor": "#fff200",
+      "backgroundColor": "#000000"
+    },
+    {
+      "id": "title-2",
+      "titleText": "Lorem ipsum",
+      "titleVariation": "center",
+      "url": "#",
+      "titleStyle": "aem-title-weight-600",
+      "titleType": "h2",
+      "fontColor": "#000000"
+    },
+}
+  hbs:
+{{#each title}}
+  <div class="{{titleStyle}}" id="{{id}}">
+    <div
+      class="title-wrapper {{#if this.backgroundColor}}title-wrapper--padding{{/if}}"
+      style="background-color: {{this.backgroundColor}};"
+    >
+      {{#if this.url}}
+        <a href="{{this.url}}" class="title__link">
+          <div class="title__text {{this.titleVariation}}">
+            <{{this.titleType}} class="title__text" style="color: {{this.fontColor}}">
+              {{this.titleText}}
+            </{{this.titleType}}>
+          </div>
+        </a>
+      {{else}}
+        <div class="title__text {{this.titleVariation}}">
+          <{{this.titleType}} class="text" style="color: {{this.fontColor}}">
+            {{this.titleText}}
+          </{{this.titleType}}>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+{{/each}}
+
+create a documentation for title component just like featured-tiles component. 
+Overview
+Component Name: Featured tiles
+Description: The Featured Tiles component is a flexible tile-based component used to highlight key content with an image, title, subtitle, description, and CTA. It supports hover, effects, responsive layouts, and is fully customizable by authors for promotional or spotlight sections.
+Nature of the Component: Static Component
+How the Component Works
+Functionality: The Featured Tiles component allows content authors to create visually engaging tiles that showcase key content with interactive features. Each tile highlights an item or offer with image transitions on hover, detailed content, and actionable CTAs. It supports responsive layouts and maintains accessibility standards.
+
+Major Elements:
+
+Tile Container: Responsive grid layout that adjusts based on screen size.
+Image: Default display image shown initially.
+Hover Image: Secondary image that appears on hover or long-tap (mobile).
+Title: Bold and prominent title for the tile content.
+Description: Scrollable content block with text truncation if it exceeds the tile space.
+CTA Button:
+    •   Supports Primary, Secondary, Outlined, and Outlined Dark styles.
+    •   Includes all interactive states: hover, focus, active, and default.
+Integration Requirements with AEM (If Applicable)
+Integration Prerequisites:
+
+JSON data needs to be passed from the AEM side.
+
+Integration Process:
+
+Data Configuration:
+The following data needs to be passed from AEM to the Featured-tiles component:
+
+Mapping Data:
+Map the JSON data from AEM to the corresponding fields in the Featured-tile component.
+API Integration & Endpoints
+APIs Used:  N/A (Static Component, data handled via AEM)
+Component Variations & Visual References
+Visual Representations:
+
+Web View:
+
+
+
+
+Tablet View:
+
+
+
+Mobile View:
+
+Major Functions & Behavior:
+Core Functions:
+Hover Interaction:
+    •    On desktop: hovering triggers the hover image and interactive states.
+    •    On mobile: short tap = click; long tap = hover effect.
+Redirection: Clicking a tile navigates the user to the respective category page.
+Dynamic Styling via JSON: Authors can set background color, font colors, image alt texts, and button labels through authored JSON or AEM fields.
+Accessibility: Implements alt text and ADA standards for compliance.
+Behavior:  
+Image aspect ratios are preserved on all screen sizes.
+Tiles adapt layout according to device screen width.
+Hover image and styling are rendered exactly as authored.
+Buttons redirect to authored URLs and open in a new tab by default.
+All interactive elements are ADA-compliant per provided guidelines.
+Linked Files:
+
+File Name(s):
+featured-tiles.hbs [Path: src\dgweb\ui.frontend\src\app\components\featured-tiles\featured-tiles.hbs]
+featured-tiles.json [Path: src\dgweb\ui.frontend\src\app\components\featured-tiles\featured-tiles.json]
+featured-tiles.scss [Path: src\dgweb\ui.frontend\src\app\components\featured-tiles\featured-tiles.scss]
+Figma Link:
+
+Figma URL – Featured-tiles Design Link
+JIRA Story ID:
+
+JIRA Story ID – [DSE-14121] Components | FE | Featured Tiles component (Variation 1) - Jira 
+Additional Information:
+Customization & Theming:
+
+Modify the SCSS for style changes.
+Update JSON configuration in AEM for dynamic content.
+Dependencies: N/A
+
+
+  
