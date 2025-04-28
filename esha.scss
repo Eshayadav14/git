@@ -1,181 +1,127 @@
-section jira:
-As a content author, I want to be able to author section component using the existing components, so that I can view the information about the section.
 
-Business / Functional Goals:
+⸻
 
-This component can be authored in the content pages in the website which is used to add content to the website.
+Section Component Documentation
 
-The content author should be able to author Section component using the following existing components:
+⸻
 
-Section
-Title
-RTE
-Banner
-Shoppable Image
-Button
-The text in the Section component has three variations which should be added at the dialog level
+Overview
 
-Top
-Center
-Bottom
-The Section component can have the below combinations:
+Component Name: Section
 
-RTE component on the left hand side and Banner component on the right hand side
-Banner component on the left hand side and RTE component on the right hand side
-RTE component on the left hand side and Shoppable Image component on the right hand side
-Shoppable Image component on the left hand side and RTE component on the right hand side
-RTE component and CTA on the left hand side and Banner component on the right hand side
-Banner component on the left hand side and RTE component and CTA on the right hand side
-RTE component and CTA on the left hand side and Shoppable Image component on the right hand side
-Shoppable Image component on the left hand side and RTE component and CTA on the right hand side
-Rich Text Component: 
+Description:
+The Section component is a versatile layout block that enables content authors to create structured content areas by combining existing components such as Title, Rich Text Editor (RTE), Banner, Shoppable Image, and Button. It supports flexible layouts, text alignment variations, responsive design, and ADA compliance.
 
-The RTE field should offer the content author to easy text editing with different styling and formatting options with key plugins like below
+Nature of the Component: Static Layout Component (built using existing components)
 
-Bold
-Italic
-Underline
-Justify (Alignment)
-Lists (Bullet, Numbers etc.)
-Hyperlink
-Underline
-Format: The Format RTE Plugin (Symbol P) should have below options as per the typography section in Figma including H1, H2, H3, H4, H5 and P.
-The styles plugin (Symbol S) in the RTE field should have below options: Small P, A, span, span small & bold.
-Banner Component: The banner variation used in section component is Variation X. It has the following fields:
+⸻
 
-Background Image
-Title with color picker
-But the content author should be able to add Banner component and choose any variation from the Banner component
+How the Component Works
 
-Button: CTAs added in the Section have the primary button type with text in white font against the black background.
+Functionality:
+The Section component acts as a container that allows authors to combine different components into a predefined two-column layout structure. It supports flexible combinations like RTE + Banner, RTE + Shoppable Image, and RTE + CTA with Banner or Shoppable Image.
 
-AND the content author should be able to add the CTA component with all the variations as defined in the Shoppable Image component story
+Major Elements:
+	•	Section Container: Flexible, responsive two-column layout.
+	•	Title Component: Optional heading for the section, configurable with different typographies and styles.
+	•	Rich Text Editor (RTE): For formatted textual content (bold, italic, underline, links, lists, headings, etc.).
+	•	Banner Component: Used to display images with text overlays and background images.
+	•	Shoppable Image Component: Used to tag products within images with clickable badges and popovers.
+	•	Button Component (CTA): Primary action buttons configurable with different styles and linking options.
 
-Shoppable Image:
+⸻
 
-The shoppable image component has below elements:
+Integration Requirements with AEM
 
-Image
-Badges
-Popovers
-Badges are used to tag products in the image of the component.
-These badges are clickable and upon clicking directs the user to the product detail page.
-When a user hovers over the badge, a popover appears.
-Badges are present over the products that are displayed in an image.
-Authors can add maximum of 5 items per page.
-Badge component has red variant in the section component.
-Badges will either have a container or frame that will encircle the badge or no container as per FIGMA.
-The container will be black if badges are yellow and white if badges are red as per FIGMA.
-Some badges will have a number and some badges will be without the number. 
-The font color of the number will be white for Red colored Badge and Black for Brand colored badge as per FIGMA in case the badge contains a number.
-The badges will have two sizes: Medium and small
-The authors should be able to move the position of the badges with the help of the custom CSS code and percentage change
-Popovers will have two positions:
-It can be placed on top of the badge or
-bottom of the badge depending upon the space within the image component and badge position.
-The content authors should be able to choose the position of the popovers
-The popover should appear when a user hovers over the badge.
-The popover should show the SKU information of the product: Product Info, Price and Image.
-These popovers are clickable and upon clicking directs the user to the product detail page
-AND the content author should be able to add the Shoppable Image component with all the variations as defined in the Shoppable Image component story
+Integration Prerequisites:
+	•	Section should be authored in AEM using allowed components: Title, RTE, Banner, Shoppable Image, Button.
+	•	The layout options and text alignment options (Top, Center, Bottom) must be available in the AEM dialog.
 
-Acceptance Criteria:
+Integration Process:
 
-As an End User/ Customer, I should be able to see the 
+Data Configuration:
+Authors configure the Section layout by selecting the alignment, layout combination, and inserting child components within the Section container.
 
-Note: 
+Mapping Data:
+	•	Title
+	•	RTE
+	•	Banner
+	•	Shoppable Image
+	•	Button
 
-The styling, placement of text, font requirements, dimensions of each element, colors, other text formatting, image ratios, etc., are as outlined in the UX/UI Designs, please refer to the links in the UX/UI Design Links section below.
-The section component should meet the ADA standards mentioned in the ADA Best Practices Document attached (Please see the attachment section)
-AC1 | FE | View of the Section component
+API Integration & Endpoints:
+	•	APIs Used: N/A (Static Component; Content fully handled via AEM)
 
-GIVEN I am an end user on DG.COM
+⸻
 
-WHEN I view the Section component in any page
+Component Variations & Visual References
 
-THEN the view of the Section should be as per the signed off Figma designs 
+Visual Representations:
+	•	Web View (XXL/XL/L):
+	•	Two-column layouts with RTE and Banner/Shoppable Image.
+	•	Title and RTE aligned based on the selected variation (Top/Center/Bottom).
+	•	Tablet View (M):
+	•	Stack layout — Shoppable Image/Banner first, followed by RTE content below.
+	•	Mobile View (S/XS):
+	•	Fully stacked — images/banners on top, text below.
 
-AND the title and RTE should be aligned as per the variant selected as per FIGMA
+Major Layout Combinations:
+	1.	RTE (left) + Banner (right)
+	2.	Banner (left) + RTE (right)
+	3.	RTE (left) + Shoppable Image (right)
+	4.	Shoppable Image (left) + RTE (right)
+	5.	RTE + Button (left) + Banner (right)
+	6.	Banner (left) + RTE + Button (right)
+	7.	RTE + Button (left) + Shoppable Image (right)
+	8.	Shoppable Image (left) + RTE + Button (right)
 
-Top
-Center 
-Bottom
-AND I should be able to view the Section component with the below combinations as per Figma
+Text Alignment Variations (for RTE):
+	•	Top
+	•	Center
+	•	Bottom
 
-RTE component on the left hand side and Banner component on the right hand side
-Banner component on the left hand side and RTE component on the right hand side
-RTE component on the left hand side and Shoppable Image component on the right hand side
-Shoppable Image component on the left hand side and RTE component on the right hand side
-RTE component and CTA on the left hand side and Banner component on the right hand side
-Banner component on the left hand side and RTE component and CTA on the right hand side
-RTE component and CTA on the left hand side and Shoppable Image component on the right hand side
-Shoppable Image component on the left hand side and RTE component and CTA on the right hand side
-AND the spacings and Padding between the components such as RTE, Button, Banner etc. in all the above combinations of the Section component should be AS PER FIGMA
+⸻
 
-AC2 | FE | Banner Variation
+Major Functions & Behavior
 
-GIVEN I am a content author in DG.COM
+Core Functions:
+	•	Two-column flexible layouts depending on device and screen size.
+	•	Title placement with typography options (H1–H5).
+	•	Formatted Rich Text with bold, italic, underline, hyperlinks, lists, alignment.
+	•	Banner with Variation X: Background image, title with color picker.
+	•	Shoppable Images: Badges (Red variant), popovers, maximum 5 items, badge positioning control.
+	•	CTA Button: Primary style (white text on black background) by default.
+	•	Dynamic text alignment (top/center/bottom) configured at the dialog level.
+	•	Responsive stacking for smaller screen sizes.
+	•	Accessibility (ADA compliance) including text contrast, alt text, interactive states.
 
-WHEN I have added the layout in which I want to author a Banner component
+⸻
 
-AND I add a Banner component inside that
+Behavior:
+	•	In Desktop/Tablet XXL, XL, L:
+Two-column layouts with defined combinations.
+	•	In Mobile/Tablet M, S, XS:
+The Banner/Shoppable Image always appears first, followed by RTE content.
+	•	Section Width Behavior:
+	•	Max container width: 1200px at XL and XXL.
+	•	Margins adjust dynamically based on screen size.
+	•	RTE Formatting Behavior:
+	•	Typography (H1, H2, H3, H4, H5, P)
+	•	Bold, Italic, Underline
+	•	Bullet Lists, Numbered Lists
+	•	Hyperlink insertion
+	•	Format and Styles plugins available
+	•	Shoppable Image Behavior:
+	•	Badge styles (Red variant for section)
+	•	Hover popovers showing product info
+	•	Badge positioning via custom CSS
+	•	Button Behavior:
+	•	Primary button: black background, white text
+	•	Supports all states: hover, focus, active
 
-THEN I am able to see Banner Variation X as per Figma
+⸻
 
-AND the UI/UX of the Banner Variation should be as per the Banner component
-
-AC3 | FE | View of Shoppable Image
-
-GIVEN I am a content author in DG.COM
-
-WHEN I have added the layout in which I want to author a Shoppable Image component
-
-AND I add a Shoppable Image component inside that
-
-THEN I am able to see Shoppable Image as per FIGMA
-
-AND the UI/UX should be AS PER the Shoppable Image component
-
-AC4 | FE | View of Button
-
-GIVEN I am a content author in DG.COM
-
-WHEN I have added the layout in which I want to author a Button component
-
-AND I add a Button component inside that
-
-THEN I am able to see Button as per FIGMA
-
-AND the button is a primary button with white text against the black background.
-
-AC5 | FE | View of the RTE component
-
-GIVEN I am an end user on DG.COM
-
-WHEN I have added the layout in which I want to author the RTE component
-
-THEN the view of the RTE component should include all the Formatting by the content authors in the RTE field and the details like font size, text alignment, bold, italics, lists, hyperlink, underline and the typography options.
-
-AC6 | FE | View of the Section component in all the screen sizes (XXL, XL, L, M, S & XS)
-
-GIVEN I am an end user on DG.COM
-
-WHEN I see the Section in any breakpoint
-
-THEN the view of the Section component should be as per the signed off FIGMA designs
-
-XXL:
-Columns should stay at a max of 1200 px width, but margins keep growing based on screen of device as per FIGMA
-RTE and Button can be on the left hand side and Banner or Shoppable Image on the right hand side
-Banner or Shoppable Image can be on the left hand side and RTE and Button on the right hand side
-XL - Columns should stay at a max of 1200 px width, but margins keep growing based on screen of device as per FIGMA
-RTE and Button can be on the left hand side and Banner or Shoppable Image on the right hand side
-Banner or Shoppable Image can be on the left hand side and RTE and Button on the right hand side
-L 
-RTE and Button can be on the left hand side and Banner or Shoppable Image on the right hand side
-Banner or Shoppable Image can be on the left hand side and RTE and Button on the right hand side
-M - The Shoppable Image or Banner should always show at the top and the text below 
-S - The Shoppable Image or Banner should always show at the top and the text below 
-XS – The Shoppable Image or Banner should always show at the top and the text below 
-
-please create a documentation for section component as well 
+Accessibility
+	•	Alt texts for all images and interactive elements.
+	•	High contrast text options available.
+	•	ADA compliance maintained throughout structure.
